@@ -931,7 +931,7 @@ export default function Dasbord() {
                   </div>
                 </div>
 
-                <div className="mt-6 pt-4 border-t border-slate-200">
+                {/* <div className="mt-6 pt-4 border-t border-slate-200">
                   <div className="grid grid-cols-2 gap-4 text-center">
                     <div>
                       <p className="text-xl sm:text-2xl font-bold text-emerald-700">
@@ -939,14 +939,14 @@ export default function Dasbord() {
                       </p>
                       <p className="text-xs text-slate-600">Total Certificates</p>
                     </div>
-                    {/* <div>
+                    <div>
                       <p className="text-xl sm:text-2xl font-bold text-blue-700">
                         ${statsState.monthlyEarnings}
                       </p>
                       <p className="text-xs text-slate-600">Monthly Earnings</p>
-                    </div> */}
+                    </div>
                   </div>
-                </div>
+                </div> */}
               </div>
             </div>
           </div>
