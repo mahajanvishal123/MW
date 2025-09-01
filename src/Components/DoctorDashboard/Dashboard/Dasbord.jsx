@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useState } from 'react';
 import CertificateManagementModal from './CertificateManagementModal';
-
+import { QRCodeCanvas } from "qrcode.react";
 // import { usePathname } from 'next/navigation';
 
 export default function Dasbord() {
@@ -9,6 +9,13 @@ export default function Dasbord() {
   const [quickApproveModal, setQuickApproveModal] = useState({ open: false, cert: null });
   const [declineReason, setDeclineReason] = useState('');
   const [declineReasonType, setDeclineReasonType] = useState(''); // dropdown or textbox
+
+  const [showPreviewModal, setShowPreviewModal] = useState(false);
+  const [previewData, setPreviewData] = useState(null);
+  const [showDeclineModal, setShowDeclineModal] = useState(false);
+  const [declineData, setDeclineData] = useState(null);
+  // const [declineReason, setDeclineReason] = useState("");
+  const [customReason, setCustomReason] = useState("");
 
   const [statsState, setStatsState] = useState({
     totalCertificates: 127,
@@ -293,6 +300,19 @@ export default function Dasbord() {
       followUp: false
     }
   ]);
+
+
+  const handleDeclineRequest = (id) => {
+    // Get the final reason
+    const reason = declineReason === "Other" ? customReason : declineReason;
+
+    // Your decline logic here, including sending the email
+
+    // Reset states
+    setShowDeclineModal(false);
+    setDeclineReason("");
+    setCustomReason("");
+  };
 
   const handleQuickApproval = () => setShowQuickApproval(true);
   const handleNewCertificate = () => setShowNewCertificate(true);
@@ -796,7 +816,7 @@ export default function Dasbord() {
                       </div>
 
                       {/* Actions */}
-                      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                      {/* <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                         <span className="text-xs text-slate-500">{request.submitted}</span>
                         {request.status === "Pending" && (
                           <div className="flex flex-wrap gap-2">
@@ -807,14 +827,14 @@ export default function Dasbord() {
                               Approve
                             </button>
                             <button
-                            
+
                               className="px-4 py-2 bg-slate-200 text-slate-800 rounded-lg hover:bg-slate-300 transition-colors cursor-pointer text-sm whitespace-nowrap"
                             >
                               Review
                             </button>
                           </div>
                         )}
-                      </div>
+                      </div> */}
                     </div>
                   ))}
                 </div>
@@ -931,6 +951,285 @@ export default function Dasbord() {
             </div>
           </div>
 
+          {/* Quick Approval Modal */}
+          {/* Quick Approval Modal */}
+          {showQuickApproval && (
+            <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+              <div className="bg-white rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+                <div className="p-6 border-b border-slate-200">
+                  <div className="flex items-center justify-between">
+                    <h2 className="text-2xl font-bold text-slate-900">Quick Certificate Approval</h2>
+                    <button
+                      onClick={() => setShowQuickApproval(false)}
+                      className="w-10 h-10 bg-slate-100 hover:bg-slate-200 rounded-lg flex items-center justify-center cursor-pointer"
+                    >
+                      <i className="ri-close-line text-slate-600 text-xl"></i>
+                    </button>
+                  </div>
+                </div>
+
+                <div className="p-6">
+                  <h3 className="text-lg font-semibold text-slate-900 mb-4">Pending Certificate Requests</h3>
+                  <div className="space-y-4">
+                    {recentRequests
+                      .filter(req => req.status === 'Pending')
+                      .map(request => (
+                        <div
+                          key={request.id}
+                          className="p-4 border border-slate-200 rounded-lg hover:shadow-sm transition-colors cursor-pointer"
+                        >
+                          <div className="flex items-center justify-between mb-3">
+                            <div>
+                              <div className="flex items-center">
+                                <span className="text-sm font-medium text-slate-700 mr-2">{request.id}</span>
+                                {request.urgent && (
+                                  <span className="px-2 py-1 bg-red-100 text-red-800 text-xs font-medium rounded">
+                                    Urgent
+                                  </span>
+                                )}
+                              </div>
+                              <h4 className="font-semibold text-slate-900">{request.patient}</h4>
+                            </div>
+                            <span className="text-xs text-slate-500">{request.submitted}</span>
+                          </div>
+
+                          <div className="grid grid-cols-2 gap-4 text-sm text-slate-700 mb-4">
+                            <div>
+                              <span className="text-slate-500">Condition:</span> {request.condition}
+                            </div>
+                            <div>
+                              <span className="text-slate-500">Duration:</span> {request.duration}
+                            </div>
+                          </div>
+
+                          <div className="flex space-x-2">
+                            <button
+                              onClick={() => setShowPreviewModal(request)}
+                              className="flex-1 px-4 py-2 border border-green-500 text-green-500 hover:bg-green-500 hover:text-white rounded-lg flex items-center justify-center"
+                            >
+                              <i className="ri-eye-line mr-2"></i>
+                              Preview & Approve
+                            </button>
+
+                            <button
+                              onClick={() => setShowDeclineModal(request)}
+                              className="flex-1 px-4 py-2 border border-red-500 text-red-500 hover:bg-red-500 hover:text-white rounded-lg flex items-center justify-center"
+                            >
+                              <i className="ri-close-line mr-2"></i>
+                              Decline Request
+                            </button>
+                          </div>
+
+                        </div>
+                      ))}
+                  </div>
+
+                  {/* Preview Modal */}
+                  {showPreviewModal && (
+                    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+                      <div className="bg-white rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+                        <div className="p-6 border-b border-slate-200">
+                          <div className="flex items-center justify-between">
+                            <h2 className="text-2xl font-bold text-slate-900">Certificate Preview</h2>
+                            <button
+                              onClick={() => setShowPreviewModal(null)}
+                              className="w-10 h-10 bg-slate-100 hover:bg-slate-200 rounded-lg flex items-center justify-center cursor-pointer"
+                            >
+                              <i className="ri-close-line text-slate-600 text-xl"></i>
+                            </button>
+                          </div>
+                        </div>
+
+                        <div className="p-6">
+                          <div className="border-2 border-slate-200 rounded-lg p-6 mb-6">
+                            <div className="text-center mb-6">
+                              <h3 className="text-2xl font-bold text-slate-900">MEDICAL CERTIFICATE</h3>
+                              <p className="text-slate-600">Certificate ID: 1</p>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-4 mb-6">
+                              <div>
+                                <p className="font-semibold">Patient Name:</p>
+                                <p>abc</p>
+                              </div>
+                              <div>
+                                <p className="font-semibold">Date of Issue:</p>
+                                <p>{new Date().toLocaleDateString()}</p>
+                              </div>
+                              <div>
+                                <p className="font-semibold">Condition:</p>
+                                <p>-</p>
+                              </div>
+                              <div>
+                                <p className="font-semibold">Duration:</p>
+                                <p>1 day</p>
+                              </div>
+                            </div>
+
+                            <div className="mb-6">
+                              <p className="font-semibold">Practitioner Details:</p>
+                              <p>Dr. Jane Smith</p>
+                              <p>AHPRA Reg. No: MED123456</p>
+                            </div>
+
+                            <div className="text-center">
+                              <div className="inline-block p-3 bg-slate-100 rounded-lg">
+                                {/* QR Code */}
+                                <div className="flex items-center justify-center mx-auto mb-2">
+                                  <QRCodeCanvas
+                                    value="https://your-verification-link.com/certificate/12345"
+                                    size={96} // QR code size
+                                    bgColor="#ffffff"
+                                    fgColor="#000000"
+                                    level="H"
+                                    includeMargin={false}
+                                  />
+                                </div>
+                                <p className="text-xs text-slate-600">Scan to verify certificate</p>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="flex justify-end space-x-3">
+                            <button
+                              onClick={() => setShowPreviewModal(null)}
+                              className="px-6 py-2 border border-slate-300 text-slate-700 rounded-lg hover:bg-slate-50 transition-colors cursor-pointer"
+                            >
+                              Cancel
+                            </button>
+                            <button
+                              onClick={() => handleApproveRequest(previewData.id)}
+                              className="px-6 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors cursor-pointer flex items-center"
+                            >
+                              <i className="ri-check-line mr-2"></i>
+                              Confirm Approval
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Decline Modal */}
+                  {showDeclineModal && (
+                    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+                      <div className="bg-white rounded-xl shadow-2xl w-full max-w-md">
+                        <div className="p-6 border-b border-slate-200">
+                          <div className="flex items-center justify-between">
+                            <h2 className="text-2xl font-bold text-slate-900">Decline Certificate Request</h2>
+                            <button
+                              onClick={() => setShowDeclineModal(null)}
+                              className="w-10 h-10 bg-slate-100 hover:bg-slate-200 rounded-lg flex items-center justify-center cursor-pointer"
+                            >
+                              <i className="ri-close-line text-slate-600 text-xl"></i>
+                            </button>
+                          </div>
+                        </div>
+
+                        <div className="p-6">
+                          <p className="text-slate-700 mb-4">You are declining the certificate request for <span className="font-semibold"></span>.</p>
+
+                          <div className="mb-6">
+                            <label className="block text-sm font-medium text-slate-700 mb-2">
+                              Reason for Decline <span className="text-red-500">*</span>
+                            </label>
+                            <select
+                              className="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                              value={declineReason}
+                              onChange={(e) => setDeclineReason(e.target.value)}
+                            >
+                              <option value="">Select a reason</option>
+                              <option value="Insufficient information">Insufficient information</option>
+                              <option value="Does not meet criteria">Does not meet criteria</option>
+                              <option value="Requires further consultation">Requires further consultation</option>
+                              <option value="Other">Other</option>
+                            </select>
+
+                            {declineReason === "Other" && (
+                              <textarea
+                                className="w-full p-3 border border-slate-300 rounded-lg mt-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                rows={3}
+                                placeholder="Please specify the reason"
+                                value={customReason}
+                                onChange={(e) => setCustomReason(e.target.value)}
+                              />
+                            )}
+                          </div>
+
+                          <div className="flex justify-end space-x-3">
+                            <button
+                              onClick={() => setShowDeclineModal(null)}
+                              className="px-6 py-2 border border-slate-300 text-slate-700 rounded-lg hover:bg-slate-50 transition-colors cursor-pointer"
+                            >
+                              Cancel
+                            </button>
+                            <button
+                              onClick={() => handleDeclineRequest(declineData.id)}
+                              disabled={!declineReason || (declineReason === "Other" && !customReason)}
+                              className={`px-6 py-2 text-white rounded-lg transition-colors cursor-pointer flex items-center ${!declineReason || (declineReason === "Other" && !customReason)
+                                ? "bg-slate-400 cursor-not-allowed"
+                                : "bg-red-600 hover:bg-red-700"
+                                }`}
+                            >
+                              <i className="ri-close-line mr-2"></i>
+                              Confirm Decline
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mt-6">
+                    <div className="flex">
+                      <div className="w-6 h-6 flex items-center justify-center">
+                        <i className="ri-information-line text-blue-600"></i>
+                      </div>
+                      <div className="ml-3">
+                        <h4 className="text-lg font-semibold text-blue-900 mb-3">Quick Approval Guidelines</h4>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                          <div>
+                            <h5 className="font-medium text-blue-800 mb-2">Best Practices:</h5>
+                            <ul className="space-y-1 text-blue-700">
+                              <li>• Respond professionally and courteously</li>
+                              <li>• Thank patients for their feedback</li>
+                              <li>• Address specific concerns mentioned</li>
+                              <li>• Keep responses concise and helpful</li>
+                            </ul>
+                          </div>
+                          <div>
+                            <h5 className="font-medium text-blue-800 mb-2">Privacy Reminders:</h5>
+                            <ul className="space-y-1 text-blue-700">
+                              <li>• Never discuss specific medical details</li>
+                              <li>• Maintain patient confidentiality</li>
+                              <li>• Use general, supportive language</li>
+                              <li>• Refer complex issues to private consultation</li>
+                            </ul>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="p-6 border-t border-slate-200 flex justify-between items-center">
+                  <button
+                    onClick={() => setShowQuickApproval(false)}
+                    className="px-6 py-2 border border-slate-300 text-slate-700 rounded-lg hover:bg-slate-50 transition-colors cursor-pointer whitespace-nowrap"
+                  >
+                    Close
+                  </button>
+                  <Link
+                    href="/admin/practitioner-certificates"
+                    className="px-6 py-2 bg-slate-800 text-white rounded-lg hover:bg-slate-900 transition-colors cursor-pointer whitespace-nowrap flex items-center"
+                  >
+                    <i className="ri-file-list-3-line mr-2"></i>
+                    View All Certificates
+                  </Link>
+                </div>
+              </div>
+            </div>
+          )}
           {/* New Certificate Modal */}
           {showNewCertificate && (
             <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">

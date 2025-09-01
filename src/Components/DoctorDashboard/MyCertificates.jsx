@@ -24,6 +24,10 @@ export default function MyCertificates() {
   const [declineCertId, setDeclineCertId] = useState('');
   const [declineReason, setDeclineReason] = useState('');
   const [declineReasonType, setDeclineReasonType] = useState('dropdown'); // or 'text'
+  const [user, setUser] = useState({ role: "Doctor" });
+  // const user = currentUser || {};
+
+
   const [approvalForm, setApprovalForm] = useState({
     startDate: '',
     endDate: '',
@@ -2190,16 +2194,54 @@ Generated: ${new Date().toLocaleString()}
                     </label>
                     <select
                       value={approvalForm.duration}
-                      onChange={(e) => handleApprovalFormChange('duration', e.target.value)}
+                      onChange={(e) =>
+                        handleApprovalFormChange("duration", e.target.value)
+                      }
                       className="w-full px-3 py-2 pr-8 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
                     >
-                      <option value="1 day">1 day</option>
-                      <option value="2 days">2 days</option>
-                      <option value="3 days">3 days</option>
-                      <option value="5 days">5 days</option>
-                      <option value="7 days">1 week</option>
-                      <option value="14 days">2 weeks</option>
+                      {user?.role === "Doctor" ? (
+                        <>
+                          <option value="1 day">1 day</option>
+                          <option value="2 days">2 days</option>
+                        </>
+                      ) : user?.role === "Pharmacist" ? (
+                        <>
+                          <option value="1 day">1 day</option>
+                        </>
+                      ) : (
+                        <>
+                          <option value="1 day">1 day</option>
+                          <option value="2 days">2 days</option>
+                          <option value="3 days">3 days</option>
+                          <option value="5 days">5 days</option>
+                          <option value="7 days">1 week</option>
+                          <option value="14 days">2 weeks</option>
+                        </>
+                      )}
                     </select>
+
+                    {/* Agar Doctor ne 2 days select kiya to phone verification dikhado */}
+                    {user?.role === "Doctor" && approvalForm.duration === "2 days" && (
+                      <div className="mt-3">
+                        <label className="block text-sm font-medium text-slate-700 mb-2">
+                          Phone Call Verification
+                        </label>
+                        <input
+                          type="checkbox"
+                          checked={approvalForm.phoneCallVerify || false}
+                          onChange={(e) =>
+                            setApprovalForm((prev) => ({
+                              ...prev,
+                              phoneCallVerify: e.target.checked,
+                            }))
+                          }
+                          className="h-4 w-4 text-emerald-600 border-gray-300 rounded"
+                        />
+                        <span className="ml-2 text-sm text-slate-600">
+                          Doctor must confirm phone call verification
+                        </span>
+                      </div>
+                    )}
                   </div>
 
                   <div>

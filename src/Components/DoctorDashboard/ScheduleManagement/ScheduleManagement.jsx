@@ -752,7 +752,7 @@ export default function ScheduleManagement() {
               </div>
 
               {/* Recent Activity Card */}
-              <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-4 sm:p-6">
+              {/* <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-4 sm:p-6">
                 <h3 className="text-lg font-semibold text-slate-900 mb-4">Recent Activity</h3>
 
                 <div className="space-y-3">
@@ -786,7 +786,7 @@ export default function ScheduleManagement() {
                     </div>
                   </div>
                 </div>
-              </div>
+              </div> */}
             </div>
           </div>
         </div>
