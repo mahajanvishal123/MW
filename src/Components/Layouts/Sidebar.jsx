@@ -17,7 +17,7 @@
     { to: "/doctor/doctorDashboard", icon: "ri-dashboard-3-line", label: "Dashboard" },
     { to: "/doctor/mycertificates", icon: "ri-file-text-line", label: "Certificates" },
     { to: "/doctor/ScheduleManagement", icon: "ri-calendar-line", label: "Schedule" },
-    { to: "/doctor/earningsreports", icon: "ri-wallet-3-line", label: "Earnings & Reports" },
+    // { to: "/doctor/earningsreports", icon: "ri-wallet-3-line", label: "Earnings & Reports" },
     { to: "/doctor/profilesettings", icon: "ri-user-settings-line", label: "Profile & Settings" },
   ];
 
@@ -29,7 +29,7 @@
 
   const doctorActions = [
     { label: "Approve Certificate", icon: "ri-check-double-line", onClick: "quickApproval" },
-    { label: "Set Unavailable", icon: "ri-calendar-close-line", onClick: null },
+    // { label: "Set Unavailable", icon: "ri-calendar-close-line", onClick: null },
   ];
 
   function Sidebar({ sidebarOpen }) {

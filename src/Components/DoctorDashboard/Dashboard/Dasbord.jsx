@@ -5,7 +5,11 @@ import CertificateManagementModal from './CertificateManagementModal';
 // import { usePathname } from 'next/navigation';
 
 export default function Dasbord() {
-const [modalAction, setModalAction] = useState({ open: false });
+  const [modalAction, setModalAction] = useState({ open: false });
+  const [quickApproveModal, setQuickApproveModal] = useState({ open: false, cert: null });
+  const [declineReason, setDeclineReason] = useState('');
+  const [declineReasonType, setDeclineReasonType] = useState(''); // dropdown or textbox
+
   const [statsState, setStatsState] = useState({
     totalCertificates: 127,
     pendingRequests: 8,
@@ -508,6 +512,62 @@ const [modalAction, setModalAction] = useState({ open: false });
   const reviewStats = getReviewStats();
   const certificateStats = getCertificateStats();
 
+  // Simulate user role (replace with actual role logic)
+  const userRole = 'doctor'; // 'doctor' or 'pharmacist'
+
+  // Certificate day options based on role
+  const getDayOptions = () => {
+    if (userRole === 'pharmacist') return [{ value: '1', label: '1 day' }];
+    if (userRole === 'doctor') return [
+      { value: '1', label: '1 day' },
+      { value: '2', label: '2 days (Phone Verification Required)' }
+    ];
+    return [];
+  };
+
+  // Red-flag logic for 3-day certificate
+  const isRedFlag = cert =>
+    cert.duration === '3 days' ||
+    (userRole === 'doctor' && cert.duration === '3 days');
+
+  // Quick Approve handler
+  const handleQuickApproveClick = cert => {
+    setQuickApproveModal({ open: true, cert });
+    setDeclineReason('');
+    setDeclineReasonType('');
+  };
+
+  // Approve logic
+  const handleApproveCertificate = cert => {
+    // Phone verification for 2-day doctor certificate
+    if (userRole === 'doctor' && cert.duration === '2 days') {
+      alert('Phone verification required for 2-day certificate!');
+      // Add phone verification logic here
+      return;
+    }
+    // Red-flag for 3-day
+    if (isRedFlag(cert)) {
+      alert('3-day certificate is not allowed. Please refer to GP.');
+      setQuickApproveModal({ open: false, cert: null });
+      return;
+    }
+    // Approve
+    alert(`Certificate ${cert.id} approved!`);
+    setQuickApproveModal({ open: false, cert: null });
+    // ...update state as needed...
+  };
+
+  // Decline logic
+  const handleDeclineCertificate = cert => {
+    if (!declineReason) {
+      alert('Please provide a decline reason.');
+      return;
+    }
+    alert(`Certificate ${cert.id} declined for reason: ${declineReason}`);
+    setQuickApproveModal({ open: false, cert: null });
+    // TODO: Send auto-email to patient with reason
+  };
+
   return (
     <div className="p-5 flex">
       {/* Main Content */}
@@ -562,7 +622,7 @@ const [modalAction, setModalAction] = useState({ open: false });
               </div>
             </Link>
 
-            <div
+            {/* <div
               onClick={handleGrowthRateClick}
               className="bg-white p-6 rounded-xl shadow-sm border border-slate-200 hover:shadow-md transition-all cursor-pointer group"
             >
@@ -581,7 +641,7 @@ const [modalAction, setModalAction] = useState({ open: false });
                 <span className="text-emerald-700 font-medium bg-emerald-100 px-2 py-1 rounded hover:bg-emerald-200 transition-colors">+18%</span>
                 <span className="text-slate-600 ml-2">vs last month</span>
               </div>
-            </div>
+            </div> */}
 
             <div
               onClick={handlePatientRatingClick}
@@ -671,13 +731,13 @@ const [modalAction, setModalAction] = useState({ open: false });
               </div>
             </Link>
 
-            <button className="bg-orange-700 hover:bg-orange-800 text-white p-4 rounded-lg transition-colors cursor-pointer whitespace-nowrap group">
+            {/* <button className="bg-orange-700 hover:bg-orange-800 text-white p-4 rounded-lg transition-colors cursor-pointer whitespace-nowrap group">
               <Link to={"/doctor/earningsreports"}>
                 <div className="flex items-center justify-center">
                   <i className="ri-bar-chart-2-line text-lg mr-2 group-hover:scale-110 transition-transform"></i>
                   Reports
                 </div></Link>
-            </button>
+            </button> */}
           </div>
 
           {/* Main Content Grid */}
@@ -690,7 +750,7 @@ const [modalAction, setModalAction] = useState({ open: false });
                     Recent Certificate Requests
                   </h2>
                   <Link
-                    href="/doctor/mycertificates"
+                    to="/doctor/mycertificates"
                     className="text-slate-700 hover:text-slate-900 text-sm cursor-pointer"
                   >
                     View All →
@@ -747,7 +807,7 @@ const [modalAction, setModalAction] = useState({ open: false });
                               Approve
                             </button>
                             <button
-                              onClick={() => handleReviewRequest(request.id)}
+                            
                               className="px-4 py-2 bg-slate-200 text-slate-800 rounded-lg hover:bg-slate-300 transition-colors cursor-pointer text-sm whitespace-nowrap"
                             >
                               Review
@@ -859,12 +919,12 @@ const [modalAction, setModalAction] = useState({ open: false });
                       </p>
                       <p className="text-xs text-slate-600">Total Certificates</p>
                     </div>
-                    <div>
+                    {/* <div>
                       <p className="text-xl sm:text-2xl font-bold text-blue-700">
                         ${statsState.monthlyEarnings}
                       </p>
                       <p className="text-xs text-slate-600">Monthly Earnings</p>
-                    </div>
+                    </div> */}
                   </div>
                 </div>
               </div>
@@ -1277,121 +1337,101 @@ const [modalAction, setModalAction] = useState({ open: false });
           )}
 
           {/* Quick Approval Modal */}
-          {showQuickApproval && (
-            <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-              <div className="bg-white rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-                <div className="p-6 border-b border-slate-200">
-                  <div className="flex items-center justify-between">
-                    <h2 className="text-2xl font-bold text-slate-900">Quick Certificate Approval</h2>
-                    <button
-                      onClick={() => setShowQuickApproval(false)}
-                      className="w-10 h-10 bg-slate-100 hover:bg-slate-200 rounded-lg flex items-center justify-center cursor-pointer"
-                    >
-                      <i className="ri-close-line text-slate-600 text-xl"></i>
-                    </button>
-                  </div>
+          {quickApproveModal.open && quickApproveModal.cert && (
+            <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
+              <div className="bg-white rounded-xl shadow-2xl w-full max-w-md p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-xl font-bold text-slate-900">Certificate Preview</h2>
+                  <button
+                    onClick={() => setQuickApproveModal({ open: false, cert: null })}
+                    className="w-8 h-8 bg-slate-100 hover:bg-slate-200 rounded-lg flex items-center justify-center cursor-pointer"
+                  >
+                    <i className="ri-close-line text-slate-600 text-xl"></i>
+                  </button>
                 </div>
-
-                <div className="p-6">
-                  <h3 className="text-lg font-semibold text-slate-900 mb-4">Pending Certificate Requests</h3>
-                  <div className="space-y-4">
-                    {recentRequests
-                      .filter(req => req.status === 'Pending')
-                      .map(request => (
-                        <div
-                          key={request.id}
-                          className="p-4 border border-slate-200 rounded-lg hover:shadow-sm transition-colors cursor-pointer"
-                        >
-                          <div className="flex items-center justify-between mb-3">
-                            <div>
-                              <div className="flex items-center">
-                                <span className="text-sm font-medium text-slate-700 mr-2">{request.id}</span>
-                                {request.urgent && (
-                                  <span className="px-2 py-1 bg-red-100 text-red-800 text-xs font-medium rounded">
-                                    Urgent
-                                  </span>
-                                )}
-                              </div>
-                              <h4 className="font-semibold text-slate-900">{request.patient}</h4>
-                            </div>
-                            <span className="text-xs text-slate-500">{request.submitted}</span>
-                          </div>
-
-                          <div className="grid grid-cols-2 gap-4 text-sm text-slate-700 mb-4">
-                            <div>
-                              <span className="text-slate-500">Condition:</span> {request.condition}
-                            </div>
-                            <div>
-                              <span className="text-slate-500">Duration:</span> {request.duration}
-                            </div>
-                          </div>
-
-                          <div className="flex space-x-2">
-                            <button
-                              onClick={() => handleApproveRequest(request.id)}
-                              className="flex-1 px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors cursor-pointer whitespace-nowrap"
-                            >
-                              <i className="ri-check-line mr-2"></i>
-                              Approve Certificate
-                            </button>
-                            <Link
-                              href="/admin/practitioner-certificates"
-                              className="flex-1 px-4 py-2 bg-slate-200 text-slate-800 rounded-lg hover:bg-slate-300 transition-colors cursor-pointer whitespace-nowrap"
-                            >
-                              <i className="ri-eye-line mr-2"></i>
-                              Review Details
-                            </Link>
-                          </div>
-                        </div>
-                      ))}
-                  </div>
-
-                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mt-6">
-                    <div className="flex">
-                      <div className="w-6 h-6 flex items-center justify-center">
-                        <i className="ri-information-line text-blue-600"></i>
-                      </div>
-                      <div className="ml-3">
-                        <h4 className="text-lg font-semibold text-blue-900 mb-3">Quick Approval Guidelines</h4>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                          <div>
-                            <h5 className="font-medium text-blue-800 mb-2">Best Practices:</h5>
-                            <ul className="space-y-1 text-blue-700">
-                              <li>• Respond professionally and courteously</li>
-                              <li>• Thank patients for their feedback</li>
-                              <li>• Address specific concerns mentioned</li>
-                              <li>• Keep responses concise and helpful</li>
-                            </ul>
-                          </div>
-                          <div>
-                            <h5 className="font-medium text-blue-800 mb-2">Privacy Reminders:</h5>
-                            <ul className="space-y-1 text-blue-700">
-                              <li>• Never discuss specific medical details</li>
-                              <li>• Maintain patient confidentiality</li>
-                              <li>• Use general, supportive language</li>
-                              <li>• Refer complex issues to private consultation</li>
-                            </ul>
-                          </div>
-                        </div>
-                      </div>
+                {/* Preview Details */}
+                <div className="space-y-2 text-sm text-slate-700 mb-4">
+                  <div><strong>Patient:</strong> {quickApproveModal.cert.patient}</div>
+                  <div><strong>Certificate ID:</strong> {quickApproveModal.cert.id}</div>
+                  <div><strong>Condition:</strong> {quickApproveModal.cert.condition}</div>
+                  <div><strong>Duration:</strong> {quickApproveModal.cert.duration}</div>
+                  <div><strong>Status:</strong> {quickApproveModal.cert.status}</div>
+                  <div><strong>Practitioner:</strong> Dr. Sarah Johnson</div>
+                  <div><strong>AHPRA Reg. No.:</strong> MED0001234567</div>
+                  <div>
+                    <strong>QR Code:</strong>
+                    <div className="mt-2">
+                      {/* Dummy QR code */}
+                      <img src="https://api.qrserver.com/v1/create-qr-code/?size=80x80&data=MC-2024-0156" alt="QR" />
                     </div>
                   </div>
                 </div>
-
-                <div className="p-6 border-t border-slate-200 flex justify-between items-center">
+                {/* Red-flag Blocker */}
+                {isRedFlag(quickApproveModal.cert) && (
+                  <div className="bg-red-100 text-red-700 p-3 rounded mb-4">
+                    <strong>3-day certificate is not allowed.</strong> Please refer to GP.
+                  </div>
+                )}
+                {/* Day Options (role-based) */}
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-slate-700 mb-2">Certificate Duration</label>
+                  <select
+                    value={quickApproveModal.cert.duration}
+                    disabled
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg bg-slate-50"
+                  >
+                    {getDayOptions().map(opt => (
+                      <option key={opt.value} value={opt.value}>{opt.label}</option>
+                    ))}
+                  </select>
+                </div>
+                {/* Approve/Decline Buttons */}
+                <div className="flex flex-col gap-3">
                   <button
-                    onClick={() => setShowQuickApproval(false)}
-                    className="px-6 py-2 border border-slate-300 text-slate-700 rounded-lg hover:bg-slate-50 transition-colors cursor-pointer whitespace-nowrap"
+                    className="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors cursor-pointer"
+                    onClick={() => handleApproveCertificate(quickApproveModal.cert)}
+                    disabled={isRedFlag(quickApproveModal.cert)}
                   >
-                    Close
+                    Approve
                   </button>
-                  <Link
-                    href="/admin/practitioner-certificates"
-                    className="px-6 py-2 bg-slate-800 text-white rounded-lg hover:bg-slate-900 transition-colors cursor-pointer whitespace-nowrap flex items-center"
+                  <button
+                    className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors cursor-pointer"
+                    onClick={() => setDeclineReasonType('dropdown')}
                   >
-                    <i className="ri-file-list-3-line mr-2"></i>
-                    View All Certificates
-                  </Link>
+                    Decline
+                  </button>
+                  {/* Decline Reason Dropdown/Textbox */}
+                  {declineReasonType && (
+                    <div className="mt-2">
+                      <label className="block text-sm font-medium text-slate-700 mb-2">Decline Reason</label>
+                      <select
+                        className="w-full px-3 py-2 border border-slate-300 rounded-lg mb-2"
+                        value={declineReason}
+                        onChange={e => setDeclineReason(e.target.value)}
+                      >
+                        <option value="">Select reason</option>
+                        <option value="Incomplete patient info">Incomplete patient info</option>
+                        <option value="Medical condition not verified">Medical condition not verified</option>
+                        <option value="Duration not allowed">Duration not allowed</option>
+                        <option value="Other">Other (specify below)</option>
+                      </select>
+                      {declineReason === 'Other' && (
+                        <textarea
+                          className="w-full px-3 py-2 border border-slate-300 rounded-lg"
+                          rows={2}
+                          placeholder="Enter reason..."
+                          value={declineReason}
+                          onChange={e => setDeclineReason(e.target.value)}
+                        />
+                      )}
+                      <button
+                        className="mt-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors cursor-pointer"
+                        onClick={() => handleDeclineCertificate(quickApproveModal.cert)}
+                      >
+                        Submit Decline
+                      </button>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -1655,307 +1695,6 @@ const [modalAction, setModalAction] = useState({ open: false });
                   {/* Stats Section */}
                   <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-4 space-y-2 sm:space-y-0">
                     <div className="text-sm text-slate-600">
-                      <span className="font-medium text-emerald-600">
-                        {Math.round(((reviewStats.ratings[5] || 0) / reviewStats.total) * 100)}%
-                      </span>{" "}
-                      of patients rated 5 stars
-                    </div>
-                    <div className="text-sm text-slate-600">
-                      Average response time: <span className="font-medium">2.3 hours</span>
-                    </div>
-                  </div>
-
-                  {/* Buttons Section */}
-                  <div className="flex space-x-3">
-                    <button
-                      onClick={() => setShowPatientReviews(false)}
-                      className="px-6 py-2 border border-slate-300 text-slate-700 rounded-lg hover:bg-white transition-colors cursor-pointer whitespace-nowrap"
-                    >
-                      Close
-                    </button>
-                    <button className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors cursor-pointer whitespace-nowrap flex items-center">
-                      <i className="ri-download-cloud-2-line mr-2"></i>
-                      Export Reviews
-                    </button>
-                  </div>
-                </div>
-
-              </div>
-            </div>
-          )}
-
-          {/* Total Certificates Overview Modal */}
-          {showCertificateOverview && (
-            <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-              <div className="bg-white rounded-xl shadow-2xl w-full max-w-7xl max-h-[95vh] overflow-y-auto">
-                <div className="p-6 border-b border-slate-200 bg-gradient-to-r from-slate-50 to-blue-50">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center">
-                      <div className="w-12 h-12 bg-slate-700 rounded-lg flex items-center justify-center mr-4">
-                        <i className="ri-file-text-fill text-white text-xl"></i>
-                      </div>
-                      <div>
-                        <h2 className="text-2xl font-bold text-slate-900">Certificate Management Dashboard</h2>
-                        <p className="text-slate-600">Complete overview of your medical certificates</p>
-                      </div>
-                    </div>
-                    <button
-                      onClick={() => setShowCertificateOverview(false)}
-                      className="w-10 h-10 bg-white hover:bg-slate-100 rounded-lg flex items-center justify-center cursor-pointer transition-colors border border-slate-200"
-                    >
-                      <i className="ri-close-line text-slate-600 text-xl"></i>
-                    </button>
-                  </div>
-                </div>
-
-                <div className="p-6">
-                  {/* Certificate Statistics Overview */}
-                  <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-                    <div className="bg-gradient-to-br from-emerald-50 to-emerald-100 border border-emerald-200 rounded-xl p-6 text-center">
-                      <div className="text-4xl font-bold text-emerald-700 mb-2">{certificateStats.total}</div>
-                      <p className="text-emerald-600 font-medium">Total Certificates</p>
-                      <p className="text-sm text-emerald-500 mt-1">{certificateStats.thisMonth} this month</p>
-                    </div>
-
-                    <div className="bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200 rounded-xl p-6 text-center">
-                      <div className="text-4xl font-bold text-blue-700 mb-2">{certificateStats.approved}</div>
-                      <p className="text-blue-600 font-medium">Approved</p>
-                      <p className="text-sm text-blue-500 mt-1">{certificateStats.approvalRate}% approval rate</p>
-                    </div>
-
-                    <div className="bg-gradient-to-br from-orange-50 to-orange-100 border border-orange-200 rounded-xl p-6 text-center">
-                      <div className="text-4xl font-bold text-orange-700 mb-2">{certificateStats.pending}</div>
-                      <p className="text-orange-600 font-medium">Pending Review</p>
-                      <p className="text-sm text-orange-500 mt-1">{certificateStats.urgent} urgent priority</p>
-                    </div>
-
-                    <div className="bg-gradient-to-br from-purple-50 to-purple-100 border border-purple-200 rounded-xl p-6 text-center">
-                      <div className="text-4xl font-bold text-purple-700 mb-2">{certificateStats.followUp}</div>
-                      <p className="text-purple-600 font-medium">Follow-up Required</p>
-                      <p className="text-sm text-purple-500 mt-1">{certificateStats.thisWeek} this week</p>
-                    </div>
-                  </div>
-
-                  {/* Certificate Type Distribution */}
-                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-                    <div className="lg:col-span-2 bg-white border border-slate-200 rounded-xl p-6">
-                      <h3 className="text-lg font-semibold text-slate-900 mb-4">Certificate Type Distribution</h3>
-                      <div className="space-y-4">
-                        {Object.entries(certificateStats.typeDistribution).map(([type, count]) => (
-                          <div key={type} className="flex items-center justify-between">
-                            <div className="flex items-center">
-                              <div
-                                className={`w-4 h-4 rounded-full mr-3 ${type === 'Medical Certificate'
-                                  ? 'bg-blue-500'
-                                  : type === 'Work Certificate'
-                                    ? 'bg-emerald-500'
-                                    : type === 'Fitness Certificate'
-                                      ? 'bg-purple-500'
-                                      : 'bg-orange-500'
-                                  }`}
-                              ></div>
-                              <span className="text-slate-700 font-medium">{type}</span>
-                            </div>
-                            <div className="flex items-center">
-                              <span className="text-slate-900 font-bold mr-3">{count}</span>
-                              <div className="w-24 bg-slate-200 rounded-full h-2">
-                                <div
-                                  className={`h-2 rounded-full ${type === 'Medical Certificate'
-                                    ? 'bg-blue-500'
-                                    : type === 'Work Certificate'
-                                      ? 'bg-emerald-500'
-                                      : type === 'Fitness Certificate'
-                                        ? 'bg-purple-500'
-                                        : 'bg-orange-500'
-                                    }`}
-                                  style={{ width: `${(count / certificateStats.total) * 100}%` }}
-                                ></div>
-                              </div>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-
-                    <div className="bg-white border border-slate-200 rounded-xl p-6">
-                      <h3 className="text-lg font-semibold text-slate-900 mb-4">Performance Metrics</h3>
-                      <div className="space-y-4">
-                        <div>
-                          <div className="flex justify-between text-sm mb-2">
-                            <span className="text-slate-600">Approval Rate</span>
-                            <span className="text-slate-900 font-medium">{certificateStats.approvalRate}%</span>
-                          </div>
-                          <div className="w-full bg-slate-200 rounded-full h-2">
-                            <div className="bg-emerald-500 h-2 rounded-full" style={{ width: `${certificateStats.approvalRate}%` }}></div>
-                          </div>
-                        </div>
-
-                        <div>
-                          <div className="flex justify-between text-sm mb-2">
-                            <span className="text-slate-600">Average Processing Time</span>
-                            <span className="text-slate-900 font-medium">2.3 hours</span>
-                          </div>
-                          <div className="w-full bg-slate-200 rounded-full h-2">
-                            <div className="bg-blue-500 h-2 rounded-full" style={{ width: '85%' }}></div>
-                          </div>
-                        </div>
-
-                        <div>
-                          <div className="flex justify-between text-sm mb-2">
-                            <span className="text-slate-600">Patient Satisfaction</span>
-                            <span className="text-slate-900 font-medium">4.9/5.0</span>
-                          </div>
-                          <div className="w-full bg-slate-200 rounded-full h-2">
-                            <div className="bg-purple-500 h-2 rounded-full" style={{ width: '98%' }}></div>
-                          </div>
-                        </div>
-
-                        <div>
-                          <div className="flex justify-between text-sm mb-2">
-                            <span className="text-slate-600">Follow-up Compliance</span>
-                            <span className="text-slate-900 font-medium">92%</span>
-                          </div>
-                          <div className="w-full bg-slate-200 rounded-full h-2">
-                            <div className="bg-orange-500 h-2 rounded-full" style={{ width: '92%' }}></div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Filter and Search */}
-                  <div className="mb-6 flex flex-col space-y-4">
-                    {/* First row - Filters */}
-                    <div className="flex flex-wrap gap-2">
-                      <button
-                        onClick={() => setCertificatesFilter('all')}
-                        className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer whitespace-nowrap ${certificatesFilter === 'all'
-                          ? 'bg-slate-700 text-white'
-                          : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-                          }`}
-                      >
-                        All Certificates ({certificateStats.total})
-                      </button>
-                      <button
-                        onClick={() => setCertificatesFilter('approved')}
-                        className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer whitespace-nowrap ${certificatesFilter === 'approved'
-                          ? 'bg-slate-700 text-white'
-                          : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-                          }`}
-                      >
-                        Approved ({certificateStats.approved})
-                      </button>
-                      <button
-                        onClick={() => setCertificatesFilter('pending')}
-                        className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer whitespace-nowrap ${certificatesFilter === 'pending'
-                          ? 'bg-slate-700 text-white'
-                          : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-                          }`}
-                      >
-                        Pending ({certificateStats.pending})
-                      </button>
-                      <button
-                        onClick={() => setCertificatesFilter('urgent')}
-                        className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer whitespace-nowrap ${certificatesFilter === 'urgent'
-                          ? 'bg-slate-700 text-white'
-                          : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-                          }`}
-                      >
-                        Urgent ({certificateStats.urgent})
-                      </button>
-                      <button
-                        onClick={() => setCertificatesFilter('followup')}
-                        className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer whitespace-nowrap ${certificatesFilter === 'followup'
-                          ? 'bg-slate-700 text-white'
-                          : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-                          }`}
-                      >
-                        Follow-up ({certificateStats.followUp})
-                      </button>
-                    </div>
-
-                    {/* Second row - Stats */}
-                    <div className="flex flex-wrap gap-6 text-sm text-slate-600">
-                      <div>
-                        <span className="font-medium text-emerald-600">{certificateStats.approvalRate}%</span> approval rate
-                      </div>
-                      <div>
-                        <span className="font-medium">{certificateStats.thisWeek}</span> certificates this week
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Certificates List */}
-             
-                  <CertificateManagementModal/>
-              
-
-                  {/* Quick Actions Panel */}
-                  <div className="mt-8 bg-slate-50 border border-slate-200 rounded-lg p-6">
-                    <h3 className="text-lg font-semibold text-slate-900 mb-4">Quick Actions</h3>
-                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                      <button
-                        onClick={handleNewCertificate}
-                        className="flex items-center justify-center px-4 py-3 bg-slate-700 text-white rounded-lg hover:bg-slate-800 transition-colors cursor-pointer whitespace-nowrap"
-                      >
-                        <i className="ri-add-circle-line mr-2"></i>
-                        New Certificate
-                      </button>
-                      <Link
-                        href="/admin/practitioner-certificates"
-                        className="flex items-center justify-center px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors cursor-pointer whitespace-nowrap"
-                      >
-                        <i className="ri-file-list-3-line mr-2"></i>
-                        Manage All
-                      </Link>
-                      <button className="flex items-center justify-center px-4 py-3 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors cursor-pointer whitespace-nowrap">
-                        <i className="ri-download-cloud-2-line mr-2"></i>
-                        Export Data
-                      </button>
-                      <button className="flex items-center justify-center px-4 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors cursor-pointer whitespace-nowrap">
-                        <i className="ri-bar-chart-2-line mr-2"></i>
-                        View Reports
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* Professional Guidelines */}
-                  <div className="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-6">
-                    <div className="flex items-start">
-                      <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center mr-4 flex-shrink-0">
-                        <i className="ri-shield-check-line text-blue-600"></i>
-                      </div>
-                      <div>
-                        <h4 className="text-lg font-semibold text-blue-900 mb-3">Certificate Management Guidelines</h4>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                          <div>
-                            <h5 className="font-medium text-blue-800 mb-2">Best Practices:</h5>
-                            <ul className="space-y-1 text-blue-700">
-                              <li>• Review all patient information thoroughly before approval</li>
-                              <li>• Ensure proper medical assessment is documented</li>
-                              <li>• Follow AHPRA guidelines for certificate duration</li>
-                              <li>• Schedule follow-up appointments when necessary</li>
-                            </ul>
-                          </div>
-                          <div>
-                            <h5 className="font-medium text-blue-800 mb-2">Compliance Reminders:</h5>
-                            <ul className="space-y-1 text-blue-700">
-                              <li>• All certificates must include proper medical reasoning</li>
-                              <li>• Patient confidentiality must be maintained at all times</li>
-                              <li>• Digital signatures ensure certificate authenticity</li>
-                              <li>• Maintain accurate records for audit purposes</li>
-                            </ul>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="p-6 border-t border-slate-200 flex flex-col space-y-4">
-                  {/* First row - Stats */}
-                  <div className="flex flex-wrap items-center gap-6">
-                    <div className="text-sm text-slate-600">
                       <span className="font-medium text-slate-900">{certificateStats.total}</span> total certificates managed
                     </div>
                     <div className="text-sm text-slate-600">
@@ -1966,7 +1705,7 @@ const [modalAction, setModalAction] = useState({ open: false });
                     </div>
                   </div>
 
-                  {/* Second row - Buttons */}
+                  {/* Buttons Section */}
                   <div className="flex space-x-3">
                     <button
                       onClick={() => setShowCertificateOverview(false)}
@@ -1975,7 +1714,7 @@ const [modalAction, setModalAction] = useState({ open: false });
                       Close
                     </button>
                     <Link
-                      href="/admin/practitioner-certificates"
+                      to="/admin/practitioner-certificates"
                       className="px-6 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-800 transition-colors cursor-pointer whitespace-nowrap flex items-center"
                     >
                       <i className="ri-external-link-line mr-2"></i>
@@ -2333,7 +2072,6 @@ const [modalAction, setModalAction] = useState({ open: false });
                     </button>
                   </div>
                 </div>
-
               </div>
             </div>
           )}

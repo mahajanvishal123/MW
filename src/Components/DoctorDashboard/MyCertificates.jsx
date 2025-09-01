@@ -20,6 +20,10 @@ export default function MyCertificates() {
   const [showApprovalModal, setShowApprovalModal] = useState(false);
   const [approvingCertId, setApprovingCertId] = useState('');
   const [approvalProgress, setApprovalProgress] = useState(0);
+  const [showDeclineModal, setShowDeclineModal] = useState(false);
+  const [declineCertId, setDeclineCertId] = useState('');
+  const [declineReason, setDeclineReason] = useState('');
+  const [declineReasonType, setDeclineReasonType] = useState('dropdown'); // or 'text'
   const [approvalForm, setApprovalForm] = useState({
     startDate: '',
     endDate: '',
@@ -983,7 +987,14 @@ Generated: ${new Date().toLocaleString()}
                             <i className="ri-check-line mr-1.5"></i>
                             Approve
                           </button>
-                          <button className="px-3 sm:px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors cursor-pointer whitespace-nowrap text-sm">
+                          <button
+                            onClick={() => {
+                              setDeclineCertId(cert.id);
+                              setDeclineReason('');
+                              setShowDeclineModal(true);
+                            }}
+                            className="px-3 sm:px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors cursor-pointer whitespace-nowrap text-sm"
+                          >
                             <i className="ri-close-line mr-1.5"></i>
                             Decline
                           </button>
@@ -1003,6 +1014,67 @@ Generated: ${new Date().toLocaleString()}
                   </div>
                 </div>
               ))}
+
+              {showDeclineModal && (
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-100 p-4">
+                  <div className="bg-white rounded-xl shadow-2xl w-full max-w-md p-6">
+                    <div className="flex items-center justify-between mb-4">
+                      <h2 className="text-xl font-bold text-red-700">Decline Certificate</h2>
+                      <button
+                        onClick={() => setShowDeclineModal(false)}
+                        className="w-8 h-8 bg-slate-100 hover:bg-slate-200 rounded-lg flex items-center justify-center cursor-pointer"
+                      >
+                        <i className="ri-close-line text-slate-600 text-xl"></i>
+                      </button>
+                    </div>
+                    <div className="mb-4 text-sm text-slate-700">
+                      Please select or enter a reason for declining certificate <span className="font-semibold">{declineCertId}</span>. The patient will be notified via email.
+                    </div>
+                    <div className="mb-4">
+                      <label className="block text-sm font-medium text-slate-700 mb-2">Decline Reason</label>
+                      <select
+                        value={declineReason}
+                        onChange={e => setDeclineReason(e.target.value)}
+                        className="w-full px-3 py-2 border border-slate-300 rounded-lg mb-2"
+                      >
+                        <option value="">Select reason</option>
+                        <option value="Incomplete patient info">Incomplete patient info</option>
+                        <option value="Medical condition not verified">Medical condition not verified</option>
+                        <option value="Duration not allowed">Duration not allowed</option>
+                        <option value="Other">Other (specify below)</option>
+                      </select>
+                      {declineReason === 'Other' && (
+                        <textarea
+                          className="w-full px-3 py-2 border border-slate-300 rounded-lg"
+                          rows={2}
+                          placeholder="Enter reason..."
+                          value={declineReasonType === 'text' ? declineReason : ''}
+                          onChange={e => setDeclineReason(e.target.value)}
+                        />
+                      )}
+                    </div>
+                    <div className="flex justify-end gap-3">
+                      <button
+                        onClick={() => setShowDeclineModal(false)}
+                        className="px-4 py-2 border border-slate-300 text-slate-700 rounded-lg hover:bg-slate-50 transition-colors cursor-pointer"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        disabled={!declineReason}
+                        onClick={() => {
+                          // TODO: Send auto-email to patient here
+                          alert(`Certificate ${declineCertId} declined for reason: ${declineReason}`);
+                          setShowDeclineModal(false);
+                        }}
+                        className={`px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors cursor-pointer ${!declineReason ? 'opacity-50 cursor-not-allowed' : ''}`}
+                      >
+                        Submit Decline
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Pagination */}
@@ -1542,17 +1614,21 @@ Generated: ${new Date().toLocaleString()}
                             Approve Certificate
                           </button>
 
-                          <button className="w-full flex items-center justify-center px-4 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors cursor-pointer whitespace-nowrap text-sm">
+                          <button onClick={() => {
+
+                            setShowDeclineModal(true);
+                          }}
+                            className="w-full flex items-center justify-center px-4 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors cursor-pointer whitespace-nowrap text-sm">
                             <i className="ri-close-line mr-2"></i>
                             Decline Certificate
                           </button>
                         </>
                       )}
 
-                      <button className="w-full flex items-center justify-center px-4 py-3 bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 transition-colors cursor-pointer whitespace-nowrap">
+                      {/* <button className="w-full flex items-center justify-center px-4 py-3 bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 transition-colors cursor-pointer whitespace-nowrap">
                         <i className="ri-edit-line mr-2"></i>
                         Edit Certificate
-                      </button>
+                      </button> */}
 
                       <button className="w-full flex items-center justify-center px-4 py-3 bg-orange-100 text-orange-700 rounded-lg hover:bg-orange-200 transition-colors cursor-pointer whitespace-nowrap">
                         <i className="ri-printer-line mr-2"></i>
@@ -1607,10 +1683,10 @@ Generated: ${new Date().toLocaleString()}
                     Status:{" "}
                     <span
                       className={`font-medium ${selectedCertificate.status === "Approved"
-                          ? "text-emerald-600"
-                          : selectedCertificate.status === "Pending"
-                            ? "text-amber-600"
-                            : "text-red-600"
+                        ? "text-emerald-600"
+                        : selectedCertificate.status === "Pending"
+                          ? "text-amber-600"
+                          : "text-red-600"
                         }`}
                     >
                       {selectedCertificate.status}
