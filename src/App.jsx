@@ -13,7 +13,6 @@ import ContactSupportPage from "./Components/Website/ContactSupportPage";
 import Dashboard from "./Components/AdminDashboard/Dashboard";
 import UserManagement from "./Components/AdminDashboard/UserManagement/UserManagement";
 import CertificateAuditTrail from "./Components/AdminDashboard/Certificate/CertificateAuditTrail";
-import PaymentManagement from "./Components/AdminDashboard/PaymentManagement";
 import DiscountManagement from "./Components/AdminDashboard/Discount/DiscountManagement";
 import AnalyticsReports from "./Components/AdminDashboard/AnalyticsReports";
 import SystemSettings from "./Components/AdminDashboard/SystemSettings";
@@ -30,6 +29,7 @@ import ScrollToTop from "./Components/ScrollToTop";
 import Sidebar from "./Components/Layouts/Sidebar";
 import Navbar from "./Components/Layouts/Navbar";
 import HeroSection from "./Components/Website/HeroSection";
+import PaymentManagement from "./Components/AdminDashboard/PaymentManagement/PaymentManagement";
 
 function AppContent() {
   const location = useLocation();

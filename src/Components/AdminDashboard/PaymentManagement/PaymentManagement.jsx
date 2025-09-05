@@ -1,6 +1,7 @@
 'use client';
 import { Link } from 'react-router-dom';
 import { useState } from 'react';
+import TransactionsTable from './TransactionsTable';
 
 export default function PaymentManagement() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -285,7 +286,7 @@ export default function PaymentManagement() {
                   Refunds
                 </button>
                 
-                <button
+                {/* <button
                   onClick={() => setActiveTab('reports')}
                   className={`py-4 px-2 sm:px-4 border-b-2 font-medium text-sm cursor-pointer whitespace-nowrap ${
                     activeTab === 'reports'
@@ -295,7 +296,7 @@ export default function PaymentManagement() {
                 >
                   <i className="ri-file-chart-line mr-2"></i>
                   Reports
-                </button>
+                </button> */}
               </nav>
             </div>
             
@@ -388,60 +389,7 @@ export default function PaymentManagement() {
                   
                   {/* Transactions Table */}
                   <div className="overflow-x-auto">
-                    <table className="w-full">
-                      <thead className="bg-slate-50 border-b border-slate-200">
-                        <tr>
-                          <th className="px-4 py-3 sm:px-6 sm:py-4 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Transaction</th>
-                          <th className="px-4 py-3 sm:px-6 sm:py-4 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Patient</th>
-                          <th className="px-4 py-3 sm:px-6 sm:py-4 text-left text-xs font-medium text-slate-500 uppercase tracking-wider hidden sm:table-cell">Practitioner</th>
-                          <th className="px-4 py-3 sm:px-6 sm:py-4 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Amount</th>
-                          <th className="px-4 py-3 sm:px-6 sm:py-4 text-left text-xs font-medium text-slate-500 uppercase tracking-wider hidden md:table-cell">Method</th>
-                          <th className="px-4 py-3 sm:px-6 sm:py-4 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Status</th>
-                          <th className="px-4 py-3 sm:px-6 sm:py-4 text-left text-xs font-medium text-slate-500 uppercase tracking-wider hidden sm:table-cell">Date</th>
-                          <th className="px-4 py-3 sm:px-6 sm:py-4 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Actions</th>
-                        </tr>
-                      </thead>
-                      
-                      <tbody className="divide-y divide-slate-200">
-                        {recentTransactions.map((txn) => (
-                          <tr key={txn.id} className="hover:bg-slate-50">
-                            <td className="px-4 py-3 sm:px-6 sm:py-4">
-                              <div className="text-sm font-medium text-blue-600">{txn.id}</div>
-                              <div className="text-xs text-slate-500">{txn.certificateId}</div>
-                            </td>
-                            <td className="px-4 py-3 sm:px-6 sm:py-4 text-sm text-slate-900">{txn.patient}</td>
-                            <td className="px-4 py-3 sm:px-6 sm:py-4 text-sm text-slate-900 hidden sm:table-cell">{txn.practitioner}</td>
-                            <td className="px-4 py-3 sm:px-6 sm:py-4 text-sm font-medium text-slate-900">${txn.amount.toFixed(2)}</td>
-                            <td className="px-4 py-3 sm:px-6 sm:py-4 hidden md:table-cell">
-                              <span className="inline-flex px-2 py-1 text-xs font-medium rounded bg-slate-100 text-slate-800">
-                                {txn.method}
-                              </span>
-                            </td>
-                            <td className="px-4 py-3 sm:px-6 sm:py-4">
-                              <span className={`inline-flex px-2 py-1 text-xs font-medium rounded ${getStatusColor(txn.status)}`}>
-                                {txn.status}
-                              </span>
-                            </td>
-                            <td className="px-4 py-3 sm:px-6 sm:py-4 text-sm text-slate-900 hidden sm:table-cell">{txn.date}</td>
-                            <td className="px-4 py-3 sm:px-6 sm:py-4">
-                              <div className="flex space-x-2">
-                                <button className="text-blue-600 hover:text-blue-700 cursor-pointer" title="View Details">
-                                  <i className="ri-eye-line"></i>
-                                </button>
-                                <button className="text-emerald-600 hover:text-emerald-700 cursor-pointer" title="Download Receipt">
-                                  <i className="ri-download-line"></i>
-                                </button>
-                                {txn.status === 'Completed' && (
-                                  <button className="text-red-600 hover:text-red-700 cursor-pointer" title="Refund">
-                                    <i className="ri-refund-line"></i>
-                                  </button>
-                                )}
-                              </div>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
+                  <TransactionsTable recentTransactions={recentTransactions} />
                   </div>
                 </div>
               )}
@@ -497,7 +445,7 @@ export default function PaymentManagement() {
                 </div>
               )}
               
-              {activeTab === 'reports' && (
+              {/* {activeTab === 'reports' && (
                 <div className="space-y-4 sm:space-y-6">
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                     <div className="bg-white border border-slate-200 rounded-lg p-6 hover:shadow-md transition-all cursor-pointer">
@@ -534,7 +482,7 @@ export default function PaymentManagement() {
                     </div>
                   </div>
                 </div>
-              )}
+              )} */}
             </div>
           </div>
         </div>

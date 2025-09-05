@@ -1,11 +1,11 @@
-
-'use client';
-
 import { Link } from 'react-router-dom';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
+import SickLeavePDF from '../Certificate/SickLeavePDF';
+import SignaturePad from "react-signature-canvas";
 // import PractitionerSidebar from '../../../components/PractitionerSidebar';
 
 export default function MyCertificates() {
+  const pdfRef = useRef();
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [customReason, setCustomReason] = useState("");
@@ -60,6 +60,15 @@ export default function MyCertificates() {
       treatment: false
     }
   });
+
+  const sigCanvas = useRef({});
+  const [imageURL, setImageURL] = useState(null);
+
+  const clear = () => sigCanvas.current.clear();
+
+  const save = () => {
+    setImageURL(sigCanvas.current.getTrimmedCanvas().toDataURL("image/png"));
+  };
 
   const handleApprove = async (certificateId) => {
     try {
@@ -319,73 +328,6 @@ export default function MyCertificates() {
         }
       }, 4000);
     }
-  };
-
-  const generateCertificateContent = (certificate) => {
-    return `
-MEDICAL CERTIFICATE
-===================
-
-Certificate ID: ${certificate.id}
-Certificate Number: ${certificate.certificateNumber}
-Issue Date: ${certificate.created}
-
-PATIENT INFORMATION
--------------------
-Name: ${certificate.patient}
-Date of Birth: ${certificate.patientDOB}
-Email: ${certificate.patientEmail}
-Phone: ${certificate.patientPhone}
-Address: ${certificate.patientAddress}
-Emergency Contact: ${certificate.emergencyContact}
-
-MEDICAL ASSESSMENT
-------------------
-Primary Condition: ${certificate.condition}
-Presenting Symptoms: ${certificate.symptoms}
-Clinical Diagnosis: ${certificate.diagnosis}
-Vital Signs: ${certificate.vitalSigns}
-Risk Factors: ${certificate.riskFactors}
-Previous History: ${certificate.previousHistory}
-
-TREATMENT & MANAGEMENT
-----------------------
-Treatment Plan: ${certificate.treatment}
-Medication Prescribed: ${certificate.medicationPrescribed}
-Work Restrictions: ${certificate.restrictions}
-Follow-up Required: ${certificate.followUpRequired ? 'Yes - ' + certificate.followUpDate : 'No'}
-  
-CERTIFICATE DETAILS
--------------------
-Certificate Type: ${certificate.type}
-Start Date: ${certificate.startDate}
-End Date: ${certificate.endDate}
-Duration: ${certificate.duration}
-Consultation Type: ${certificate.consultationType}
-
-PRACTITIONER INFORMATION
-------------------------
-Issued By: ${certificate.issuedBy}
-AHPRA Registration: ${certificate.ahpraNumber}
-Digital Signature: ${certificate.practitionerSignature}
-QR Verification Code: ${certificate.qrCode}
-
-CONSULTATION NOTES
-------------------
-${certificate.consultationNotes}
-
-LEGAL NOTICE
-------------
-This medical certificate has been issued in accordance with the Medical Board of Australia guidelines and AHPRA requirements. It is legally binding and digitally signed by a registered medical practitioner.
-
-Certificate Status: ${certificate.status}
-Amount Charged: ${certificate.amount}
-
-For verification, scan the QR code: ${certificate.qrCode}
-
---- END OF CERTIFICATE ---
-Generated: ${new Date().toLocaleString()}
-    `.trim();
   };
 
   const downloadFile = (content, filename, mimeType) => {
@@ -1007,13 +949,21 @@ Generated: ${new Date().toLocaleString()}
                       )}
 
                       {cert.status === "Approved" && (
-                        <button
-                          onClick={() => handleDownloadPDF(cert.id)}
-                          className="text-blue-600 hover:text-blue-700 cursor-pointer transition-colors"
-                          title="Download PDF"
-                        >
-                          <i className="ri-download-line text-lg"></i>
-                        </button>
+                        <div>
+                          {/* Dusre page me button */}
+                          <button
+                            onClick={() => pdfRef.current.downloadCertificate()}
+                            className="text-blue-600 hover:text-blue-700 cursor-pointer transition-colors"
+                            title="Download PDF"
+                          >
+                            <i className="ri-download-line text-lg"></i>
+                          </button>
+
+                          {/* Certificate component hidden rakh sakte ho (agar display nahi karna ho) */}
+                          <div style={{ display: "none" }}>
+                            <SickLeavePDF ref={pdfRef} />
+                          </div>
+                        </div>
                       )}
                     </div>
                   </div>
@@ -1565,6 +1515,62 @@ Generated: ${new Date().toLocaleString()}
                     </div>
                   </div>
 
+                  {/* Digital Signature Section */}
+                  <div className="bg-white border border-slate-200 rounded-xl p-6">
+                    <div className="flex items-center mb-4">
+                      <div className="w-8 h-8 bg-indigo-100 rounded-lg flex items-center justify-center mr-3">
+                        <i className="ri-pen-nib-line text-indigo-600"></i>
+                      </div>
+                      <h3 className="text-lg font-semibold text-slate-900">Digital Signature</h3>
+                    </div>
+
+                    <div className="space-y-4">
+                      {selectedCertificate.status === 'Approved' ? (
+                        <>
+                          <div className="border-2 border-dashed border-indigo-300 rounded-lg p-4 flex flex-col items-center justify-center">
+                            <div className="text-indigo-800 font-signature text-3xl mb-2">
+                              {selectedCertificate.issuedBy}
+                            </div>
+                            <div className="w-full h-px bg-indigo-200 my-2"></div>
+                            <div className="text-xs text-slate-500">
+                              Digitally signed by {selectedCertificate.issuedBy} on {selectedCertificate.created}
+                            </div>
+                            <div className="flex items-center mt-2 text-emerald-600">
+                              <i className="ri-shield-check-line mr-1"></i>
+                              <span className="text-xs">Verified and secure</span>
+                            </div>
+                          </div>
+
+                          <div className="bg-indigo-50 border border-indigo-200 rounded-lg p-3">
+                            <div className="flex items-start">
+                              <i className="ri-information-line text-indigo-600 mt-0.5 mr-2"></i>
+                              <div className="text-sm">
+                                <p className="text-indigo-800 font-medium mb-1">Digital Signature Verification</p>
+                                <p className="text-indigo-700">
+                                  This document has been digitally signed and is legally binding.
+                                  The signature includes a timestamp and cannot be altered.
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                        </>
+                      ) : (
+                        <div className="text-center py-6">
+                          <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i className="ri-quill-pen-line text-slate-400 text-2xl"></i>
+                          </div>
+                          <p className="text-slate-600 mb-4">Certificate must be approved before digital signature is applied</p>
+                          <button
+                            onClick={() => handleApprove(selectedCertificate.id)}
+                            className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors cursor-pointer"
+                          >
+                            Approve and Sign
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
                   {selectedCertificate.status === 'Approved' && (
                     <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-6">
                       <div className="flex items-center mb-4">
@@ -1603,7 +1609,7 @@ Generated: ${new Date().toLocaleString()}
                       {selectedCertificate.status === 'Approved' && (
                         <>
                           <button
-                            onClick={() => handleDownloadPDF(selectedCertificate.id)}
+                            onClick={() => pdfRef.current.downloadCertificate()}
                             className="w-full flex items-center justify-center px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors cursor-pointer whitespace-nowrap"
                           >
                             <i className="ri-download-line mr-2"></i>
@@ -1627,26 +1633,13 @@ Generated: ${new Date().toLocaleString()}
                             Approve Certificate
                           </button>
 
-                          <button onClick={() => {
-
-                            setShowDeclineModal(true);
-                          }}
+                          <button onClick={() => setShowDeclineModal(true)}
                             className="w-full flex items-center justify-center px-4 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors cursor-pointer whitespace-nowrap text-sm">
                             <i className="ri-close-line mr-2"></i>
                             Decline Certificate
                           </button>
                         </>
                       )}
-
-                      {/* <button className="w-full flex items-center justify-center px-4 py-3 bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 transition-colors cursor-pointer whitespace-nowrap">
-                        <i className="ri-edit-line mr-2"></i>
-                        Edit Certificate
-                      </button> */}
-
-                      <button className="w-full flex items-center justify-center px-4 py-3 bg-orange-100 text-orange-700 rounded-lg hover:bg-orange-200 transition-colors cursor-pointer whitespace-nowrap">
-                        <i className="ri-printer-line mr-2"></i>
-                        Print Details
-                      </button>
                     </div>
                   </div>
                 </div>
@@ -1723,7 +1716,7 @@ Generated: ${new Date().toLocaleString()}
                   </button>
                   {selectedCertificate.status === "Approved" && (
                     <button
-                      onClick={() => handleDownloadPDF(selectedCertificate.id)}
+                      onClick={() => pdfRef.current.downloadCertificate()}
                       className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors cursor-pointer whitespace-nowrap flex items-center"
                     >
                       <i className="ri-download-line mr-2"></i>
@@ -1732,7 +1725,6 @@ Generated: ${new Date().toLocaleString()}
                   )}
                 </div>
               </div>
-
             </div>
           </div>
         </div>
@@ -2263,6 +2255,75 @@ Generated: ${new Date().toLocaleString()}
                       onChange={(e) => handleApprovalFormChange('endDate', e.target.value)}
                       className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
                     />
+                  </div>
+                </div>
+              </div>
+
+              {/* Digital Signature Section */}
+              <div className="bg-white border border-slate-200 rounded-xl p-6">
+                <div className="flex items-center mb-4">
+                  <div className="w-8 h-8 bg-indigo-100 rounded-lg flex items-center justify-center mr-3">
+                    <i className="ri-pen-nib-line text-indigo-600"></i>
+                  </div>
+                  <h3 className="text-lg font-semibold text-slate-900">Digital Signature</h3>
+                </div>
+
+                <div className="space-y-4">
+                  {/* Signature Box */}
+                  <div className="border-2 border-dashed border-indigo-300 rounded-lg p-4 flex flex-col items-center justify-center">
+                    {!imageURL ? (
+                      <>
+                        <SignaturePad
+                          ref={sigCanvas}
+                          canvasProps={{
+                            className: "w-full h-32 border rounded-md bg-white",
+                          }}
+                        />
+                        <div className="flex gap-3 mt-3">
+                          <button
+                            onClick={clear}
+                            className="px-3 py-1 text-sm bg-red-100 text-red-600 rounded-md hover:bg-red-200"
+                          >
+                            Clear
+                          </button>
+                          <button
+                            onClick={save}
+                            className="px-3 py-1 text-sm bg-indigo-100 text-indigo-600 rounded-md hover:bg-indigo-200"
+                          >
+                            Save Signature
+                          </button>
+                        </div>
+                      </>
+                    ) : (
+                      <div className="flex flex-col items-center">
+                        <img
+                          src={imageURL}
+                          alt="Saved signature"
+                          className="w-48 border-b-2 border-slate-400 mb-2"
+                        />
+                        <p className="text-xs text-slate-500">
+                          Digitally signed by {user?.name || "Practitioner"} on{" "}
+                          {new Date().toLocaleDateString()}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Info Section */}
+                  <div className="bg-indigo-50 border border-indigo-200 rounded-lg p-3">
+                    <div className="flex items-start">
+                      <i className="ri-information-line text-indigo-600 mt-0.5 mr-2"></i>
+                      <div className="text-sm">
+                        <p className="text-indigo-800 font-medium mb-1">
+                          Digital Signature Verification
+                        </p>
+                        <p className="text-indigo-700">
+                          This document will be digitally signed and become legally
+                          binding. The signature includes a timestamp and cannot be
+                          altered.
+                        </p>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>

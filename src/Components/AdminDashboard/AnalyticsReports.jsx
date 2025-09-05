@@ -186,7 +186,9 @@ export default function AnalyticsReports() {
             </div>
           </div>
           
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
+          {/* grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8 */}
+          
+          <div className="">
             {/* Report Generation */}
             <div className="lg:col-span-2 space-y-4 sm:space-y-6">
               <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-4 sm:p-6">
@@ -338,7 +340,7 @@ export default function AnalyticsReports() {
             </div>
             
             {/* Recent Reports & Export Options */}
-            <div className="space-y-4 sm:space-y-6">
+            {/* <div className="space-y-4 sm:space-y-6">
               <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-4 sm:p-6">
                 <h2 className="text-lg sm:text-xl font-semibold text-slate-900 mb-3 sm:mb-4">Recent Reports</h2>
                 <div className="space-y-3 sm:space-y-4">
@@ -421,7 +423,7 @@ export default function AnalyticsReports() {
                   </button>
                 </div>
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>

@@ -468,7 +468,7 @@ const handleVerifyAndCreateUser = () => {
                           <button onClick={() => handleEdit(user)} className="text-emerald-600 hover:text-emerald-700 cursor-pointer" title="Edit User">
                             <i className="ri-edit-line"></i>
                           </button>
-                          {user.status === 'Pending' && (
+                          {/* {user.status === 'Pending' && (
                             <button className="text-green-600 hover:text-green-700 cursor-pointer" title="Approve">
                               <i className="ri-check-line"></i>
                             </button>
@@ -477,7 +477,7 @@ const handleVerifyAndCreateUser = () => {
                             <button className="text-yellow-600 hover:text-yellow-700 cursor-pointer" title="Suspend">
                               <i className="ri-pause-line"></i>
                             </button>
-                          )}
+                          )} */}
                           <button className="text-red-600 hover:text-red-700 cursor-pointer" title="Delete">
                             <i className="ri-delete-bin-line"></i>
                           </button>
