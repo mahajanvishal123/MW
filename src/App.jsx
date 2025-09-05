@@ -8,6 +8,7 @@ import Login from "./Auth/Login";
 import SickLeavePage from "./Components/Website/SickLeavePage";
 import CarersLeavePage from "./Components/Website/CarersLeavePage";
 import ContactSupportPage from "./Components/Website/ContactSupportPage";
+import WhatsAppLogin from "./Components/Website/WhatsAppLogin";
 
 // Admin Dashboard
 import Dashboard from "./Components/AdminDashboard/Dashboard";
@@ -101,8 +102,12 @@ function AppContent() {
           <Route path="/PractitionerPortal" element={<PractitionerPortal />} />
           <Route path="/patient/login" element={<PatientPortal />} />
           <Route path="/Login" element={<Login />} />
-          <Route path="/SickLeave" element={<SickLeavePage />} />
+          <Route path="SickLeave" element={<SickLeavePage />} />
           <Route path="/CarersLeave" element={<CarersLeavePage />} />
+          <Route path="/WhatsAppLogin" element={<WhatsAppLogin/>} />
+          <Route path="/MedicalCertificates" element={<WhatsAppLogin/>} />     
+
+
           <Route path="/ContactSupport" element={<ContactSupportPage />} />
         </Routes>
       )}

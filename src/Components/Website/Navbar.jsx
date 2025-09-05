@@ -27,18 +27,18 @@ const Navbar = () => {
 
             {/* Desktop Navigation */}
             <nav className="hidden md:flex items-center gap-6 text-gray-700 font-medium text-sm sm:text-base">
-              <Link
-                to="/SickLeave"
+              {/* <Link
+                to="/WhatsAppLogin"
                 className="hover:text-indigo-600 transition duration-300"
               >
                 Sick Leave
-              </Link>
-              <Link
+              </Link> */}
+              {/* <Link
                 to="/CarersLeave"
                 className="hover:text-indigo-600 transition duration-300"
               >
                 Carer's Leave
-              </Link>
+              </Link> */}
               <Link
                 to="/MedicalCertificates"
                 className="hover:text-indigo-600 transition duration-300"
