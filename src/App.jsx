@@ -32,6 +32,7 @@ import Navbar from "./Components/Layouts/Navbar";
 import HeroSection from "./Components/Website/HeroSection";
 import PaymentManagement from "./Components/AdminDashboard/PaymentManagement/PaymentManagement";
 import AdminDashboard from "./Components/AdminDashboard/Dashboard/Dashboard";
+import DayCertificates from "./Components/AdminDashboard/DayCertificates/DayCertificates";
 
 function AppContent() {
   const location = useLocation();
@@ -84,6 +85,7 @@ function AppContent() {
                 <Route path="/admin/discountmanagement" element={<DiscountManagement />} />
                 <Route path="/admin/analyticsreports" element={<AnalyticsReports />} />
                 <Route path="/admin/systemsettings" element={<SystemSettings />} />
+                 <Route path="/admin/daycertificates" element={<DayCertificates />} />
 
                 {/* Doctor Routes */}
                 <Route path="/doctor/doctorDashboard" element={<Dasbord />} />
