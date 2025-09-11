@@ -1,4 +1,4 @@
-import React, { useState , useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 
 // Website Pages
@@ -11,7 +11,7 @@ import ContactSupportPage from "./Components/Website/ContactSupportPage";
 import WhatsAppLogin from "./Components/Website/WhatsAppLogin";
 
 // Admin Dashboard
-import Dashboard from "./Components/AdminDashboard/Dashboard";
+// import Dashboard from "./Components/AdminDashboard/Dashboard";
 import UserManagement from "./Components/AdminDashboard/UserManagement/UserManagement";
 import CertificateAuditTrail from "./Components/AdminDashboard/Certificate/CertificateAuditTrail";
 import DiscountManagement from "./Components/AdminDashboard/Discount/DiscountManagement";
@@ -31,6 +31,7 @@ import Sidebar from "./Components/Layouts/Sidebar";
 import Navbar from "./Components/Layouts/Navbar";
 import HeroSection from "./Components/Website/HeroSection";
 import PaymentManagement from "./Components/AdminDashboard/PaymentManagement/PaymentManagement";
+import AdminDashboard from "./Components/AdminDashboard/Dashboard/Dashboard";
 
 function AppContent() {
   const location = useLocation();
@@ -43,13 +44,13 @@ function AppContent() {
     location.pathname.startsWith("/admin") || location.pathname.startsWith("/doctor");
 
 
-    useEffect(() => {
-  const handleResize = () => {
-    setSidebarOpen(window.innerWidth >= 768);
-  };
-  window.addEventListener('resize', handleResize);
-  return () => window.removeEventListener('resize', handleResize);
-}, []);
+  useEffect(() => {
+    const handleResize = () => {
+      setSidebarOpen(window.innerWidth >= 768);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
 
   return (
@@ -76,7 +77,7 @@ function AppContent() {
             >
               <Routes>
                 {/* Admin Routes */}
-                <Route path="/admin/dashboard" element={<Dashboard />} />
+                <Route path="/admin/dashboard" element={<AdminDashboard />} />
                 <Route path="/admin/usermanagement" element={<UserManagement />} />
                 <Route path="/admin/certificateaudittrail" element={<CertificateAuditTrail />} />
                 <Route path="/admin/paymentmanagement" element={<PaymentManagement />} />
@@ -104,8 +105,8 @@ function AppContent() {
           <Route path="/Login" element={<Login />} />
           <Route path="SickLeave" element={<SickLeavePage />} />
           <Route path="/CarersLeave" element={<CarersLeavePage />} />
-          <Route path="/WhatsAppLogin" element={<WhatsAppLogin/>} />
-          <Route path="/MedicalCertificates" element={<WhatsAppLogin/>} />     
+          <Route path="/WhatsAppLogin" element={<WhatsAppLogin />} />
+          <Route path="/MedicalCertificates" element={<WhatsAppLogin />} />
 
 
           <Route path="/ContactSupport" element={<ContactSupportPage />} />
