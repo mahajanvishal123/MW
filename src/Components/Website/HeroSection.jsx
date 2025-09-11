@@ -62,13 +62,15 @@ export default function HeroSection() {
 
             {/* Action Buttons */}
             <div className="flex flex-col sm:flex-row gap-3 mb-8">
-              <button
-                onClick={() => setShowModal(true)}
-                className="bg-indigo-600 text-white px-6 py-3 rounded-xl text-base font-semibold hover:bg-indigo-700 transition-all duration-300 cursor-pointer whitespace-nowrap shadow-lg hover:shadow-xl"
-              >
-                <i className="ri-file-add-line mr-2"></i>
-                Get Your Certificate Now
-              </button>
+              <Link to="/MedicalCertificates">
+                <button
+                  // onClick={() => setShowModal(true)}
+                  className="bg-indigo-600 text-white px-6 py-3 rounded-xl text-base font-semibold hover:bg-indigo-700 transition-all duration-300 cursor-pointer whitespace-nowrap shadow-lg hover:shadow-xl"
+                >
+                  <i className="ri-file-add-line mr-2"></i>
+                  Get Your Certificate Now
+                </button>
+              </Link>
               <button
                 to="/verify"
                 className="bg-white text-indigo-600 border-2 border-indigo-600 px-6 py-3 rounded-xl text-base font-semibold hover:bg-indigo-50 transition-all duration-300 cursor-pointer whitespace-nowrap text-center"
@@ -91,9 +93,17 @@ export default function HeroSection() {
                   <div className="text-xs font-bold text-gray-700 mb-4">
                     AHPRA Registered Practitioners
                   </div>
-                  <button className="bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-bold px-6 py-2 rounded-full shadow-md transition-all">
-                    Get Certificate
-                  </button>
+                  {/* <Link to="/MedicalCertificates">
+                    <button className="bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-bold px-6 py-2 rounded-full shadow-md transition-all">
+                      Get Certificate
+                    </button>
+                  </Link> */}
+                  <a href="#pricingSection">
+                    <button className="bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-bold px-6 py-2 rounded-full shadow-md transition-all">
+                      Get Certificate
+                    </button>
+                  </a>
+
                 </div>
               </div>
 
@@ -107,9 +117,12 @@ export default function HeroSection() {
                   <div className="text-xs font-bold mb-4">
                     AHPRA Registered Practitioners
                   </div>
-                  <button className="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold px-6 py-2 rounded-full shadow-md transition-all">
-                    Get Certificate
-                  </button>
+                  <a href="#pricingSection">
+                    <button className="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold px-6 py-2 rounded-full shadow-md transition-all">
+                      Get Certificate
+                    </button>
+                  </a>
+
                 </div>
               </div>
             </div>
@@ -217,15 +230,18 @@ export default function HeroSection() {
                 Medical certificate for personal illness. Required for sick leave from work or study. <strong>Issued by AHPRA-registered health practitioners within minutes.</strong>
               </p>
               <div className="text-center">
-                <div className="text-2xl font-bold text-emerald-600 mb-2">
+                {/* <div className="text-2xl font-bold text-emerald-600 mb-2">
                   From $11.99
-                </div>
+                </div> */}
                 <div className="text-xs text-gray-500 mb-4">
                   Single-day from AHPRA Registered Practitioners
                 </div>
-                <button className="w-full bg-emerald-600 text-white py-3 rounded-xl font-semibold hover:bg-emerald-700 transition-colors cursor-pointer text-sm">
-                  Get Certificate
-                </button>
+                <Link to="/MedicalCertificates">
+                  <button className="w-full bg-emerald-600 text-white py-3 rounded-xl font-semibold hover:bg-emerald-700 transition-colors cursor-pointer text-sm">
+                    Get Certificate
+                  </button>
+                </Link>
+
               </div>
             </div>
 
@@ -241,15 +257,18 @@ export default function HeroSection() {
                 Certificate for caring for sick family members. Essential for carer's leave entitlements. <strong>Professionally assessed and issued by AHPRA-registered practitioners.</strong>
               </p>
               <div className="text-center">
-                <div className="text-2xl font-bold text-indigo-600 mb-2">
+                {/* <div className="text-2xl font-bold text-indigo-600 mb-2">
                   From $11.99
-                </div>
+                </div> */}
                 <div className="text-xs text-gray-500 mb-4">
                   Single-day from AHPRA Registered Practitioners
                 </div>
-                <button className="w-full bg-indigo-600 text-white py-3 rounded-xl font-semibold hover:bg-indigo-700 transition-colors cursor-pointer text-sm">
-                  Get Certificate
-                </button>
+                <Link to="/MedicalCertificates">
+                  <button className="w-full bg-indigo-600 text-white py-3 rounded-xl font-semibold hover:bg-indigo-700 transition-colors cursor-pointer text-sm">
+                    Get Certificate
+                  </button>
+                </Link>
+
               </div>
             </div>
 
@@ -265,15 +284,17 @@ export default function HeroSection() {
                 Special student certificates for educational institutions. Covers illness-related absences from school, university, or training courses. <strong>Issued promptly by AHPRA-registered health professionals.</strong>
               </p>
               <div className="text-center">
-                <div className="text-2xl font-bold text-amber-600 mb-2">
+                {/* <div className="text-2xl font-bold text-amber-600 mb-2">
                   From $11.99
-                </div>
+                </div> */}
                 <div className="text-xs text-gray-500 mb-4">
                   Single-day from AHPRA Registered Practitioners
                 </div>
-                <button className="w-full bg-amber-600 text-white py-3 rounded-xl font-semibold hover:bg-amber-700 transition-colors cursor-pointer text-sm">
-                  Get Certificate
-                </button>
+                <Link to="/MedicalCertificates">
+                  <button className="w-full bg-amber-600 text-white py-3 rounded-xl font-semibold hover:bg-amber-700 transition-colors cursor-pointer text-sm">
+                    Get Certificate
+                  </button>
+                </Link>
               </div>
             </div>
           </div>
@@ -290,7 +311,7 @@ export default function HeroSection() {
           />
         </div>
 
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div id="pricingSection" className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <div className="inline-flex items-center bg-emerald-900 border border-emerald-700 rounded-full px-4 py-2 mb-6 text-xs">
               <i className="ri-money-dollar-circle-line text-emerald-400 mr-1"></i>
@@ -358,10 +379,13 @@ export default function HeroSection() {
                   </li>
                 </ul>
 
-                <button className="w-full bg-emerald-600 text-white py-3 px-6 rounded-xl text-base font-semibold hover:bg-emerald-700 transition-all duration-300 cursor-pointer shadow-lg hover:shadow-xl">
-                  <i className="ri-shopping-cart-line mr-1"></i>
-                  Get Single-Day Certificate
-                </button>
+                <Link to="/MedicalCertificates">
+                  <button className="w-full bg-emerald-600 text-white py-3 px-6 rounded-xl text-base font-semibold hover:bg-emerald-700 transition-all duration-300 cursor-pointer shadow-lg hover:shadow-xl">
+                    <i className="ri-shopping-cart-line mr-1"></i>
+                    Get Single-Day Certificate
+                  </button>
+                </Link>
+
               </div>
             </div>
 
@@ -411,10 +435,12 @@ export default function HeroSection() {
                   </li>
                 </ul>
 
-                <button className="w-full bg-indigo-600 text-white py-3 px-6 rounded-xl text-base font-semibold hover:bg-indigo-700 transition-all duration-300 cursor-pointer shadow-lg hover:shadow-xl">
-                  <i className="ri-star-line mr-1"></i>
-                  Get Multi-Day Certificate
-                </button>
+                <Link to="/MedicalCertificates">
+                  <button className="w-full bg-indigo-600 text-white py-3 px-6 rounded-xl text-base font-semibold hover:bg-indigo-700 transition-all duration-300 cursor-pointer shadow-lg hover:shadow-xl">
+                    <i className="ri-star-line mr-1"></i>
+                    Get Multi-Day Certificate
+                  </button>
+                </Link>
               </div>
             </div>
           </div>

@@ -1,11 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
-import Navbar from './Navbar'; // Assuming you have this component
+import Navbar from './Navbar';
 
-// Personal Details Form Component (Matches Screenshot)
 const PersonalDetailsForm = ({ onContinue, onBack, selectedCertificate, certificates }) => {
   // Find the selected certificate object
   const certificate = certificates.find(cert => cert.id === selectedCertificate);
-  
+
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
@@ -24,7 +23,7 @@ const PersonalDetailsForm = ({ onContinue, onBack, selectedCertificate, certific
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log('Personal Details Submitted:', formData);
-    onContinue(); // Move to next step
+    onContinue();
   };
 
   return (
@@ -33,11 +32,10 @@ const PersonalDetailsForm = ({ onContinue, onBack, selectedCertificate, certific
         {/* Certificate Header - Now Dynamic */}
         {certificate && (
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 flex items-center">
-            <div className={`w-8 h-8 rounded-md flex items-center justify-center mr-3 ${
-              certificate.id === 1 ? 'bg-emerald-100' : 
-              certificate.id === 2 ? 'bg-indigo-100' : 
-              'bg-amber-100'
-            }`}>
+            <div className={`w-8 h-8 rounded-md flex items-center justify-center mr-3 ${certificate.id === 1 ? 'bg-emerald-100' :
+              certificate.id === 2 ? 'bg-indigo-100' :
+                'bg-amber-100'
+              }`}>
               {certificate.id === 1 && <i className="ri-file-text-line text-2xl text-emerald-600"></i>}
               {certificate.id === 2 && <i className="ri-parent-line text-2xl text-indigo-600"></i>}
               {certificate.id === 3 && <i className="ri-graduation-cap-line text-2xl text-amber-600"></i>}
@@ -52,17 +50,29 @@ const PersonalDetailsForm = ({ onContinue, onBack, selectedCertificate, certific
         {/* Personal Information Section */}
         <div className="bg-white p-5 rounded-lg shadow-sm border">
           <h3 className="text-lg font-semibold text-gray-800 mb-2">Personal Information</h3>
-          <p className="text-sm text-gray-600 mb-4">Please provide your personal details as per official documents</p>
+          <p className="text-sm text-gray-600 mb-4">
+            Please provide your personal details as per official documents
+          </p>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            {/* Full Name */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Full Name <span className="text-red-500">*</span>
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5 text-gray-400"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
+                      clipRule="evenodd"
+                    />
                   </svg>
                 </div>
                 <input
@@ -77,13 +87,19 @@ const PersonalDetailsForm = ({ onContinue, onBack, selectedCertificate, certific
               </div>
             </div>
 
+            {/* Email Address */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Email Address <span className="text-red-500">*</span>
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5 text-gray-400"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
                     <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
                     <path d="M18 8a2 2 0 11-4 0 2 2 0 014 0zM11 15a2 2 0 100-4 2 2 0 000 4z" />
                   </svg>
@@ -100,14 +116,55 @@ const PersonalDetailsForm = ({ onContinue, onBack, selectedCertificate, certific
               </div>
             </div>
 
+            {/* Birth Date */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Birth Date <span className="text-red-500">*</span>
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5 text-gray-400"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M6 2a1 1 0 000 2h8a1 1 0 100-2H6zM3 6a2 2 0 012-2h10a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2V6zm3 2a1 1 0 000 2h8a1 1 0 100-2H6z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                </div>
+                <input
+                  type="date"
+                  name="birthDate"
+                  value={formData.birthDate}
+                  onChange={handleInputChange}
+                  required
+                  className="w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+            </div>
+
+            {/* Guardian's Name */}
             <div className="md:col-span-2">
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Guardian's Name <span className="text-red-500">*</span>
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5 text-gray-400"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
+                      clipRule="evenodd"
+                    />
                   </svg>
                 </div>
                 <input
@@ -123,6 +180,7 @@ const PersonalDetailsForm = ({ onContinue, onBack, selectedCertificate, certific
             </div>
           </div>
         </div>
+
 
         {/* Address Information Section */}
         <div className="bg-white p-5 rounded-lg shadow-sm border">
@@ -343,15 +401,50 @@ const CertificateDetailsForm = ({ onBack }) => {
         {/* Medical Fitness Details */}
         <div className="border-t pt-6">
           <div className="flex items-center mb-4">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-blue-600 mr-2" viewBox="0 0 20 20" fill="currentColor">
-              <path fillRule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clipRule="evenodd" />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-5 text-blue-600 mr-2"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+            >
+              <path
+                fillRule="evenodd"
+                d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"
+                clipRule="evenodd"
+              />
             </svg>
             <h3 className="font-semibold text-blue-800">Medical Fitness Details</h3>
           </div>
 
+          {/* Dropdown for Reason */}
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Reason for Leave <span className="text-red-500">*</span>
+            </label>
+            <select
+              name="reason"
+              value={formData.reason}
+              onChange={handleInputChange}
+              required
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            >
+              <option value="">Select reason</option>
+              <option value="Fever">Fever</option>
+              <option value="Cold and Cough">Cold and Cough</option>
+              <option value="Stomach Infection">Stomach Infection</option>
+              <option value="Migraine">Migraine</option>
+              <option value="Injury/Accident">Injury/Accident</option>
+              <option value="Surgery/Post-operative Care">Surgery/Post-operative Care</option>
+              <option value="Mental Health">Mental Health</option>
+              <option value="Other">Other (Please specify)</option>
+            </select>
+          </div>
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Height (cm)</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Height (cm)
+              </label>
               <input
                 type="number"
                 name="height"
@@ -362,7 +455,9 @@ const CertificateDetailsForm = ({ onBack }) => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Weight (kg)</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Weight (kg)
+              </label>
               <input
                 type="number"
                 name="weight"
@@ -375,7 +470,9 @@ const CertificateDetailsForm = ({ onBack }) => {
           </div>
 
           <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700 mb-1">Any Medical Conditions to Note (Optional)</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Any Medical Conditions to Note (Optional)
+            </label>
             <textarea
               name="medicalConditions"
               value={formData.medicalConditions}
@@ -391,13 +488,24 @@ const CertificateDetailsForm = ({ onBack }) => {
 
           <div className="bg-blue-50 border border-blue-200 rounded-md p-3 text-sm text-blue-800">
             <div className="flex items-start">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1 mt-0.5" viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2H9.414l1-1H10a1 1 0 000-2H9z" clipRule="evenodd" />
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-4 w-4 mr-1 mt-0.5"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2H9.414l1-1H10a1 1 0 000-2H9z"
+                  clipRule="evenodd"
+                />
               </svg>
-              Please note that we may require additional information during the verification process to ensure the fitness certificate meets your specific requirements.
+              Please note that we may require additional information during the verification
+              process to ensure the fitness certificate meets your specific requirements.
             </div>
           </div>
         </div>
+
 
         {/* Navigation Buttons */}
         <div className="flex justify-between pt-4">
@@ -499,18 +607,16 @@ const SickLeavePage = () => {
             <div className="bg-gray-50 px-6 py-4 flex justify-between items-center">
               <div className="flex flex-col items-center w-1/3">
                 <div
-                  className={`w-8 h-8 rounded-full border-2 flex items-center justify-center font-medium ${
-                    activeStep === 'certificate'
-                      ? 'border-blue-500 bg-blue-100 text-blue-700'
-                      : 'border-gray-300 text-gray-500'
-                  }`}
+                  className={`w-8 h-8 rounded-full border-2 flex items-center justify-center font-medium ${activeStep === 'certificate'
+                    ? 'border-blue-500 bg-blue-100 text-blue-700'
+                    : 'border-gray-300 text-gray-500'
+                    }`}
                 >
                   1
                 </div>
                 <span
-                  className={`text-xs mt-1 text-center ${
-                    activeStep === 'certificate' ? 'text-blue-700' : 'text-gray-400'
-                  }`}
+                  className={`text-xs mt-1 text-center ${activeStep === 'certificate' ? 'text-blue-700' : 'text-gray-400'
+                    }`}
                 >
                   Choose Certificate
                 </span>
@@ -520,18 +626,16 @@ const SickLeavePage = () => {
 
               <div className="flex flex-col items-center w-1/3">
                 <div
-                  className={`w-8 h-8 rounded-full border-2 flex items-center justify-center font-medium ${
-                    activeStep === 'personal'
-                      ? 'border-blue-500 bg-blue-100 text-blue-700'
-                      : 'border-gray-300 text-gray-500'
-                  }`}
+                  className={`w-8 h-8 rounded-full border-2 flex items-center justify-center font-medium ${activeStep === 'personal'
+                    ? 'border-blue-500 bg-blue-100 text-blue-700'
+                    : 'border-gray-300 text-gray-500'
+                    }`}
                 >
                   2
                 </div>
                 <span
-                  className={`text-xs mt-1 text-center ${
-                    activeStep === 'personal' ? 'text-blue-700' : 'text-gray-400'
-                  }`}
+                  className={`text-xs mt-1 text-center ${activeStep === 'personal' ? 'text-blue-700' : 'text-gray-400'
+                    }`}
                 >
                   Personal Details
                 </span>
@@ -541,18 +645,16 @@ const SickLeavePage = () => {
 
               <div className="flex flex-col items-center w-1/3">
                 <div
-                  className={`w-8 h-8 rounded-full border-2 flex items-center justify-center font-medium ${
-                    activeStep === 'details'
-                      ? 'border-blue-500 bg-blue-100 text-blue-700'
-                      : 'border-gray-300 text-gray-500'
-                  }`}
+                  className={`w-8 h-8 rounded-full border-2 flex items-center justify-center font-medium ${activeStep === 'details'
+                    ? 'border-blue-500 bg-blue-100 text-blue-700'
+                    : 'border-gray-300 text-gray-500'
+                    }`}
                 >
                   3
                 </div>
                 <span
-                  className={`text-xs mt-1 text-center ${
-                    activeStep === 'details' ? 'text-blue-700' : 'text-gray-400'
-                  }`}
+                  className={`text-xs mt-1 text-center ${activeStep === 'details' ? 'text-blue-700' : 'text-gray-400'
+                    }`}
                 >
                   Certificate Details
                 </span>
@@ -562,54 +664,51 @@ const SickLeavePage = () => {
             {/* Tab Navigation with Slider */}
             <div className="px-6 py-3 flex border-b border-gray-200 relative">
               {/* Slider element */}
-              <div 
+              <div
                 className="absolute bottom-0 h-1 bg-blue-500 transition-all duration-300 rounded-t-md"
                 style={{
                   left: `${sliderPosition}px`,
                   width: 'var(--slider-width, 0px)'
                 }}
               ></div>
-              
+
               <button
                 ref={tabRefs[0]}
-                className={`flex-1 flex items-center justify-center py-2 px-4 font-medium rounded-t-lg relative z-10 ${
-                  activeStep === 'certificate'
-                    ? 'text-blue-700'
-                    : 'text-gray-600 hover:text-gray-800'
-                }`}
+                className={`flex-1 flex items-center justify-center py-2 px-4 font-medium rounded-t-lg relative z-10 ${activeStep === 'certificate'
+                  ? 'text-blue-700'
+                  : 'text-gray-600 hover:text-gray-800'
+                  }`}
                 onClick={() => handleTabChange('certificate')}
               >
-                 Choose Certificate
+                Choose Certificate
               </button>
-              
+
               <button
                 ref={tabRefs[1]}
-                className={`flex-1 flex items-center justify-center py-2 px-4 font-medium rounded-t-lg relative z-10 ${
-                  activeStep === 'personal'
-                    ? 'text-blue-700'
-                    : selectedCertificate 
-                      ? 'text-gray-600 hover:text-gray-800'
-                      : 'text-gray-400 cursor-not-allowed'
-                }`}
+                className={`flex-1 flex items-center justify-center py-2 px-4 font-medium rounded-t-lg relative z-10 ${activeStep === 'personal'
+                  ? 'text-blue-700'
+                  : selectedCertificate
+                    ? 'text-gray-600 hover:text-gray-800'
+                    : 'text-gray-400 cursor-not-allowed'
+                  }`}
                 onClick={() => handleTabChange('personal')}
                 disabled={!selectedCertificate}
               >
-                 Personal Details
+                Personal Details
               </button>
 
               <button
                 ref={tabRefs[2]}
-                className={`flex-1 flex items-center justify-center py-2 px-4 font-medium rounded-t-lg relative z-10 ${
-                  activeStep === 'details'
-                    ? 'text-blue-700'
-                    : activeStep === 'personal'
-                      ? 'text-gray-600 hover:text-gray-800'
-                      : 'text-gray-400 cursor-not-allowed'
-                }`}
+                className={`flex-1 flex items-center justify-center py-2 px-4 font-medium rounded-t-lg relative z-10 ${activeStep === 'details'
+                  ? 'text-blue-700'
+                  : activeStep === 'personal'
+                    ? 'text-gray-600 hover:text-gray-800'
+                    : 'text-gray-400 cursor-not-allowed'
+                  }`}
                 onClick={() => handleTabChange('details')}
                 disabled={activeStep !== 'personal'}
               >
-                 Certificate Details
+                Certificate Details
               </button>
             </div>
 
@@ -624,19 +723,17 @@ const SickLeavePage = () => {
                 {certificates.map((cert) => (
                   <div
                     key={cert.id}
-                    className={`border rounded-xl p-5 transition-all cursor-pointer ${
-                      selectedCertificate === cert.id
-                        ? 'border-blue-500 bg-blue-50 shadow-md'
-                        : 'border-gray-200 hover:border-gray-300'
-                    }`}
+                    className={`border rounded-xl p-5 transition-all cursor-pointer ${selectedCertificate === cert.id
+                      ? 'border-blue-500 bg-blue-50 shadow-md'
+                      : 'border-gray-200 hover:border-gray-300'
+                      }`}
                     onClick={() => handleSelect(cert.id)}
                   >
                     <div className="flex justify-between items-start">
                       <div className="flex items-start space-x-3">
                         <div
-                          className={`rounded-lg w-10 h-10 flex items-center justify-center ${
-                            cert.id === 1 ? 'bg-emerald-50' : cert.id === 2 ? 'bg-indigo-50' : 'bg-amber-50'
-                          }`}
+                          className={`rounded-lg w-10 h-10 flex items-center justify-center ${cert.id === 1 ? 'bg-emerald-50' : cert.id === 2 ? 'bg-indigo-50' : 'bg-amber-50'
+                            }`}
                         >
                           {cert.id === 1 && <i className="ri-file-text-line text-2xl text-emerald-600"></i>}
                           {cert.id === 2 && <i className="ri-parent-line text-2xl text-indigo-600"></i>}
@@ -651,11 +748,10 @@ const SickLeavePage = () => {
                         <span className="text-sm font-medium text-gray-700">{cert.price}</span>
                         <div className="mt-2">
                           <span
-                            className={`inline-flex items-center px-4 py-2 text-sm font-medium rounded-full border ${
-                              selectedCertificate === cert.id
-                                ? 'border-blue-500 text-blue-700 bg-blue-50'
-                                : 'border-blue-300 text-blue-700'
-                            }`}
+                            className={`inline-flex items-center px-4 py-2 text-sm font-medium rounded-full border ${selectedCertificate === cert.id
+                              ? 'border-blue-500 text-blue-700 bg-blue-50'
+                              : 'border-blue-300 text-blue-700'
+                              }`}
                           >
                             {selectedCertificate === cert.id ? 'Selected' : 'Select'}
                           </span>
@@ -687,20 +783,19 @@ const SickLeavePage = () => {
                   <button
                     onClick={() => handleTabChange('personal')}
                     disabled={!selectedCertificate}
-                    className={`px-6 py-3 rounded-lg transition ${
-                      selectedCertificate
-                        ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white hover:from-indigo-700 hover:to-purple-700'
-                        : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                    }`}
+                    className={`px-6 py-3 rounded-lg transition ${selectedCertificate
+                      ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white hover:from-indigo-700 hover:to-purple-700'
+                      : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                      }`}
                   >
                     Continue →
                   </button>
                 </div>
               </div>
             ) : activeStep === 'personal' ? (
-              <PersonalDetailsForm 
-                onContinue={() => handleTabChange('details')} 
-                onBack={() => handleTabChange('certificate')} 
+              <PersonalDetailsForm
+                onContinue={() => handleTabChange('details')}
+                onBack={() => handleTabChange('certificate')}
                 selectedCertificate={selectedCertificate}
                 certificates={certificates}
               />

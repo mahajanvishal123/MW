@@ -1,7 +1,65 @@
 import React, { useState } from "react";
 
-const TransactionsTable = ({ recentTransactions }) => {
+const TransactionsTable = () => {
   const [selectedTxn, setSelectedTxn] = useState(null);
+
+  const recentTransactions = [
+    {
+      id: 'TXN-2024-0156',
+      patient: 'John Smith',
+      practitioner: 'Dr. Sarah Johnson',
+      amount: 79.00,
+      type: 'Doctor Certificate',
+      status: 'Completed',
+      method: 'Credit Card',
+      date: '2024-01-15 14:30',
+      certificateId: 'MC-2024-0156'
+    },
+    {
+      id: 'TXN-2024-0155',
+      patient: 'Alice Brown',
+      practitioner: 'Emma Wilson',
+      amount: 39.20,
+      type: 'Pharmacist Certificate',
+      status: 'Completed',
+      method: 'PayPal',
+      date: '2024-01-15 12:15',
+      certificateId: 'MC-2024-0155'
+    },
+    {
+      id: 'TXN-2024-0154',
+      patient: 'Robert Davis',
+      practitioner: 'Dr. Michael Chen',
+      amount: 79.00,
+      type: 'Doctor Certificate',
+      status: 'Pending',
+      method: 'Bank Transfer',
+      date: '2024-01-15 11:45',
+      certificateId: 'MC-2024-0154'
+    },
+    {
+      id: 'TXN-2024-0153',
+      patient: 'Maria Garcia',
+      practitioner: 'Dr. James Miller',
+      amount: 79.00,
+      type: 'Doctor Certificate',
+      status: 'Failed',
+      method: 'Credit Card',
+      date: '2024-01-15 09:20',
+      certificateId: 'MC-2024-0153'
+    },
+    {
+      id: 'TXN-2024-0152',
+      patient: 'David Wilson',
+      practitioner: 'Lisa Thompson',
+      amount: 63.20,
+      type: 'Pharmacist Certificate',
+      status: 'Refunded',
+      method: 'Credit Card',
+      date: '2024-01-14 16:30',
+      certificateId: 'MC-2024-0152'
+    }
+  ];
 
   // Status color helper
   const getStatusColor = (status) => {
@@ -91,23 +149,17 @@ const TransactionsTable = ({ recentTransactions }) => {
                   <div className="flex space-x-2">
                     <button
                       className="text-blue-600 hover:text-blue-700 cursor-pointer"
-                      title="View Details"
-                      data-bs-toggle="modal"
-                      data-bs-target="#txnModal"
-                      onClick={() => setSelectedTxn(txn)}
                     >
                       <i className="ri-eye-line"></i>
                     </button>
                     <button
                       className="text-emerald-600 hover:text-emerald-700 cursor-pointer"
-                      title="Download Receipt"
                     >
                       <i className="ri-download-line"></i>
                     </button>
                     {txn.status === "Completed" && (
                       <button
                         className="text-red-600 hover:text-red-700 cursor-pointer"
-                        title="Refund"
                       >
                         <i className="ri-refund-line"></i>
                       </button>
@@ -118,75 +170,6 @@ const TransactionsTable = ({ recentTransactions }) => {
             ))}
           </tbody>
         </table>
-      </div>
-
-      {/* Bootstrap Modal */}
-      <div
-        className="modal fade"
-        id="txnModal"
-        tabIndex="-1"
-        aria-labelledby="txnModalLabel"
-        aria-hidden="true"
-      >
-        <div className="modal-dialog modal-dialog-centered modal-lg">
-          <div className="modal-content">
-            <div className="modal-header">
-              <h5 className="modal-title" id="txnModalLabel">
-                Transaction Details
-              </h5>
-              <button
-                type="button"
-                className="btn-close"
-                data-bs-dismiss="modal"
-                aria-label="Close"
-              ></button>
-            </div>
-            <div className="modal-body">
-              {selectedTxn ? (
-                <div className="space-y-2">
-                  <p>
-                    <strong>ID:</strong> {selectedTxn.id}
-                  </p>
-                  <p>
-                    <strong>Patient:</strong> {selectedTxn.patient}
-                  </p>
-                  <p>
-                    <strong>Practitioner:</strong> {selectedTxn.practitioner}
-                  </p>
-                  <p>
-                    <strong>Amount:</strong> ${selectedTxn.amount.toFixed(2)}
-                  </p>
-                  <p>
-                    <strong>Method:</strong> {selectedTxn.method}
-                  </p>
-                  <p>
-                    <strong>Status:</strong> {selectedTxn.status}
-                  </p>
-                  <p>
-                    <strong>Date:</strong> {selectedTxn.date}
-                  </p>
-                  <p>
-                    <strong>Certificate ID:</strong> {selectedTxn.certificateId}
-                  </p>
-                </div>
-              ) : (
-                <p>No transaction selected.</p>
-              )}
-            </div>
-            <div className="modal-footer">
-              <button
-                type="button"
-                className="btn btn-secondary"
-                data-bs-dismiss="modal"
-              >
-                Close
-              </button>
-              <button type="button" className="btn btn-primary">
-                Download Receipt
-              </button>
-            </div>
-          </div>
-        </div>
       </div>
     </>
   );

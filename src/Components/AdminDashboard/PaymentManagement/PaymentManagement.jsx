@@ -16,65 +16,7 @@ export default function PaymentManagement() {
     transactionCount: 1247,
     avgTransactionValue: 63.25
   };
-  
-  const recentTransactions = [
-    {
-      id: 'TXN-2024-0156',
-      patient: 'John Smith',
-      practitioner: 'Dr. Sarah Johnson',
-      amount: 79.00,
-      type: 'Doctor Certificate',
-      status: 'Completed',
-      method: 'Credit Card',
-      date: '2024-01-15 14:30',
-      certificateId: 'MC-2024-0156'
-    },
-    {
-      id: 'TXN-2024-0155',
-      patient: 'Alice Brown',
-      practitioner: 'Emma Wilson',
-      amount: 39.20,
-      type: 'Pharmacist Certificate',
-      status: 'Completed',
-      method: 'PayPal',
-      date: '2024-01-15 12:15',
-      certificateId: 'MC-2024-0155'
-    },
-    {
-      id: 'TXN-2024-0154',
-      patient: 'Robert Davis',
-      practitioner: 'Dr. Michael Chen',
-      amount: 79.00,
-      type: 'Doctor Certificate',
-      status: 'Pending',
-      method: 'Bank Transfer',
-      date: '2024-01-15 11:45',
-      certificateId: 'MC-2024-0154'
-    },
-    {
-      id: 'TXN-2024-0153',
-      patient: 'Maria Garcia',
-      practitioner: 'Dr. James Miller',
-      amount: 79.00,
-      type: 'Doctor Certificate',
-      status: 'Failed',
-      method: 'Credit Card',
-      date: '2024-01-15 09:20',
-      certificateId: 'MC-2024-0153'
-    },
-    {
-      id: 'TXN-2024-0152',
-      patient: 'David Wilson',
-      practitioner: 'Lisa Thompson',
-      amount: 63.20,
-      type: 'Pharmacist Certificate',
-      status: 'Refunded',
-      method: 'Credit Card',
-      date: '2024-01-14 16:30',
-      certificateId: 'MC-2024-0152'
-    }
-  ];
-  
+ 
   const exportOptions = {
     format: 'csv',
     dataType: 'transactions',
@@ -150,16 +92,6 @@ export default function PaymentManagement() {
     if (exportOptions.dateRange === 'week') count = Math.floor(count * 0.3);
     if (exportOptions.dateRange === 'today') count = Math.floor(count * 0.1);
     return count;
-  };
-  
-  const getStatusColor = (status) => {
-    switch (status) {
-      case 'Completed': return 'bg-emerald-100 text-emerald-800';
-      case 'Pending': return 'bg-yellow-100 text-yellow-800';
-      case 'Failed': return 'bg-red-100 text-red-800';
-      case 'Refunded': return 'bg-blue-100 text-blue-800';
-      default: return 'bg-slate-100 text-slate-800';
-    }
   };
   
   return (
@@ -389,7 +321,7 @@ export default function PaymentManagement() {
                   
                   {/* Transactions Table */}
                   <div className="overflow-x-auto">
-                  <TransactionsTable recentTransactions={recentTransactions} />
+                  <TransactionsTable />
                   </div>
                 </div>
               )}

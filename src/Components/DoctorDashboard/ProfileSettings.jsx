@@ -428,7 +428,7 @@ export default function ProfileSettings() {
                   <div>
                     <h3 className="text-lg font-semibold text-slate-900 mb-4">Security Settings</h3>
                     <div className="space-y-4">
-                      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 bg-slate-50 rounded-lg border border-slate-200">
+                      {/* <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 bg-slate-50 rounded-lg border border-slate-200">
                         <div className="flex-1">
                           <h4 className="font-medium text-slate-900">Two-Factor Authentication</h4>
                           <p className="text-sm text-slate-600">
@@ -445,7 +445,7 @@ export default function ProfileSettings() {
                           <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white 
     after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600"></div>
                         </label>
-                      </div>
+                      </div> */}
 
                       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-4 bg-slate-50 rounded-lg border border-slate-200">
                         <div className="flex-1">
@@ -463,10 +463,10 @@ export default function ProfileSettings() {
                     </div>
                   </div>
 
-                  <div>
+                  {/* <div>
                     <h3 className="text-lg font-semibold text-slate-900 mb-4">Notification Preferences</h3>
                     <div className="space-y-4">
-                      {/* Email Notifications */}
+                    
                       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-4 bg-slate-50 rounded-lg border border-slate-200">
                         <div className="flex-1">
                           <h4 className="font-medium text-slate-900">Email Notifications</h4>
@@ -483,7 +483,7 @@ export default function ProfileSettings() {
                         </label>
                       </div>
 
-                      {/* SMS Notifications */}
+                   
                       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-4 bg-slate-50 rounded-lg border border-slate-200">
                         <div className="flex-1">
                           <h4 className="font-medium text-slate-900">SMS Notifications</h4>
@@ -500,7 +500,7 @@ export default function ProfileSettings() {
                         </label>
                       </div>
 
-                      {/* Weekly Reports */}
+                   
                       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-4 bg-slate-50 rounded-lg border border-slate-200">
                         <div className="flex-1">
                           <h4 className="font-medium text-slate-900">Weekly Reports</h4>
@@ -517,7 +517,7 @@ export default function ProfileSettings() {
                         </label>
                       </div>
 
-                      {/* Marketing Emails */}
+                 
                       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-4 bg-slate-50 rounded-lg border border-slate-200">
                         <div className="flex-1">
                           <h4 className="font-medium text-slate-900">Marketing Emails</h4>
@@ -534,7 +534,7 @@ export default function ProfileSettings() {
                         </label>
                       </div>
                     </div>
-                  </div>
+                  </div> */}
 
                 </div>
               </div>

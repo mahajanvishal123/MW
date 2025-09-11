@@ -50,6 +50,113 @@ export default function SystemSettings() {
     setSaveStatus('idle');
   };
 
+
+  const [isEditing, setIsEditing] = useState(false);
+  const [showPasswordModal, setShowPasswordModal] = useState(false);
+  const [showPasswords, setShowPasswords] = useState({
+    current: false,
+    new: false,
+    confirm: false
+  });
+
+
+  const handleSaveProfile = () => {
+    setIsEditing(false);
+    alert('Profile updated successfully!');
+  };
+
+  const [passwordForm, setPasswordForm] = useState({
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: ''
+  });
+
+    const [passwordValidation, setPasswordValidation] = useState({
+    minLength: false,
+    hasUppercase: false,
+    hasLowercase: false,
+    hasNumber: false,
+    hasSpecialChar: false,
+    matches: false
+  });
+
+    const handlePasswordSubmit = async () => {
+    try {
+      if (!isPasswordFormValid()) {
+        alert('Please ensure all password requirements are met.');
+        return;
+      }
+
+      // Simulate password change API call
+      await new Promise(resolve => setTimeout(resolve, 1500));
+
+      // Reset form and close modal
+      setPasswordForm({
+        currentPassword: '',
+        newPassword: '',
+        confirmPassword: ''
+      });
+      setPasswordValidation({
+        minLength: false,
+        hasUppercase: false,
+        hasLowercase: false,
+        hasNumber: false,
+        hasSpecialChar: false,
+        matches: false
+      });
+      setShowPasswordModal(false);
+
+      // Success notification
+      const notification = document.createElement('div');
+      notification.className = 'fixed top-4 right-4 bg-emerald-600 text-white px-6 py-4 rounded-lg shadow-lg z-50 border border-emerald-500';
+      notification.innerHTML = `
+        <div class="flex items-center">
+          <i class="ri-check-double-line mr-3 text-lg"></i>
+          <div>
+            <div class="font-semibold">Password Updated Successfully!</div>
+            <div class="text-sm text-emerald-100">Your account password has been changed</div>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(notification);
+
+      setTimeout(() => {
+        if (notification.parentNode) {
+          notification.parentNode.removeChild(notification);
+        }
+      }, 5000);
+
+    } catch (error) {
+      console.error('Password change failed:', error);
+      alert('Failed to update password. Please try again.');
+    }
+  };
+
+    const isPasswordFormValid = () => {
+    const { minLength, hasUppercase, hasLowercase, hasNumber, hasSpecialChar, matches } = passwordValidation;
+    return passwordForm.currentPassword &&
+      minLength && hasUppercase && hasLowercase && hasNumber && hasSpecialChar && matches;
+  };
+
+  const [profileData, setProfileData] = useState({
+    firstName: 'Sarah',
+    lastName: 'Johnson',
+    email: 'sarah.johnson@email.com',
+    phone: '+61 412 345 678',
+    ahpraNumber: 'MED0001234567',
+    specialization: 'General Practitioner',
+    qualification: 'MBBS, FRACGP',
+    clinicName: 'Sydney Medical Centre',
+    clinicAddress: '123 Health Street, Sydney NSW 2000',
+    yearsExperience: '12',
+    languages: ['English', 'Mandarin'],
+    availability: 'Monday to Friday, 9 AM - 5 PM'
+  });
+
+
+
+
+
   const handleSaveConfiguration = async () => {
     try {
       setIsSaving(true);
@@ -129,7 +236,7 @@ export default function SystemSettings() {
             </div>
           </div>
         </header>
-        
+
         <div className="px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
             {/* Settings Navigation */}
@@ -149,7 +256,7 @@ export default function SystemSettings() {
                     }`}
                 >
                   <i className="ri-mail-line mr-3"></i>
-                  <span className="truncate">Email & SMS</span>
+                  <span className="truncate">Profile</span>
                 </button>
                 <button
                   onClick={() => setActiveTab('security')}
@@ -157,19 +264,19 @@ export default function SystemSettings() {
                     }`}
                 >
                   <i className="ri-shield-line mr-3"></i>
-                  <span className="truncate">Security & Compliance</span>
+                  <span className="truncate">Change Password</span>
                 </button>
-                <button
+                {/* <button
                   onClick={() => setActiveTab('system')}
                   className={`w-full text-left px-4 py-3 rounded-lg text-sm font-medium transition-colors cursor-pointer whitespace-nowrap flex items-center ${activeTab === 'system' ? 'bg-slate-100 text-slate-900' : 'text-slate-600 hover:text-slate-900'
                     }`}
                 >
                   <i className="ri-settings-line mr-3"></i>
                   <span className="truncate">System Configuration</span>
-                </button>
+                </button> */}
               </div>
             </div>
-            
+
             {/* Settings Content */}
             <div className="flex-1">
               {/* Payment Settings */}
@@ -256,185 +363,320 @@ export default function SystemSettings() {
                   </div> */}
                 </div>
               )}
-              
+
               {/* Email & SMS Settings */}
               {activeTab === 'email' && (
-                <div className="space-y-6">
-                  <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-4 sm:p-6">
-                    <h2 className="text-lg sm:text-xl font-semibold text-slate-900 mb-4 sm:mb-6">SMS Configuration (NetCode API)</h2>
-                    <div className="space-y-4">
-                      <div>
-                        <label className="block text-sm font-medium text-slate-700 mb-2">SMS Provider</label>
-                        <select
-                          value={settings.smsProvider}
-                          onChange={(e) => handleSettingChange('smsProvider', e.target.value)}
-                          className="w-full px-3 py-2 pr-8 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                        >
-                          <option value="NetCode">NetCode SMS</option>
-                          <option value="Twilio">Twilio</option>
-                          <option value="MessageBird">MessageBird</option>
-                        </select>
+                <div className="p-8">
+                  <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-8">
+                    <div className="flex items-center mb-4 md:mb-0">
+                      <div className="w-20 h-20 bg-slate-100 rounded-xl flex items-center justify-center mr-6 border border-slate-200">
+                        <i className="ri-user-heart-fill text-slate-600 text-3xl"></i>
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-slate-700 mb-2">SMS API Key</label>
+                        <h2 className="text-2xl font-semibold text-slate-900">
+                          Dr. {profileData.firstName} {profileData.lastName}
+                        </h2>
+                        <p className="text-slate-600 mt-1">{profileData.specialization}</p>
+                        <p className="text-sm text-slate-500 mt-1">AHPRA: {profileData.ahpraNumber}</p>
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => setIsEditing(!isEditing)}
+                      className="px-6 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-800 transition-colors cursor-pointer whitespace-nowrap"
+                    >
+                      <i className={`${isEditing ? 'ri-close-line' : 'ri-edit-line'} mr-2`}></i>
+                      {isEditing ? 'Cancel' : 'Edit Profile'}
+                    </button>
+                  </div>
+
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div className="space-y-6">
+                      <div>
+                        <label className="block text-sm font-medium text-slate-700 mb-2">First Name</label>
                         <input
-                          type="password"
-                          value={settings.smsApiKey}
-                          onChange={(e) => handleSettingChange('smsApiKey', e.target.value)}
-                          className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 font-mono text-sm"
+                          type="text"
+                          value={profileData.firstName}
+                          onChange={(e) => setProfileData(prev => ({ ...prev, firstName: e.target.value }))}
+                          disabled={!isEditing}
+                          className={`w-full px-3 py-2 border rounded-lg ${isEditing
+                            ? 'border-slate-300 focus:ring-2 focus:ring-slate-500 focus:border-slate-500'
+                            : 'border-slate-200 bg-slate-50 text-slate-500'
+                            }`}
                         />
                       </div>
-                    </div>
-                  </div>
-                  <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-4 sm:p-6">
-                    <h2 className="text-lg sm:text-xl font-semibold text-slate-900 mb-4 sm:mb-6">Email Configuration</h2>
-                    <div className="space-y-4">
+
                       <div>
-                        <label className="block text-sm font-medium text-slate-700 mb-2">Email Provider</label>
-                        <select
-                          value={settings.emailProvider}
-                          onChange={(e) => handleSettingChange('emailProvider', e.target.value)}
-                          className="w-full px-3 py-2 pr-8 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                        >
-                          <option value="SendGrid">SendGrid</option>
-                          <option value="AWS SES">AWS SES</option>
-                          <option value="Mailgun">Mailgun</option>
-                        </select>
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-slate-700 mb-2">Email API Key</label>
+                        <label className="block text-sm font-medium text-slate-700 mb-2">Last Name</label>
                         <input
-                          type="password"
-                          value={settings.emailApiKey}
-                          onChange={(e) => handleSettingChange('emailApiKey', e.target.value)}
-                          className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 font-mono text-sm"
+                          type="text"
+                          value={profileData.lastName}
+                          onChange={(e) => setProfileData(prev => ({ ...prev, lastName: e.target.value }))}
+                          disabled={!isEditing}
+                          className={`w-full px-3 py-2 border rounded-lg ${isEditing
+                            ? 'border-slate-300 focus:ring-2 focus:ring-slate-500 focus:border-slate-500'
+                            : 'border-slate-200 bg-slate-50 text-slate-500'
+                            }`}
                         />
                       </div>
-                    </div>
-                  </div>
-                  <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-4 sm:p-6">
-                    <h2 className="text-lg sm:text-xl font-semibold text-slate-900 mb-4 sm:mb-6">Email Templates</h2>
-                    <div className="space-y-4">
-                      <button className="w-full text-left p-4 border border-slate-200 rounded-lg hover:bg-slate-50 cursor-pointer">
-                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-                          <div>
-                            <h3 className="font-medium text-slate-900">Certificate Approval Notification</h3>
-                            <p className="text-sm text-slate-500">Email sent when certificate is approved</p>
-                          </div>
-                          <i className="ri-edit-line text-slate-400"></i>
-                        </div>
-                      </button>
-                      <button className="w-full text-left p-4 border border-slate-200 rounded-lg hover:bg-slate-50 cursor-pointer">
-                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-                          <div>
-                            <h3 className="font-medium text-slate-900">OTP Verification</h3>
-                            <p className="text-sm text-slate-500">SMS template for OTP codes</p>
-                          </div>
-                          <i className="ri-edit-line text-slate-400"></i>
-                        </div>
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              )}
-              
-              {/* Security Settings */}
-              {activeTab === 'security' && (
-                <div className="space-y-6">
-                  <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-4 sm:p-6">
-                    <h2 className="text-lg sm:text-xl font-semibold text-slate-900 mb-4 sm:mb-6">Authentication & Access</h2>
-                    <div className="space-y-4">
-                      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-                        <div>
-                          <h3 className="text-sm font-medium text-slate-900">Two-Factor Authentication Required</h3>
-                          <p className="text-sm text-slate-500">Require 2FA for all admin accounts</p>
-                        </div>
-                        <label className="relative inline-flex items-center cursor-pointer">
-                          <input
-                            type="checkbox"
-                            checked={settings.twoFactorRequired}
-                            onChange={(e) => handleSettingChange('twoFactorRequired', e.target.checked)}
-                            className="sr-only peer"
-                          />
-                          <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-                        </label>
-                      </div>
+
                       <div>
-                        <label className="block text-sm font-medium text-slate-700 mb-2">Session Timeout (minutes)</label>
+                        <label className="block text-sm font-medium text-slate-700 mb-2">Email</label>
+                        <input
+                          type="email"
+                          value={profileData.email}
+                          onChange={(e) => setProfileData(prev => ({ ...prev, email: e.target.value }))}
+                          disabled={!isEditing}
+                          className={`w-full px-3 py-2 border rounded-lg ${isEditing
+                            ? 'border-slate-300 focus:ring-2 focus:ring-slate-500 focus:border-slate-500'
+                            : 'border-slate-200 bg-slate-50 text-slate-500'
+                            }`}
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-slate-700 mb-2">Phone</label>
+                        <input
+                          type="tel"
+                          value={profileData.phone}
+                          onChange={(e) => setProfileData(prev => ({ ...prev, phone: e.target.value }))}
+                          disabled={!isEditing}
+                          className={`w-full px-3 py-2 border rounded-lg ${isEditing
+                            ? 'border-slate-300 focus:ring-2 focus:ring-slate-500 focus:border-slate-500'
+                            : 'border-slate-200 bg-slate-50 text-slate-500'
+                            }`}
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-slate-700 mb-2">AHPRA Registration Number</label>
+                        <input
+                          type="text"
+                          value={profileData.ahpraNumber}
+                          disabled={true}
+                          className="w-full px-3 py-2 border border-slate-200 bg-slate-50 text-slate-500 rounded-lg"
+                        />
+                        <p className="text-xs text-slate-500 mt-1">AHPRA number cannot be changed. Contact support if needed.</p>
+                      </div>
+                    </div>
+
+                    <div className="space-y-6">
+                      <div>
+                        <label className="block text-sm font-medium text-slate-700 mb-2">Specialization</label>
+                        <select
+                          value={profileData.specialization}
+                          onChange={(e) => setProfileData(prev => ({ ...prev, specialization: e.target.value }))}
+                          disabled={!isEditing}
+                          className={`w-full px-3 py-2 pr-8 border rounded-lg ${isEditing
+                            ? 'border-slate-300 focus:ring-2 focus:ring-slate-500 focus:border-slate-500'
+                            : 'border-slate-200 bg-slate-50 text-slate-500'
+                            }`}
+                        >
+                          <option value="General Practitioner">General Practitioner</option>
+                          <option value="Specialist">Specialist</option>
+                          <option value="Nurse Practitioner">Nurse Practitioner</option>
+                          <option value="Pharmacist">Pharmacist</option>
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-slate-700 mb-2">Qualifications</label>
+                        <input
+                          type="text"
+                          value={profileData.qualification}
+                          onChange={(e) => setProfileData(prev => ({ ...prev, qualification: e.target.value }))}
+                          disabled={!isEditing}
+                          className={`w-full px-3 py-2 border rounded-lg ${isEditing
+                            ? 'border-slate-300 focus:ring-2 focus:ring-slate-500 focus:border-slate-500'
+                            : 'border-slate-200 bg-slate-50 text-slate-500'
+                            }`}
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-slate-700 mb-2">Clinic Name</label>
+                        <input
+                          type="text"
+                          value={profileData.clinicName}
+                          onChange={(e) => setProfileData(prev => ({ ...prev, clinicName: e.target.value }))}
+                          disabled={!isEditing}
+                          className={`w-full px-3 py-2 border rounded-lg ${isEditing
+                            ? 'border-slate-300 focus:ring-2 focus:ring-slate-500 focus:border-slate-500'
+                            : 'border-slate-200 bg-slate-50 text-slate-500'
+                            }`}
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-slate-700 mb-2">Clinic Address</label>
+                        <textarea
+                          value={profileData.clinicAddress}
+                          onChange={(e) => setProfileData(prev => ({ ...prev, clinicAddress: e.target.value }))}
+                          disabled={!isEditing}
+                          rows={3}
+                          className={`w-full px-3 py-2 border rounded-lg ${isEditing
+                            ? 'border-slate-300 focus:ring-2 focus:ring-slate-500 focus:border-slate-500'
+                            : 'border-slate-200 bg-slate-50 text-slate-500'
+                            }`}
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-slate-700 mb-2">Years of Experience</label>
                         <input
                           type="number"
-                          value={settings.sessionTimeout}
-                          onChange={(e) => handleSettingChange('sessionTimeout', Number(e.target.value))}
-                          className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                          value={profileData.yearsExperience}
+                          onChange={(e) => setProfileData(prev => ({ ...prev, yearsExperience: e.target.value }))}
+                          disabled={!isEditing}
+                          className={`w-full px-3 py-2 border rounded-lg ${isEditing
+                            ? 'border-slate-300 focus:ring-2 focus:ring-slate-500 focus:border-slate-500'
+                            : 'border-slate-200 bg-slate-50 text-slate-500'
+                            }`}
                         />
                       </div>
                     </div>
                   </div>
-                  <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-4 sm:p-6">
-                    <h2 className="text-lg sm:text-xl font-semibold text-slate-900 mb-4 sm:mb-6">Data Compliance</h2>
-                    <div className="space-y-4">
-                      <div>
-                        <label className="block text-sm font-medium text-slate-700 mb-2">Data Retention Period (years)</label>
-                        <select
-                          value={settings.dataRetention}
-                          onChange={(e) => handleSettingChange('dataRetention', Number(e.target.value))}
-                          className="w-full px-3 py-2 pr-8 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                        >
-                          <option value={3}>3 years</option>
-                          <option value={5}>5 years</option>
-                          <option value={7}>7 years (Recommended)</option>
-                          <option value={10}>10 years</option>
-                        </select>
-                      </div>
-                      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                        <div className="flex">
-                          <div className="w-6 h-6 flex items-center justify-center flex-shrink-0">
-                            <i className="ri-information-line text-blue-600"></i>
-                          </div>
-                          <div className="ml-3">
-                            <h3 className="text-sm font-medium text-blue-800">Australian Privacy Compliance</h3>
-                            <p className="text-sm text-blue-700 mt-1">
-                              Data is hosted in Australia and complies with the Privacy Act 1988 and Australian health data regulations.
-                            </p>
-                          </div>
+
+                  {isEditing && (
+                    <div className="mt-8 flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+                      <button
+                        onClick={handleSaveProfile}
+                        className="px-6 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors cursor-pointer whitespace-nowrap"
+                      >
+                        <i className="ri-check-line mr-2"></i>
+                        Save Changes
+                      </button>
+                      <button
+                        onClick={() => setIsEditing(false)}
+                        className="px-6 py-2 border border-slate-300 text-slate-700 rounded-lg hover:bg-slate-50 transition-colors cursor-pointer whitespace-nowrap"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Security Settings */}
+              {activeTab === 'security' && (
+                <div className="p-8">
+                  <div className="space-y-8">
+                    <div>
+                      <h3 className="text-lg font-semibold text-slate-900 mb-4">Security Settings</h3>
+                      <div className="space-y-4">
+                        {/* <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 bg-slate-50 rounded-lg border border-slate-200">
+                        <div className="flex-1">
+                          <h4 className="font-medium text-slate-900">Two-Factor Authentication</h4>
+                          <p className="text-sm text-slate-600">
+                            Add an extra layer of security to your account
+                          </p>
                         </div>
+                        <label className="relative inline-flex items-center cursor-pointer self-start sm:self-auto">
+                          <input
+                            type="checkbox"
+                            checked={securitySettings.twoFactorEnabled}
+                            onChange={() => handleSecurityToggle('twoFactorEnabled')}
+                            className="sr-only peer"
+                          />
+                          <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white 
+    after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600"></div>
+                        </label>
+                      </div> */}
+
+                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-4 bg-slate-50 rounded-lg border border-slate-200">
+                          <div className="flex-1">
+                            <h4 className="font-medium text-slate-900">Change Password</h4>
+                            <p className="text-sm text-slate-600">Update your account password regularly</p>
+                          </div>
+                          <button
+                            onClick={() => setShowPasswordModal(true)}
+                            className="px-4 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-800 transition-colors cursor-pointer whitespace-nowrap w-full sm:w-auto"
+                          >
+                            Change Password
+                          </button>
+                        </div>
+
                       </div>
                     </div>
-                  </div>
-                  <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-4 sm:p-6">
-                    <h2 className="text-lg sm:text-xl font-semibold text-slate-900 mb-4 sm:mb-6">Audit & Logging</h2>
+
+                    {/* <div>
+                    <h3 className="text-lg font-semibold text-slate-900 mb-4">Notification Preferences</h3>
                     <div className="space-y-4">
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
-                          <div className="flex items-center">
-                            <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
-                              <i className="ri-check-line text-green-600"></i>
-                            </div>
-                            <div className="ml-3">
-                              <p className="text-sm font-medium text-green-800">Login Attempts</p>
-                              <p className="text-sm text-green-600">Enabled</p>
-                            </div>
-                          </div>
+                    
+                      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-4 bg-slate-50 rounded-lg border border-slate-200">
+                        <div className="flex-1">
+                          <h4 className="font-medium text-slate-900">Email Notifications</h4>
+                          <p className="text-sm text-slate-600">Receive notifications about certificate requests</p>
                         </div>
-                        <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
-                          <div className="flex items-center">
-                            <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
-                              <i className="ri-check-line text-green-600"></i>
-                            </div>
-                            <div className="ml-3">
-                              <p className="text-sm font-medium text-green-800">Certificate Actions</p>
-                              <p className="text-sm text-green-600">Enabled</p>
-                            </div>
-                          </div>
+                        <label className="relative inline-flex items-center cursor-pointer self-start sm:self-center">
+                          <input
+                            type="checkbox"
+                            checked={securitySettings.emailNotifications}
+                            onChange={() => handleSecurityToggle('emailNotifications')}
+                            className="sr-only peer"
+                          />
+                          <div className="w-11 h-6 bg-slate-200 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600"></div>
+                        </label>
+                      </div>
+
+                   
+                      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-4 bg-slate-50 rounded-lg border border-slate-200">
+                        <div className="flex-1">
+                          <h4 className="font-medium text-slate-900">SMS Notifications</h4>
+                          <p className="text-sm text-slate-600">Get urgent notifications via text message</p>
                         </div>
+                        <label className="relative inline-flex items-center cursor-pointer self-start sm:self-center">
+                          <input
+                            type="checkbox"
+                            checked={securitySettings.smsNotifications}
+                            onChange={() => handleSecurityToggle('smsNotifications')}
+                            className="sr-only peer"
+                          />
+                          <div className="w-11 h-6 bg-slate-200 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600"></div>
+                        </label>
+                      </div>
+
+                   
+                      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-4 bg-slate-50 rounded-lg border border-slate-200">
+                        <div className="flex-1">
+                          <h4 className="font-medium text-slate-900">Weekly Reports</h4>
+                          <p className="text-sm text-slate-600">Receive weekly performance summaries</p>
+                        </div>
+                        <label className="relative inline-flex items-center cursor-pointer self-start sm:self-center">
+                          <input
+                            type="checkbox"
+                            checked={securitySettings.weeklyReports}
+                            onChange={() => handleSecurityToggle('weeklyReports')}
+                            className="sr-only peer"
+                          />
+                          <div className="w-11 h-6 bg-slate-200 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600"></div>
+                        </label>
+                      </div>
+
+                 
+                      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-4 bg-slate-50 rounded-lg border border-slate-200">
+                        <div className="flex-1">
+                          <h4 className="font-medium text-slate-900">Marketing Emails</h4>
+                          <p className="text-sm text-slate-600">Receive updates about new features and tips</p>
+                        </div>
+                        <label className="relative inline-flex items-center cursor-pointer self-start sm:self-center">
+                          <input
+                            type="checkbox"
+                            checked={securitySettings.marketingEmails}
+                            onChange={() => handleSecurityToggle('marketingEmails')}
+                            className="sr-only peer"
+                          />
+                          <div className="w-11 h-6 bg-slate-200 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600"></div>
+                        </label>
                       </div>
                     </div>
+                  </div> */}
+
                   </div>
                 </div>
               )}
-              
+
               {/* System Settings */}
-              {activeTab === 'system' && (
+              {/* {activeTab === 'system' && (
                 <div className="space-y-6">
                   <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-4 sm:p-6">
                     <h2 className="text-lg sm:text-xl font-semibold text-slate-900 mb-4 sm:mb-6">System Maintenance</h2>
@@ -506,8 +748,8 @@ export default function SystemSettings() {
                     </div>
                   </div>
                 </div>
-              )}
-              
+              )} */}
+
               {/* Save Button */}
               <div className="mt-8">
                 <div className="flex flex-col sm:flex-row sm:items-center space-y-4 sm:space-y-0 sm:space-x-4">
@@ -515,12 +757,12 @@ export default function SystemSettings() {
                     onClick={handleSaveConfiguration}
                     disabled={isSaving}
                     className={`px-6 py-3 rounded-lg transition-all cursor-pointer whitespace-nowrap flex items-center justify-center ${isSaving
-                        ? 'bg-slate-400 text-white cursor-not-allowed'
-                        : saveStatus === 'success'
-                          ? 'bg-emerald-600 text-white hover:bg-emerald-700'
-                          : saveStatus === 'error'
-                            ? 'bg-red-600 text-white hover:bg-red-700'
-                            : 'bg-slate-700 text-white hover:bg-slate-800'
+                      ? 'bg-slate-400 text-white cursor-not-allowed'
+                      : saveStatus === 'success'
+                        ? 'bg-emerald-600 text-white hover:bg-emerald-700'
+                        : saveStatus === 'error'
+                          ? 'bg-red-600 text-white hover:bg-red-700'
+                          : 'bg-slate-700 text-white hover:bg-slate-800'
                       }`}
                   >
                     {isSaving ? (
@@ -566,7 +808,7 @@ export default function SystemSettings() {
                     </div>
                   )}
                 </div>
-                
+
                 {/* Settings Summary */}
                 <div className="mt-6 bg-slate-50 border border-slate-200 rounded-lg p-4">
                   <h3 className="text-sm font-medium text-slate-900 mb-3">Configuration Summary</h3>
@@ -609,7 +851,7 @@ export default function SystemSettings() {
                     </div>
                   </div>
                 </div>
-                
+
                 {/* Quick Actions */}
                 <div className="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-4">
                   <button
@@ -619,21 +861,22 @@ export default function SystemSettings() {
                     <i className="ri-refresh-line mr-2"></i>
                     Reset to Defaults
                   </button>
-                  <button
+                  {/* <button
                     onClick={() => setShowExportReports(true)}
                     className="flex items-center justify-center px-4 py-2 bg-purple-100 text-purple-700 rounded-lg hover:bg-purple-200 transition-colors cursor-pointer whitespace-nowrap"
                   >
                     <i className="ri-download-cloud-2-line mr-2"></i>
                     Export Settings
-                  </button>
-                 
+                  </button> */}
+
                 </div>
               </div>
+              
             </div>
           </div>
         </div>
       </div>
-      
+
       {/* Add Practitioner Modal */}
       {showAddPractitioner && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
@@ -765,7 +1008,7 @@ export default function SystemSettings() {
           </div>
         </div>
       )}
-      
+
       {/* Export Reports Modal */}
       {showExportReports && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
@@ -898,6 +1141,214 @@ export default function SystemSettings() {
                 <i className="ri-download-cloud-2-line mr-2"></i>
                 Generate Report
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showPasswordModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl shadow-2xl w-full max-w-2xl max-h-[95vh] overflow-y-auto">
+            <div className="p-6 border-b border-slate-200 bg-gradient-to-r from-slate-50 to-blue-50">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center">
+                  <div className="w-12 h-12 bg-slate-700 rounded-lg flex items-center justify-center mr-4">
+                    <i className="ri-lock-password-line text-white text-xl"></i>
+                  </div>
+                  <div>
+                    <h2 className="text-2xl font-bold text-slate-900">Change Password</h2>
+                    <p className="text-slate-600">Update your account password for enhanced security</p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setShowPasswordModal(false)}
+                  className="w-10 h-10 bg-white hover:bg-slate-100 rounded-lg flex items-center justify-center cursor-pointer transition-colors border border-slate-200"
+                >
+                  <i className="ri-close-line text-slate-600 text-xl"></i>
+                </button>
+              </div>
+            </div>
+
+            <div className="p-6 space-y-6">
+              {/* Current Password */}
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-2">
+                  Current Password *
+                </label>
+                <div className="relative">
+                  <input
+                    type={showPasswords.current ? 'text' : 'password'}
+                    value={passwordForm.currentPassword}
+                    onChange={(e) => handlePasswordChange('currentPassword', e.target.value)}
+                    className="w-full px-3 py-2 pr-10 border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-500 focus:border-slate-500"
+                    placeholder="Enter your current password"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => togglePasswordVisibility('current')}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-600 cursor-pointer"
+                  >
+                    <i className={showPasswords.current ? 'ri-eye-off-line' : 'ri-eye-line'}></i>
+                  </button>
+                </div>
+              </div>
+
+              {/* New Password */}
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-2">
+                  New Password *
+                </label>
+                <div className="relative">
+                  <input
+                    type={showPasswords.new ? 'text' : 'password'}
+                    value={passwordForm.newPassword}
+                    onChange={(e) => handlePasswordChange('newPassword', e.target.value)}
+                    className="w-full px-3 py-2 pr-10 border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-500 focus:border-slate-500"
+                    placeholder="Enter your new password"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => togglePasswordVisibility('new')}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-600 cursor-pointer"
+                  >
+                    <i className={showPasswords.new ? 'ri-eye-off-line' : 'ri-eye-line'}></i>
+                  </button>
+                </div>
+
+                {/* Password Strength Indicator */}
+                {passwordForm.newPassword && (
+                  <div className="mt-3">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-sm font-medium text-slate-700">Password Strength</span>
+                      <span
+                        className={`text-sm font-medium ${getPasswordStrength().level === 'strong' ? 'text-emerald-600' :
+                          getPasswordStrength().level === 'good' ? 'text-yellow-600' :
+                            getPasswordStrength().level === 'fair' ? 'text-orange-600' : 'text-red-600'
+                          }`}
+                      >
+                        {getPasswordStrength().text}
+                      </span>
+                    </div>
+                    <div className="w-full bg-slate-200 rounded-full h-2">
+                      <div
+                        className={`h-2 rounded-full transition-all duration-300 ${getPasswordStrength().color}`}
+                        style={{
+                          width: `${getPasswordStrength().level === 'strong' ? '100' :
+                            getPasswordStrength().level === 'good' ? '75' :
+                              getPasswordStrength().level === 'fair' ? '50' :
+                                getPasswordStrength().level === 'weak' ? '25' : '0'
+                            }%`
+                        }}
+                      ></div>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Confirm Password */}
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-2">
+                  Confirm New Password *
+                </label>
+                <div className="relative">
+                  <input
+                    type={showPasswords.confirm ? 'text' : 'password'}
+                    value={passwordForm.confirmPassword}
+                    onChange={(e) => handlePasswordChange('confirmPassword', e.target.value)}
+                    className={`w-full px-3 py-2 pr-10 border rounded-lg focus:ring-2 focus:ring-slate-500 ${passwordForm.confirmPassword && !passwordValidation.matches
+                      ? 'border-red-300 focus:border-red-500'
+                      : 'border-slate-300 focus:border-slate-500'
+                      }`}
+                    placeholder="Confirm your new password"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => togglePasswordVisibility('confirm')}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-600 cursor-pointer"
+                  >
+                    <i className={showPasswords.confirm ? 'ri-eye-off-line' : 'ri-eye-line'}></i>
+                  </button>
+                </div>
+                {passwordForm.confirmPassword && !passwordValidation.matches && (
+                  <p className="text-sm text-red-600 mt-1">Passwords do not match</p>
+                )}
+              </div>
+
+              {/* Password Requirements */}
+              <div className="bg-slate-50 border border-slate-200 rounded-lg p-4">
+                <h4 className="text-sm font-medium text-slate-700 mb-3">Password Requirements</h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                  <div className={`flex items-center text-sm ${passwordValidation.minLength ? 'text-emerald-600' : 'text-slate-500'}`}>
+                    <i className={`${passwordValidation.minLength ? 'ri-check-line' : 'ri-close-line'} mr-2`}></i>
+                    At least 8 characters
+                  </div>
+                  <div className={`flex items-center text-sm ${passwordValidation.hasUppercase ? 'text-emerald-600' : 'text-slate-500'}`}>
+                    <i className={`${passwordValidation.hasUppercase ? 'ri-check-line' : 'ri-close-line'} mr-2`}></i>
+                    One uppercase letter
+                  </div>
+                  <div className={`flex items-center text-sm ${passwordValidation.hasLowercase ? 'text-emerald-600' : 'text-slate-500'}`}>
+                    <i className={`${passwordValidation.hasLowercase ? 'ri-check-line' : 'ri-close-line'} mr-2`}></i>
+                    One lowercase letter
+                  </div>
+                  <div className={`flex items-center text-sm ${passwordValidation.hasNumber ? 'text-emerald-600' : 'text-slate-500'}`}>
+                    <i className={`${passwordValidation.hasNumber ? 'ri-check-line' : 'ri-close-line'} mr-2`}></i>
+                    One number
+                  </div>
+                  <div className={`flex items-center text-sm ${passwordValidation.hasSpecialChar ? 'text-emerald-600' : 'text-slate-500'}`}>
+                    <i className={`${passwordValidation.hasSpecialChar ? 'ri-check-line' : 'ri-close-line'} mr-2`}></i>
+                    One special character
+                  </div>
+                  <div className={`flex items-center text-sm ${passwordValidation.matches ? 'text-emerald-600' : 'text-slate-500'}`}>
+                    <i className={`${passwordValidation.matches ? 'ri-check-line' : 'ri-close-line'} mr-2`}></i>
+                    Passwords match
+                  </div>
+                </div>
+              </div>
+
+              {/* Security Tips */}
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <div className="flex items-start">
+                  <div className="w-6 h-6 flex items-center justify-center">
+                    <i className="ri-shield-check-line text-blue-600"></i>
+                  </div>
+                  <div className="ml-3">
+                    <h4 className="text-sm font-medium text-blue-800">Security Best Practices</h4>
+                    <ul className="text-sm text-blue-700 mt-1 space-y-1">
+                      <li>• Use a unique password that you don't use elsewhere</li>
+                      <li>• Consider using a password manager for better security</li>
+                      <li>• Update your password regularly</li>
+                      <li>• Never share your password with anyone</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="p-6 border-t border-slate-200 flex justify-between items-center">
+              <div className="flex items-center text-sm text-slate-600">
+                <i className="ri-lock-line mr-2 text-emerald-600"></i>
+                Your password is encrypted and secure
+              </div>
+
+              <div className="flex space-x-3">
+                <button
+                  onClick={() => setShowPasswordModal(false)}
+                  className="px-6 py-2 border border-slate-300 text-slate-700 rounded-lg hover:bg-slate-50 transition-colors cursor-pointer whitespace-nowrap"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handlePasswordSubmit}
+                  disabled={!isPasswordFormValid()}
+                  className={`px-6 py-3 rounded-lg transition-colors cursor-pointer whitespace-nowrap flex items-center ${isPasswordFormValid()
+                    ? 'bg-slate-700 text-white hover:bg-slate-800'
+                    : 'bg-slate-300 text-slate-500 cursor-not-allowed'
+                    }`}
+                >
+                  <i className="ri-shield-check-line mr-2"></i>
+                  Update Password
+                </button>
+              </div>
             </div>
           </div>
         </div>
