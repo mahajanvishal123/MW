@@ -2,6 +2,8 @@ import { Link } from 'react-router-dom';
 import { useState } from 'react';
 import ViewUserModal from "./ViewUserModal";
 import EditUserModal from "./EditUserModal";
+import UserManagementCards from './UserManagementCards';
+import AddUserModal from './AddUserModal';
 
 export default function UserManagement() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -105,6 +107,7 @@ export default function UserManagement() {
 
   const [viewModalOpen, setViewModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
+  const [addModalOpen, setAddModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
 
 
@@ -208,6 +211,11 @@ export default function UserManagement() {
     setViewModalOpen(true);
   };
 
+  const handleAdd = (user) => {
+    setSelectedUser(user);
+    setAddModalOpen(true);
+  };
+
   const handleEdit = (user) => {
     setSelectedUser(user);
     setEditModalOpen(true);
@@ -272,7 +280,7 @@ export default function UserManagement() {
               </div>
               <div className="flex items-center space-x-3">
                 <button
-                  onClick={() => setShowAddUser(true)}
+                  onClick={() => handleAdd(true)}
                   className="w-full sm:w-auto bg-slate-700 text-white px-4 py-2 rounded-lg hover:bg-slate-800 transition-colors cursor-pointer whitespace-nowrap"
                 >
                   <i className="ri-user-add-line mr-2"></i>
@@ -285,78 +293,7 @@ export default function UserManagement() {
 
         <div className="p-4 sm:p-6 lg:p-8">
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6 sm:mb-8">
-            <div className="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-slate-200">
-              <div className="flex items-center justify-between mb-4">
-                <div>
-                  <p className="text-sm text-slate-500 font-medium">Total Users</p>
-                  <p className="text-2xl sm:text-3xl font-bold text-slate-900">{users.length}</p>
-                </div>
-                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-slate-100 rounded-lg flex items-center justify-center">
-                  <i className="ri-team-fill text-lg sm:text-xl text-slate-600"></i>
-                </div>
-              </div>
-              <div className="flex items-center text-sm">
-                <span className="text-emerald-600 font-medium bg-emerald-50 px-2 py-1 rounded">+12</span>
-                <span className="text-slate-500 ml-2">this month</span>
-              </div>
-            </div>
-
-            <div className="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-slate-200">
-              <div className="flex items-center justify-between mb-4">
-                <div>
-                  <p className="text-sm text-slate-500 font-medium">Active Practitioners</p>
-                  <p className="text-2xl sm:text-3xl font-bold text-blue-600">
-                    {users.filter(u => u.type === 'Practitioner' && u.status === 'Active').length}
-                  </p>
-                </div>
-                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                  <i className="ri-user-heart-fill text-lg sm:text-xl text-blue-600"></i>
-                </div>
-              </div>
-              <div className="flex items-center text-sm">
-                <span className="text-blue-600 font-medium bg-blue-50 px-2 py-1 rounded">Verified</span>
-                <span className="text-slate-500 ml-2">and active</span>
-              </div>
-            </div>
-
-            <div className="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-slate-200">
-              <div className="flex items-center justify-between mb-4">
-                <div>
-                  <p className="text-sm text-slate-500 font-medium">Registered Patients</p>
-                  <p className="text-2xl sm:text-3xl font-bold text-purple-600">
-                    {users.filter(u => u.type === 'Patient').length}
-                  </p>
-                </div>
-                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-purple-100 rounded-lg flex items-center justify-center">
-                  <i className="ri-user-fill text-lg sm:text-xl text-purple-600"></i>
-                </div>
-              </div>
-              <div className="flex items-center text-sm">
-                <span className="text-purple-600 font-medium bg-purple-50 px-2 py-1 rounded">+8</span>
-                <span className="text-slate-500 ml-2">new this week</span>
-              </div>
-            </div>
-
-            <div className="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-slate-200">
-              <div className="flex items-center justify-between mb-4">
-                <div>
-                  <p className="text-sm text-slate-500 font-medium">Pending Approvals</p>
-                  <p className="text-2xl sm:text-3xl font-bold text-yellow-600">
-                    {users.filter(u => u.status === 'Pending').length}
-                  </p>
-                </div>
-                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-yellow-100 rounded-lg flex items-center justify-center">
-                  <i className="ri-time-fill text-lg sm:text-xl text-yellow-600"></i>
-                </div>
-              </div>
-              <div className="flex items-center text-sm">
-                <span className="text-yellow-600 font-medium bg-yellow-50 px-2 py-1 rounded">Review</span>
-                <span className="text-slate-500 ml-2">required</span>
-              </div>
-            </div>
-          </div>
-
+          <UserManagementCards />
 
           <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-4 sm:p-6 mb-6 sm:mb-8">
             <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
@@ -394,368 +331,124 @@ export default function UserManagement() {
 
           <div className="bg-white rounded-xl shadow-sm border border-slate-200 mb-6 sm:mb-8">
             <div className="border-b border-slate-200">
-              <nav className="flex overflow-x-auto px-4 sm:px-6 hide-scrollbar">
-                <button
-                  onClick={() => setActiveTab('Practitioners')}
-                  className={`py-4 px-2 sm:px-4 border-b-2 font-medium text-sm cursor-pointer whitespace-nowrap ${activeTab === 'Practitioners'
-                    ? 'border-blue-500 text-blue-600'
-                    : 'border-transparent text-slate-500 hover:text-slate-700'
-                    }`}
-                >
-                  <i className="ri-dashboard-line mr-2"></i>
-                  Practitioners
-                </button>
-              </nav>
+              <button
+                className={`py-4 px-2 sm:px-4 border-b-2 font-medium text-sm cursor-pointer whitespace-nowrap ${activeTab === 'Practitioners'
+                  ? 'border-blue-500 text-blue-600'
+                  : 'border-transparent text-slate-500 hover:text-slate-700'
+                  }`}
+              >
+                <i className="ri-dashboard-line mr-2"></i>
+                Practitioners
+              </button>
+
             </div>
 
             <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-                  <div className="overflow-x-auto">
-                    <table className="w-full">
-                      <thead className="bg-slate-50 border-b border-slate-200">
-                        <tr>
-                          <th className="px-4 py-3 sm:px-6 sm:py-4 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">User</th>
-                          <th className="px-4 py-3 sm:px-6 sm:py-4 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Type</th>
-                          <th className="px-4 py-3 sm:px-6 sm:py-4 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Status</th>
-                          <th className="px-4 py-3 sm:px-6 sm:py-4 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Certificates</th>
-                          <th className="px-4 py-3 sm:px-6 sm:py-4 text-left text-xs font-medium text-slate-500 uppercase tracking-wider hidden sm:table-cell">Last Login</th>
-                          <th className="px-4 py-3 sm:px-6 sm:py-4 text-left text-xs font-medium text-slate-500 uppercase tracking-wider hidden md:table-cell">Join Date</th>
-                          <th className="px-4 py-3 sm:px-6 sm:py-4 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Actions</th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-slate-200">
-                        {filteredUsers
-                          .filter((user) => user.type === "Practitioner") // 👈 yaha filter lagaya
-                          .map((user) => (
-                            <tr key={user.id} className="hover:bg-slate-50">
-                              <td className="px-4 py-3 sm:px-6 sm:py-4">
-                                <div className="flex items-center">
-                                  <div className="w-8 h-8 sm:w-10 sm:h-10 bg-slate-100 rounded-lg flex items-center justify-center mr-3">
-                                    <i className={`ri-${user.type === 'Practitioner' ? 'user-heart' : 'user'}-line text-slate-600`}></i>
-                                  </div>
-                                  <div>
-                                    <div className="text-sm font-medium text-slate-900 flex items-center">
-                                      {user.name}
-                                      {user.verified && (
-                                        <i className="ri-verified-badge-fill text-blue-500 ml-2" title="Verified"></i>
-                                      )}
-                                    </div>
-                                    <div className="text-sm text-slate-500">{user.email}</div>
-                                    <div className="text-xs text-slate-400">{user.id}</div>
-                                    {user.ahpra && (
-                                      <div className="text-xs text-blue-600 font-mono">AHPRA: {user.ahpra}</div>
-                                    )}
-                                  </div>
-                                </div>
-                              </td>
-                              <td className="px-4 py-3 sm:px-6 sm:py-4">
-                                <div>
-                                  <span className={`inline-flex px-2 py-1 text-xs font-medium rounded ${getTypeColor(user.type)}`}>
-                                    {user.type}
-                                  </span>
-                                  {user.role !== user.type && (
-                                    <div className="text-xs text-slate-500 mt-1">{user.role}</div>
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead className="bg-slate-50 border-b border-slate-200">
+                    <tr>
+                      <th className="px-4 py-3 sm:px-6 sm:py-4 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">User</th>
+                      <th className="px-4 py-3 sm:px-6 sm:py-4 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Type</th>
+                      <th className="px-4 py-3 sm:px-6 sm:py-4 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Status</th>
+                      <th className="px-4 py-3 sm:px-6 sm:py-4 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Certificates</th>
+                      <th className="px-4 py-3 sm:px-6 sm:py-4 text-left text-xs font-medium text-slate-500 uppercase tracking-wider hidden sm:table-cell">Last Login</th>
+                      <th className="px-4 py-3 sm:px-6 sm:py-4 text-left text-xs font-medium text-slate-500 uppercase tracking-wider hidden md:table-cell">Join Date</th>
+                      <th className="px-4 py-3 sm:px-6 sm:py-4 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-200">
+                    {filteredUsers
+                      .filter((user) => user.type === "Practitioner") // 👈 yaha filter lagaya
+                      .map((user) => (
+                        <tr key={user.id} className="hover:bg-slate-50">
+                          <td className="px-4 py-3 sm:px-6 sm:py-4">
+                            <div className="flex items-center">
+                              <div className="w-8 h-8 sm:w-10 sm:h-10 bg-slate-100 rounded-lg flex items-center justify-center mr-3">
+                                <i className={`ri-${user.type === 'Practitioner' ? 'user-heart' : 'user'}-line text-slate-600`}></i>
+                              </div>
+                              <div>
+                                <div className="text-sm font-medium text-slate-900 flex items-center">
+                                  {user.name}
+                                  {user.verified && (
+                                    <i className="ri-verified-badge-fill text-blue-500 ml-2" title="Verified"></i>
                                   )}
                                 </div>
-                              </td>
-                              <td className="px-4 py-3 sm:px-6 sm:py-4">
-                                <span className={`inline-flex px-2 py-1 text-xs font-medium rounded ${getStatusColor(user.status)}`}>
-                                  {user.status}
-                                </span>
-                              </td>
-                              <td className="px-4 py-3 sm:px-6 sm:py-4 text-sm text-slate-900">{user.certificates}</td>
-                              <td className="px-4 py-3 sm:px-6 sm:py-4 text-sm text-slate-900 hidden sm:table-cell">{user.lastLogin}</td>
-                              <td className="px-4 py-3 sm:px-6 sm:py-4 text-sm text-slate-900 hidden md:table-cell">{user.joinDate}</td>
-                              <td className="px-4 py-3 sm:px-6 sm:py-4">
-                                <div className="flex space-x-2">
-                                  <button onClick={() => handleView(user)} className="text-blue-600 hover:text-blue-700 cursor-pointer" title="View Profile">
-                                    <i className="ri-eye-line"></i>
-                                  </button>
-                                  <button onClick={() => handleEdit(user)} className="text-emerald-600 hover:text-emerald-700 cursor-pointer" title="Edit User">
-                                    <i className="ri-edit-line"></i>
-                                  </button>
-                                  <button className="text-red-600 hover:text-red-700 cursor-pointer" title="Delete">
-                                    <i className="ri-delete-bin-line"></i>
-                                  </button>
-                                </div>
-                              </td>
-                            </tr>
-                          ))}
-                      </tbody>
-                    </table>
+                                <div className="text-sm text-slate-500">{user.email}</div>
+                                <div className="text-xs text-slate-400">{user.id}</div>
+                                {user.ahpra && (
+                                  <div className="text-xs text-blue-600 font-mono">AHPRA: {user.ahpra}</div>
+                                )}
+                              </div>
+                            </div>
+                          </td>
+                          <td className="px-4 py-3 sm:px-6 sm:py-4">
+                            <div>
+                              <span className={`inline-flex px-2 py-1 text-xs font-medium rounded ${getTypeColor(user.type)}`}>
+                                {user.type}
+                              </span>
+                              {user.role !== user.type && (
+                                <div className="text-xs text-slate-500 mt-1">{user.role}</div>
+                              )}
+                            </div>
+                          </td>
+                          <td className="px-4 py-3 sm:px-6 sm:py-4">
+                            <span className={`inline-flex px-2 py-1 text-xs font-medium rounded ${getStatusColor(user.status)}`}>
+                              {user.status}
+                            </span>
+                          </td>
+                          <td className="px-4 py-3 sm:px-6 sm:py-4 text-sm text-slate-900">{user.certificates}</td>
+                          <td className="px-4 py-3 sm:px-6 sm:py-4 text-sm text-slate-900 hidden sm:table-cell">{user.lastLogin}</td>
+                          <td className="px-4 py-3 sm:px-6 sm:py-4 text-sm text-slate-900 hidden md:table-cell">{user.joinDate}</td>
+                          <td className="px-4 py-3 sm:px-6 sm:py-4">
+                            <div className="flex space-x-2">
+                              <button onClick={() => handleView(user)} className="text-blue-600 hover:text-blue-700 cursor-pointer" title="View Profile">
+                                <i className="ri-eye-line"></i>
+                              </button>
+                              <button onClick={() => handleEdit(user)} className="text-emerald-600 hover:text-emerald-700 cursor-pointer" title="Edit User">
+                                <i className="ri-edit-line"></i>
+                              </button>
+                              <button className="text-red-600 hover:text-red-700 cursor-pointer" title="Delete">
+                                <i className="ri-delete-bin-line"></i>
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                  </tbody>
+                </table>
+              </div>
+
+
+              <div className="bg-slate-50 px-4 py-3 sm:px-6 sm:py-4 border-t border-slate-200">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                  <div className="text-sm text-slate-700">
+                    Showing {filteredUsers.length} of {users.length} users
                   </div>
-
-
-                  <div className="bg-slate-50 px-4 py-3 sm:px-6 sm:py-4 border-t border-slate-200">
-                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-                      <div className="text-sm text-slate-700">
-                        Showing {filteredUsers.length} of {users.length} users
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <button className="px-3 py-2 border border-slate-300 rounded-lg text-sm hover:bg-slate-50 cursor-pointer">
-                          Previous
-                        </button>
-                        <button className="px-3 py-2 bg-slate-700 text-white rounded-lg text-sm cursor-pointer">1</button>
-                        <button className="px-3 py-2 border border-slate-300 rounded-lg text-sm hover:bg-slate-50 cursor-pointer">2</button>
-                        <button className="px-3 py-2 border border-slate-300 rounded-lg text-sm hover:bg-slate-50 cursor-pointer">
-                          Next
-                        </button>
-                      </div>
-                    </div>
+                  <div className="flex items-center space-x-2">
+                    <button className="px-3 py-2 border border-slate-300 rounded-lg text-sm hover:bg-slate-50 cursor-pointer">
+                      Previous
+                    </button>
+                    <button className="px-3 py-2 bg-slate-700 text-white rounded-lg text-sm cursor-pointer">1</button>
+                    <button className="px-3 py-2 border border-slate-300 rounded-lg text-sm hover:bg-slate-50 cursor-pointer">2</button>
+                    <button className="px-3 py-2 border border-slate-300 rounded-lg text-sm hover:bg-slate-50 cursor-pointer">
+                      Next
+                    </button>
                   </div>
                 </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
       {/* Add User Modal */}
-      {showAddUser && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto">
-            <div className="p-4 sm:p-6 border-b border-slate-200">
-              <div className="flex items-center justify-between">
-                <h2 className="text-xl sm:text-2xl font-bold text-slate-900">
-                  {showTwoFactorVerification ? "Verify User Creation" : "Add New User"}
-                </h2>
-                <button
-                  onClick={() => {
-                    setShowAddUser(false);
-                    setShowTwoFactorVerification(false);
-                    setTwoFactorCode("");
-                  }}
-                  className="w-8 h-8 sm:w-10 sm:h-10 bg-slate-100 hover:bg-slate-200 rounded-lg flex items-center justify-center cursor-pointer transition-colors"
-                >
-                  <i className="ri-close-line text-slate-600 text-lg sm:text-xl"></i>
-                </button>
-              </div>
-            </div>
-
-            <div className="p-4 sm:p-6 space-y-4 sm:space-y-6">
-                  {/* Basic Information */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium text-slate-700 mb-2">First Name *</label>
-                      <input
-                        type="text"
-                        required
-                        value={newUserForm.firstName}
-                        onChange={(e) => setNewUserForm(prev => ({ ...prev, firstName: e.target.value }))}
-                        className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                        placeholder="Enter first name"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-slate-700 mb-2">Last Name *</label>
-                      <input
-                        type="text"
-                        required
-                        value={newUserForm.lastName}
-                        onChange={(e) => setNewUserForm(prev => ({ ...prev, lastName: e.target.value }))}
-                        className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                        placeholder="Enter last name"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium text-slate-700 mb-2">Email Address *</label>
-                      <input
-                        type="email"
-                        required
-                        value={newUserForm.email}
-                        onChange={(e) => setNewUserForm(prev => ({ ...prev, email: e.target.value }))}
-                        className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                        placeholder="user@example.com"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-slate-700 mb-2">Phone Number *</label>
-                      <input
-                        type="tel"
-                        required
-                        value={newUserForm.phone}
-                        onChange={(e) => setNewUserForm(prev => ({ ...prev, phone: e.target.value }))}
-                        className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                        placeholder="+61 400 000 000"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium text-slate-700 mb-2">AHPRA Registration Number *</label>
-                      <input
-                        type="text"
-                        required
-                        value={newUserForm.ahpraNumber}
-                        onChange={(e) => setNewUserForm(prev => ({ ...prev, ahpraNumber: e.target.value }))}
-                        className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                        placeholder="MED0001234567"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-slate-700 mb-2">Specialization *</label>
-                      <select
-                        required
-                        value={newUserForm.specialization}
-                        onChange={(e) => setNewUserForm(prev => ({ ...prev, specialization: e.target.value }))}
-                        className="w-full px-3 py-2 pr-8 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                      >
-                        <option value="">Select specialization</option>
-                        <option value="General Practitioner">General Practitioner</option>
-                        <option value="Pharmacist">Pharmacist</option>
-                        <option value="Nurse Practitioner">Nurse Practitioner</option>
-                        <option value="Specialist Doctor">Specialist Doctor</option>
-                        <option value="Physiotherapist">Physiotherapist</option>
-                        <option value="Psychologist">Psychologist</option>
-                        <option value="Dentist">Dentist</option>
-                      </select>
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-2">Qualification</label>
-                    <input
-                      type="text"
-                      value={newUserForm.qualification}
-                      onChange={(e) => setNewUserForm(prev => ({ ...prev, qualification: e.target.value }))}
-                      className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                      placeholder="MBBS, FRACGP, BPharm, etc."
-                    />
-                  </div>
-                  {/* Password Section */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium text-slate-700 mb-2">Password *</label>
-                      <div className="relative">
-                        <input
-                          type="password"
-                          required
-                          value={newUserForm.password}
-                          onChange={(e) => setNewUserForm(prev => ({ ...prev, password: e.target.value }))}
-                          className="w-full px-3 py-2 pr-10 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                          placeholder="Enter password"
-                        />
-                        <button
-                          type="button"
-                          onClick={generatePassword}
-                          className="absolute right-2 top-2 text-slate-400 hover:text-slate-600 cursor-pointer"
-                          title="Generate Password"
-                        >
-                          <i className="ri-refresh-line text-lg"></i>
-                        </button>
-                      </div>
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-slate-700 mb-2">Confirm Password *</label>
-                      <input
-                        type="password"
-                        required
-                        value={newUserForm.confirmPassword}
-                        onChange={(e) => setNewUserForm(prev => ({ ...prev, confirmPassword: e.target.value }))}
-                        className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                        placeholder="Confirm password"
-                      />
-                    </div>
-                  </div>
-
-                  {/* Options */}
-                  <div className="space-y-4">
-                    <div className="flex items-center">
-                      <input
-                        type="checkbox"
-                        id="sendWelcomeEmail"
-                        checked={newUserForm.sendWelcomeEmail}
-                        onChange={(e) => setNewUserForm(prev => ({ ...prev, sendWelcomeEmail: e.target.checked }))}
-                        className="w-4 h-4 text-blue-600"
-                      />
-                      <label htmlFor="sendWelcomeEmail" className="ml-3 text-sm text-slate-700 cursor-pointer">
-                        Send welcome email with login credentials
-                      </label>
-                    </div>
-
-                    {newUserForm.userType === 'practitioner' && (
-                      <div className="flex items-center">
-                        <input
-                          type="checkbox"
-                          id="requireVerification"
-                          checked={newUserForm.requireVerification}
-                          onChange={(e) => setNewUserForm(prev => ({ ...prev, requireVerification: e.target.checked }))}
-                          className="w-4 h-4 text-blue-600"
-                        />
-                        <label htmlFor="requireVerification" className="ml-3 text-sm text-slate-700 cursor-pointer">
-                          Require AHPRA verification before activation
-                        </label>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Info Box */}
-                  <div className={`border rounded-lg p-4 ${newUserForm.userType === 'practitioner' ? 'bg-blue-50 border-blue-200' : 'bg-purple-50 border-purple-200'}`}>
-                    <div className="flex">
-                      <div className="w-6 h-6 flex items-center justify-center">
-                        <i className={`ri-information-line ${newUserForm.userType === 'practitioner' ? 'text-blue-600' : 'text-purple-600'}`}></i>
-                      </div>
-                      <div className="ml-3">
-                        <h4 className={`text-sm font-medium ${newUserForm.userType === 'practitioner' ? 'text-blue-800' : 'text-purple-800'}`}>
-                          {newUserForm.userType === 'practitioner' ? 'Practitioner Account Setup' : 'Patient Account Setup'}
-                        </h4>
-                        <p className={`text-sm mt-1 ${newUserForm.userType === 'practitioner' ? 'text-blue-700' : 'text-purple-700'}`}>
-                          {newUserForm.userType === 'practitioner'
-                            ? 'AHPRA registration will be automatically verified. User will receive login credentials and setup instructions via email.'
-                            : 'User will receive login credentials via email and can immediately start requesting medical certificates.'
-                          }
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-
-            </div>
-
-            <div className="p-4 sm:p-6 border-t border-slate-200 flex flex-col sm:flex-row sm:space-x-4 space-y-3 sm:space-y-0">
-              {showTwoFactorVerification ? (
-                <>
-                  <button
-                    onClick={() => setShowTwoFactorVerification(false)}
-                    className="flex-1 px-4 py-2 border border-slate-300 text-slate-700 rounded-lg hover:bg-slate-50 transition-colors cursor-pointer whitespace-nowrap"
-                  >
-                    <i className="ri-arrow-left-line mr-2"></i>
-                    Back
-                  </button>
-                  <button
-                    onClick={handleVerifyAndCreateUser}
-                    disabled={twoFactorCode.length !== 6}
-                    className={`flex-1 px-4 py-2 text-white rounded-lg transition-colors cursor-pointer whitespace-nowrap ${twoFactorCode.length !== 6 ? 'bg-blue-400' : 'bg-blue-600 hover:bg-blue-700'}`}
-                  >
-                    <i className="ri-shield-check-line mr-2"></i>
-                    Verify & Create User
-                  </button>
-                </>
-              ) : (
-                <>
-                  <button
-                    onClick={() => setShowAddUser(false)}
-                    className="flex-1 px-4 py-2 border border-slate-300 text-slate-700 rounded-lg hover:bg-slate-50 transition-colors cursor-pointer whitespace-nowrap"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    onClick={handleProceedTo2FA}
-                    className={`flex-1 px-4 py-2 text-white rounded-lg transition-colors cursor-pointer whitespace-nowrap ${newUserForm.userType === 'practitioner' ? 'bg-blue-600 hover:bg-blue-700' : 'bg-purple-600 hover:bg-purple-700'}`}
-                  >
-                    <i className="ri-user-add-line mr-2"></i>
-                    Continue to Verification
-                  </button>
-                </>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
+      <AddUserModal
+        isOpen={addModalOpen}
+        onClose={() => setAddModalOpen(false)}
+        user={selectedUser}
+        onSave={handleSave}
+      />
       {/* Modals */}
       <ViewUserModal
         isOpen={viewModalOpen}
