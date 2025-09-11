@@ -8,7 +8,7 @@ const adminMenu = [
   { to: "/admin/usermanagement", icon: "ri-team-line", label: "Users" },
   { to: "/admin/certificateaudittrail", icon: "ri-shield-check-line", label: "Certificates" },
   { to: "/admin/paymentmanagement", icon: "ri-wallet-3-line", label: "Payments" },
-  // { to: "/admin/discountmanagement", icon: "ri-coupon-3-line", label: "Discounts" },
+  { to: "/admin/daycertificates", icon: "ri-coupon-3-line", label: "Day Certificates" },
   { to: "/admin/analyticsreports", icon: "ri-line-chart-line", label: "Analytics" },
   { to: "/admin/systemsettings", icon: "ri-settings-4-line", label: "Settings" },
 ];

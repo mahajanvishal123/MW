@@ -216,12 +216,7 @@ export default function Patientstable() {
                       >
                         <i className="ri-eye-line"></i>
                       </button>
-                      <button
-                        onClick={() => handleEdit(user)}
-                        className="text-emerald-600 hover:text-emerald-700"
-                      >
-                        <i className="ri-edit-line"></i>
-                      </button>
+
                       <button
                         onClick={() => handleDelete(user)}
                         className="text-red-600 hover:text-red-700"
@@ -235,11 +230,10 @@ export default function Patientstable() {
           </tbody>
         </table>
       </div>
-
       {/* View Modal */}
       {viewModalOpen && selectedUser && (
-        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-md animate-fadeIn">
             <h3 className="text-lg font-semibold mb-4">View Patient</h3>
             <div className="space-y-2 text-sm">
               <p><b>ID:</b> {selectedUser.id}</p>
@@ -254,7 +248,7 @@ export default function Patientstable() {
             <div className="flex justify-end mt-4">
               <button
                 onClick={() => setViewModalOpen(false)}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg"
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
               >
                 Close
               </button>
@@ -263,72 +257,10 @@ export default function Patientstable() {
         </div>
       )}
 
-      {/* Edit Modal */}
-      {editModalOpen && selectedUser && (
-        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
-            <h3 className="text-lg font-semibold mb-4">Edit Patient</h3>
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                handleSave(selectedUser);
-              }}
-              className="space-y-3"
-            >
-              <input
-                type="text"
-                value={selectedUser.name}
-                onChange={(e) =>
-                  setSelectedUser({ ...selectedUser, name: e.target.value })
-                }
-                className="w-full p-2 border rounded"
-                placeholder="Name"
-              />
-              <input
-                type="email"
-                value={selectedUser.email}
-                onChange={(e) =>
-                  setSelectedUser({ ...selectedUser, email: e.target.value })
-                }
-                className="w-full p-2 border rounded"
-                placeholder="Email"
-              />
-              <select
-                value={selectedUser.status}
-                onChange={(e) =>
-                  setSelectedUser({ ...selectedUser, status: e.target.value })
-                }
-                className="w-full p-2 border rounded"
-              >
-                <option>Active</option>
-                <option>Pending</option>
-                <option>Suspended</option>
-                <option>Inactive</option>
-              </select>
-              <div className="flex justify-end space-x-2 mt-4">
-                <button
-                  type="button"
-                  onClick={() => setEditModalOpen(false)}
-                  className="px-4 py-2 bg-gray-300 rounded-lg"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-4 py-2 bg-emerald-600 text-white rounded-lg"
-                >
-                  Save
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
       {/* Delete Modal */}
       {deleteModalOpen && selectedUser && (
-        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-sm text-center">
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-sm text-center animate-fadeIn">
             <h3 className="text-lg font-semibold mb-4 text-red-600">
               Confirm Delete
             </h3>
@@ -339,13 +271,13 @@ export default function Patientstable() {
             <div className="flex justify-center space-x-2">
               <button
                 onClick={() => setDeleteModalOpen(false)}
-                className="px-4 py-2 bg-gray-300 rounded-lg"
+                className="px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400 transition"
               >
                 Cancel
               </button>
               <button
                 onClick={confirmDelete}
-                className="px-4 py-2 bg-red-600 text-white rounded-lg"
+                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition"
               >
                 Delete
               </button>
