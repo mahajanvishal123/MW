@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import ViewCertificateModal from "./ViewCertificateModal";
+import AssignCertificate from './AssignCertificate';
 
 export default function CertificateAuditTrail() {
-  const [activeTab, setActiveTab] = useState('auditTrail');
+  const [activeTab, setActiveTab] = useState('assignRequests');
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [dateFilter, setDateFilter] = useState('all');
@@ -299,19 +300,20 @@ export default function CertificateAuditTrail() {
         {/* Tabs */}
         <div className="px-4 sm:px-6 pt-4">
           <div className="flex border-b border-slate-200">
-            <button
-              className={`px-4 py-2 font-medium text-sm ${activeTab === 'auditTrail' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-slate-500 hover:text-slate-700'}`}
-              onClick={() => setActiveTab('auditTrail')}
-            >
-              <i className="ri-file-list-line mr-2"></i>
-              Certificate Audit Trail
-            </button>
+
             <button
               className={`px-4 py-2 font-medium text-sm ${activeTab === 'assignRequests' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-slate-500 hover:text-slate-700'}`}
               onClick={() => setActiveTab('assignRequests')}
             >
               <i className="ri-user-add-line mr-2"></i>
               Assign Requests to Practitioners
+            </button>
+            <button
+              className={`px-4 py-2 font-medium text-sm ${activeTab === 'auditTrail' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-slate-500 hover:text-slate-700'}`}
+              onClick={() => setActiveTab('auditTrail')}
+            >
+              <i className="ri-file-list-line mr-2"></i>
+              Certificate Audit Trail
             </button>
           </div>
         </div>
@@ -529,146 +531,8 @@ export default function CertificateAuditTrail() {
             <>
               {/* Assignment Section */}
               <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-4 sm:p-6 mb-6 sm:mb-8">
-                <h2 className="text-lg sm:text-xl font-bold text-slate-900 mb-4">
-                  Assign Certificates to Practitioners
-                </h2>
-
-                <div className="overflow-x-auto">
-                  <table className="w-full border border-slate-200 rounded-lg overflow-hidden">
-                    <thead className="bg-slate-50 border-b border-slate-200">
-                      <tr>
-                        {[
-                          "Certificate ID",
-                          "Patient",
-                          "Created",
-                          "Duration",
-                          "Amount",
-                          "Purpose",
-                          "Organization",
-                          "Reason",
-                          "Practitioner",
-                          "Action",
-                        ].map((header) => (
-                          <th
-                            key={header}
-                            className="px-5 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider"
-                          >
-                            {header}
-                          </th>
-                        ))}
-                      </tr>
-                    </thead>
-
-                    <tbody className="divide-y divide-slate-200">
-                      {unassignedCertificates.map((cert) => (
-                        <tr key={cert.id} className="hover:bg-slate-50 transition">
-                          <td className="px-5 py-3 text-sm font-medium text-slate-900 text-nowrap">
-                            {cert.id}
-                          </td>
-                          <td className="px-5 py-3 text-sm text-slate-700 text-nowrap">{cert.patient}</td>
-                          <td className="px-5 py-3 text-sm text-slate-700 text-nowrap">{cert.created}</td>
-                          <td className="px-5 py-3 text-sm text-slate-700">{cert.duration}</td>
-                          <td className="px-5 py-3 text-sm text-slate-700">{cert.amount}</td>
-                          <td className="px-5 py-3 text-sm text-slate-700">{cert.purpose}</td>
-                          <td className="px-5 py-3 text-sm text-slate-700">
-                            {cert.certificateDetails.organizationName}
-                          </td>
-                          <td className="px-5 py-3 text-sm text-slate-700">
-                            {cert.certificateDetails.reasonForLeave}
-                          </td>
-
-                          {/* Practitioner Dropdown */}
-                          <td className="px-5 py-3 text-sm">
-                            <select
-                              onChange={(e) => handleSelectChange(cert.id, e.target.value)}
-                              className=" px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                            >
-                              <option value="">Select Practitioner</option>
-                              <optgroup label="Doctors">
-                                {practitioners
-                                  .filter((p) => p.type === "Doctor")
-                                  .map((p) => (
-                                    <option key={p.id} value={p.id}>
-                                      {p.name}
-                                    </option>
-                                  ))}
-                              </optgroup>
-                              <optgroup label="Pharmacists">
-                                {practitioners
-                                  .filter((p) => p.type === "Pharmacist")
-                                  .map((p) => (
-                                    <option key={p.id} value={p.id}>
-                                      {p.name}
-                                    </option>
-                                  ))}
-                              </optgroup>
-                            </select>
-                          </td>
-
-                          {/* Action Button */}
-                          <td className="px-5 py-3 text-sm">
-                            <button
-                              className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition disabled:bg-slate-400 disabled:cursor-not-allowed"
-                            >
-                              Assign
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
+                <AssignCertificate />
               </div>
-
-
-              {/* Assignment History */}
-              {/* <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-                <div className="p-4 sm:p-6 border-b border-slate-200">
-                  <h2 className="text-lg sm:text-xl font-bold text-slate-900">Assignment History</h2>
-                  <p className="text-sm text-slate-600 mt-1">Recent certificate assignments to practitioners</p>
-                </div>
-
-                {assignments.length > 0 ? (
-                  <div className="overflow-x-auto">
-                    <table className="w-full">
-                      <thead className="bg-slate-50 border-b border-slate-200">
-                        <tr>
-                          <th className="px-4 py-3 sm:px-6 sm:py-4 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Certificate ID</th>
-                          <th className="px-4 py-3 sm:px-6 sm:py-4 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Patient</th>
-                          <th className="px-4 py-3 sm:px-6 sm:py-4 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Certificate Type</th>
-                          <th className="px-4 py-3 sm:px-6 sm:py-4 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Practitioner</th>
-                          <th className="px-4 py-3 sm:px-6 sm:py-4 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Assigned At</th>
-                          <th className="px-4 py-3 sm:px-6 sm:py-4 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Status</th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-slate-200">
-                        {assignments.map((assignment, index) => (
-                          <tr key={index} className="hover:bg-slate-50">
-                            <td className="px-4 py-3 sm:px-6 sm:py-4 text-sm font-medium text-slate-900">{assignment.certificateId}</td>
-                            <td className="px-4 py-3 sm:px-6 sm:py-4 text-sm text-slate-900">{assignment.patientName}</td>
-                            <td className="px-4 py-3 sm:px-6 sm:py-4 text-sm text-slate-900">{assignment.certificateType}</td>
-                            <td className="px-4 py-3 sm:px-6 sm:py-4 text-sm text-slate-900">{assignment.practitionerName}</td>
-                            <td className="px-4 py-3 sm:px-6 sm:py-4 text-sm text-slate-900">{assignment.assignedAt}</td>
-                            <td className="px-4 py-3 sm:px-6 sm:py-4">
-                              <span className="inline-flex px-2 py-1 text-xs font-medium rounded bg-blue-100 text-blue-800">
-                                {assignment.status}
-                              </span>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                ) : (
-                  <div className="p-8 text-center">
-                    <div className="mx-auto w-16 h-16 flex items-center justify-center bg-slate-100 rounded-full mb-4">
-                      <i className="ri-inbox-line text-2xl text-slate-400"></i>
-                    </div>
-                    <h3 className="text-lg font-medium text-slate-900 mb-1">No assignments yet</h3>
-                    <p className="text-sm text-slate-500">Assign certificates to practitioners to see the history here.</p>
-                  </div>
-                )}
-              </div> */}
             </>
           )}
         </div>

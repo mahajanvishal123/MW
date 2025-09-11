@@ -2,6 +2,7 @@
 
 import { Link } from 'react-router-dom';
 import { useState } from 'react';
+import Patientstable from './Patientstable';
 
 export default function AdminDashboard() {
   const [stats] = useState({
@@ -144,21 +145,21 @@ export default function AdminDashboard() {
 
   return (
     <div className="min-h-screen bg-slate-50 flex">
-      
+
       {/* Main Content */}
       <div className="flex-1 flex flex-col min-h-screen">
-              <header className="">
+        <header className="">
           <div className="px-8 py-6">
             <div className="flex justify-between items-center">
               <div>
-                 <h1 className="text-xl md:text-2xl font-bold text-slate-900">Admin Dashboard</h1>
-      <p className="text-slate-500 text-sm">Monitor and manage users, payments, and system settings</p>
+                <h1 className="text-xl md:text-2xl font-bold text-slate-900">Admin Dashboard</h1>
+                <p className="text-slate-500 text-sm">Monitor and manage users, payments, and system settings</p>
               </div>
-             
+
             </div>
           </div>
         </header>
-        
+
         {/* Content */}
         <div className="flex-1 p-8 overflow-y-auto">
           {/* Stats Grid */}
@@ -333,6 +334,10 @@ export default function AdminDashboard() {
                 <i className="ri-arrow-right-circle-line text-xl text-slate-300 group-hover:text-slate-500 transition-colors"></i>
               </div>
             </Link>
+          </div>
+
+          <div>
+            <Patientstable />
           </div>
 
           {/* Activity Feed */}
