@@ -260,7 +260,6 @@ export default function CertificateAuditTrail() {
       alert('Please select both a certificate and a practitioner');
       return;
     }
-
     const practitioner = practitioners.find(p => p.id === selectedPractitioner);
     const cert = unassignedCertificates.find(c => c.id === selectedCertificate);
 
@@ -530,143 +529,100 @@ export default function CertificateAuditTrail() {
             <>
               {/* Assignment Section */}
               <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-4 sm:p-6 mb-6 sm:mb-8">
-                <h2 className="text-lg sm:text-xl font-bold text-slate-900 mb-4">Assign Certificates to Practitioners</h2>
+                <h2 className="text-lg sm:text-xl font-bold text-slate-900 mb-4">
+                  Assign Certificates to Practitioners
+                </h2>
 
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
-                  <div className="lg:col-span-2">
-                    <h3 className="text-md font-medium text-slate-700 mb-3">Select Certificate</h3>
-                    <div className="space-y-3">
-                      {unassignedCertificates.map(cert => (
-                        <div
-                          key={cert.id}
-                          className={`p-4 border rounded-lg cursor-pointer transition-colors ${selectedCertificate === cert.id
-                              ? 'border-blue-500 bg-blue-50'
-                              : 'border-slate-200 hover:border-slate-300'
-                            }`}
-                          onClick={() => setSelectedCertificate(cert.id)}
-                        >
-                          <div className="flex justify-between items-start mb-3">
-                            <div>
-                              <p className="font-medium text-slate-900">{cert.id}</p>
-                              <p className="text-sm text-slate-600">{cert.patient}</p>
-                            </div>
-                            <span className={`inline-flex px-2 py-1 text-xs font-medium rounded ${cert.type.includes('Doctor') ? 'bg-blue-100 text-blue-800' : 'bg-emerald-100 text-emerald-800'
-                              }`}>
-                              {cert.type}
-                            </span>
-                          </div>
+                <div className="overflow-x-auto">
+                  <table className="w-full border border-slate-200 rounded-lg overflow-hidden">
+                    <thead className="bg-slate-50 border-b border-slate-200">
+                      <tr>
+                        {[
+                          "Certificate ID",
+                          "Patient",
+                          "Created",
+                          "Duration",
+                          "Amount",
+                          "Purpose",
+                          "Organization",
+                          "Reason",
+                          "Practitioner",
+                          "Action",
+                        ].map((header) => (
+                          <th
+                            key={header}
+                            className="px-5 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider"
+                          >
+                            {header}
+                          </th>
+                        ))}
+                      </tr>
+                    </thead>
 
-                          <div className="grid grid-cols-2 gap-3 text-xs text-slate-600 mb-3">
-                            <div>
-                              <span className="font-medium">Created:</span> {cert.created}
-                            </div>
-                            <div>
-                              <span className="font-medium">Amount:</span> {cert.amount}
-                            </div>
-                            <div>
-                              <span className="font-medium">Duration:</span> {cert.duration}
-                            </div>
-                            <div>
-                              <span className="font-medium">Purpose:</span> {cert.purpose}
-                            </div>
-                          </div>
+                    <tbody className="divide-y divide-slate-200">
+                      {unassignedCertificates.map((cert) => (
+                        <tr key={cert.id} className="hover:bg-slate-50 transition">
+                          <td className="px-5 py-3 text-sm font-medium text-slate-900 text-nowrap">
+                            {cert.id}
+                          </td>
+                          <td className="px-5 py-3 text-sm text-slate-700 text-nowrap">{cert.patient}</td>
+                          <td className="px-5 py-3 text-sm text-slate-700 text-nowrap">{cert.created}</td>
+                          <td className="px-5 py-3 text-sm text-slate-700">{cert.duration}</td>
+                          <td className="px-5 py-3 text-sm text-slate-700">{cert.amount}</td>
+                          <td className="px-5 py-3 text-sm text-slate-700">{cert.purpose}</td>
+                          <td className="px-5 py-3 text-sm text-slate-700">
+                            {cert.certificateDetails.organizationName}
+                          </td>
+                          <td className="px-5 py-3 text-sm text-slate-700">
+                            {cert.certificateDetails.reasonForLeave}
+                          </td>
 
-                          {/* Personal Information Preview */}
-                          <div className="mb-3">
-                            <p className="text-xs font-medium text-slate-700 mb-1">Personal Info:</p>
-                            <p className="text-xs text-slate-600 truncate">{cert.personalInfo.fullName}, {cert.personalInfo.city}, {cert.personalInfo.state}</p>
-                          </div>
+                          {/* Practitioner Dropdown */}
+                          <td className="px-5 py-3 text-sm">
+                            <select
+                              onChange={(e) => handleSelectChange(cert.id, e.target.value)}
+                              className=" px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                            >
+                              <option value="">Select Practitioner</option>
+                              <optgroup label="Doctors">
+                                {practitioners
+                                  .filter((p) => p.type === "Doctor")
+                                  .map((p) => (
+                                    <option key={p.id} value={p.id}>
+                                      {p.name}
+                                    </option>
+                                  ))}
+                              </optgroup>
+                              <optgroup label="Pharmacists">
+                                {practitioners
+                                  .filter((p) => p.type === "Pharmacist")
+                                  .map((p) => (
+                                    <option key={p.id} value={p.id}>
+                                      {p.name}
+                                    </option>
+                                  ))}
+                              </optgroup>
+                            </select>
+                          </td>
 
-                          {/* Certificate Details Preview */}
-                          <div>
-                            <p className="text-xs font-medium text-slate-700 mb-1">Certificate Details:</p>
-                            <p className="text-xs text-slate-600 truncate">{cert.certificateDetails.organizationName}, {cert.certificateDetails.reasonForLeave}</p>
-                          </div>
-                        </div>
+                          {/* Action Button */}
+                          <td className="px-5 py-3 text-sm">
+                            <button
+                              className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition disabled:bg-slate-400 disabled:cursor-not-allowed"
+                            >
+                              Assign
+                            </button>
+                          </td>
+                        </tr>
                       ))}
-                    </div>
-                  </div>
-
-                  <div>
-                    <h3 className="text-md font-medium text-slate-700 mb-3">Select Practitioner</h3>
-                    <div className="mb-4">
-                      <select
-                        value={selectedPractitioner}
-                        onChange={(e) => setSelectedPractitioner(e.target.value)}
-                        className="w-full px-3 py-2 pr-8 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
-                      >
-                        <option value="">Select a practitioner</option>
-                        <optgroup label="Doctors">
-                          {practitioners.filter(p => p.type === 'Doctor').map(p => (
-                            <option key={p.id} value={p.id}>{p.name}</option>
-                          ))}
-                        </optgroup>
-                        <optgroup label="Pharmacists">
-                          {practitioners.filter(p => p.type === 'Pharmacist').map(p => (
-                            <option key={p.id} value={p.id}>{p.name}</option>
-                          ))}
-                        </optgroup>
-                      </select>
-                    </div>
-
-                    {selectedCertificate && (
-                      <div className="bg-slate-50 p-4 rounded-lg border border-slate-200 mb-4">
-                        <h4 className="font-medium text-slate-900 mb-2">Selected Certificate Details</h4>
-                        {unassignedCertificates.filter(c => c.id === selectedCertificate).map(cert => (
-                          <div key={cert.id} className="text-sm">
-                            <p className="font-medium text-slate-900">{cert.id} - {cert.certificateType}</p>
-                            <p className="text-slate-600 mb-2">{cert.patient}</p>
-
-                            <div className="grid grid-cols-2 gap-2 mb-2">
-                              <div>
-                                <span className="font-medium">Duration:</span> {cert.duration}
-                              </div>
-                              <div>
-                                <span className="font-medium">Amount:</span> {cert.amount}
-                              </div>
-                            </div>
-
-                            <div className="mb-2">
-                              <span className="font-medium">Organization:</span> {cert.certificateDetails.organizationName}
-                            </div>
-
-                            <div>
-                              <span className="font-medium">Reason:</span> {cert.certificateDetails.reasonForLeave}
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-
-                    {selectedPractitioner && (
-                      <div className="bg-slate-50 p-4 rounded-lg border border-slate-200">
-                        <h4 className="font-medium text-slate-900 mb-2">Practitioner Information</h4>
-                        {practitioners.filter(p => p.id === selectedPractitioner).map(p => (
-                          <div key={p.id} className="text-sm">
-                            <p className="text-slate-900 font-medium">{p.name}</p>
-                            <p className="text-slate-600">{p.type}</p>
-                            <p className="text-slate-600 mt-2">
-                              This practitioner will receive the selected certificate for review and processing.
-                            </p>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-
-                    <button
-                      onClick={handleAssignCertificate}
-                      disabled={!selectedCertificate || !selectedPractitioner}
-                      className="w-full mt-4 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors cursor-pointer disabled:bg-slate-400 disabled:cursor-not-allowed"
-                    >
-                      <i className="ri-user-add-line mr-2"></i>
-                      Assign Certificate
-                    </button>
-                  </div>
+                    </tbody>
+                  </table>
                 </div>
               </div>
 
+
               {/* Assignment History */}
-              <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+              {/* <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
                 <div className="p-4 sm:p-6 border-b border-slate-200">
                   <h2 className="text-lg sm:text-xl font-bold text-slate-900">Assignment History</h2>
                   <p className="text-sm text-slate-600 mt-1">Recent certificate assignments to practitioners</p>
@@ -712,7 +668,7 @@ export default function CertificateAuditTrail() {
                     <p className="text-sm text-slate-500">Assign certificates to practitioners to see the history here.</p>
                   </div>
                 )}
-              </div>
+              </div> */}
             </>
           )}
         </div>
