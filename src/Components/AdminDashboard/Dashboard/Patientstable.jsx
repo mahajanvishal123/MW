@@ -5,6 +5,7 @@ export default function Patientstable() {
   const [userFilter, setUserFilter] = useState("all");
   const [viewModalOpen, setViewModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
 
   // Dummy Users
@@ -104,138 +105,254 @@ export default function Patientstable() {
     setEditModalOpen(true);
   };
 
+  const handleDelete = (user) => {
+    setSelectedUser(user);
+    setDeleteModalOpen(true);
+  };
+
   const handleSave = (updatedUser) => {
     console.log("Updated User:", updatedUser);
-    // TODO: Update logic (API call / state update)
+    setEditModalOpen(false);
+  };
+
+  const confirmDelete = () => {
+    console.log("Deleted User:", selectedUser);
+    setDeleteModalOpen(false);
   };
 
   return (
     <div className="bg-white rounded-xl shadow-sm border border-slate-200 mb-5">
-     <h2 className="text-xl font-semibold text-slate-900 p-4">Patients</h2>
-     <div className="overflow-x-auto">
-      <table className="w-full">
-        <thead className="bg-slate-50 border-b border-slate-200">
-          <tr>
-            <th className="px-4 py-3 sm:px-6 sm:py-4 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
-              User
-            </th>
-            <th className="px-4 py-3 sm:px-6 sm:py-4 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
-              Type
-            </th>
-            <th className="px-4 py-3 sm:px-6 sm:py-4 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
-              Status
-            </th>
-            <th className="px-4 py-3 sm:px-6 sm:py-4 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
-              Certificates
-            </th>
-            <th className="px-4 py-3 sm:px-6 sm:py-4 text-left text-xs font-medium text-slate-500 uppercase tracking-wider hidden sm:table-cell">
-              Last Login
-            </th>
-            <th className="px-4 py-3 sm:px-6 sm:py-4 text-left text-xs font-medium text-slate-500 uppercase tracking-wider hidden md:table-cell">
-              Join Date
-            </th>
-            <th className="px-4 py-3 sm:px-6 sm:py-4 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
-              Actions
-            </th>
-          </tr>
-        </thead>
-        <tbody className="divide-y divide-slate-200">
-          {filteredUsers
-            .filter((user) => user.type === "Patient")
-            .map((user) => (
-              <tr key={user.id} className="hover:bg-slate-50">
-                {/* User details */}
-                <td className="px-4 py-3 sm:px-6 sm:py-4">
-                  <div className="flex items-center">
-                    <div className="w-8 h-8 sm:w-10 sm:h-10 bg-slate-100 rounded-lg flex items-center justify-center mr-3">
-                      <i className="ri-user-line text-slate-600"></i>
-                    </div>
-                    <div>
-                      <div className="text-sm font-medium text-slate-900">
-                        {user.name}
+      <h2 className="text-xl font-semibold text-slate-900 p-4">Patients</h2>
+      <div className="overflow-x-auto">
+        <table className="w-full">
+          <thead className="bg-slate-50 border-b border-slate-200">
+            <tr>
+              <th className="px-4 py-3 sm:px-6 sm:py-4 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                User
+              </th>
+              <th className="px-4 py-3 sm:px-6 sm:py-4 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                Type
+              </th>
+              <th className="px-4 py-3 sm:px-6 sm:py-4 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                Status
+              </th>
+              <th className="px-4 py-3 sm:px-6 sm:py-4 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                Certificates
+              </th>
+              <th className="px-4 py-3 sm:px-6 sm:py-4 text-left text-xs font-medium text-slate-500 uppercase tracking-wider hidden sm:table-cell">
+                Last Login
+              </th>
+              <th className="px-4 py-3 sm:px-6 sm:py-4 text-left text-xs font-medium text-slate-500 uppercase tracking-wider hidden md:table-cell">
+                Join Date
+              </th>
+              <th className="px-4 py-3 sm:px-6 sm:py-4 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                Actions
+              </th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-slate-200">
+            {filteredUsers
+              .filter((user) => user.type === "Patient")
+              .map((user) => (
+                <tr key={user.id} className="hover:bg-slate-50">
+                  {/* User details */}
+                  <td className="px-4 py-3 sm:px-6 sm:py-4">
+                    <div className="flex items-center">
+                      <div className="w-8 h-8 sm:w-10 sm:h-10 bg-slate-100 rounded-lg flex items-center justify-center mr-3">
+                        <i className="ri-user-line text-slate-600"></i>
                       </div>
-                      <div className="text-sm text-slate-500">{user.email}</div>
+                      <div>
+                        <div className="text-sm font-medium text-slate-900">
+                          {user.name}
+                        </div>
+                        <div className="text-sm text-slate-500">{user.email}</div>
+                      </div>
                     </div>
-                  </div>
-                </td>
+                  </td>
 
-                {/* Type */}
-                <td className="px-4 py-3 sm:px-6 sm:py-4">
-                  <span
-                    className={`inline-flex px-2 py-1 text-xs font-medium rounded ${getTypeColor(
-                      user.type
-                    )}`}
-                  >
-                    {user.type}
-                  </span>
-                </td>
-
-                {/* Status */}
-                <td className="px-4 py-3 sm:px-6 sm:py-4">
-                  <span
-                    className={`inline-flex px-2 py-1 text-xs font-medium rounded ${getStatusColor(
-                      user.status
-                    )}`}
-                  >
-                    {user.status}
-                  </span>
-                </td>
-
-                {/* Certificates */}
-                <td className="px-4 py-3 sm:px-6 sm:py-4 text-sm">
-                  {user.certificates}
-                </td>
-
-                {/* Last Login */}
-                <td className="px-4 py-3 sm:px-6 sm:py-4 text-sm hidden sm:table-cell">
-                  {user.lastLogin}
-                </td>
-
-                {/* Join Date */}
-                <td className="px-4 py-3 sm:px-6 sm:py-4 text-sm hidden md:table-cell">
-                  {user.joinDate}
-                </td>
-
-                {/* Actions */}
-                <td className="px-4 py-3 sm:px-6 sm:py-4">
-                  <div className="flex space-x-2">
-                    <button
-                      onClick={() => handleView(user)}
-                      className="text-blue-600 hover:text-blue-700"
+                  {/* Type */}
+                  <td className="px-4 py-3 sm:px-6 sm:py-4">
+                    <span
+                      className={`inline-flex px-2 py-1 text-xs font-medium rounded ${getTypeColor(
+                        user.type
+                      )}`}
                     >
-                      <i className="ri-eye-line"></i>
-                    </button>
-                    <button
-                      onClick={() => handleEdit(user)}
-                      className="text-emerald-600 hover:text-emerald-700"
-                    >
-                      <i className="ri-edit-line"></i>
-                    </button>
-                    <button className="text-red-600 hover:text-red-700">
-                      <i className="ri-delete-bin-line"></i>
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-        </tbody>
-      </table>
+                      {user.type}
+                    </span>
+                  </td>
 
-      {/* Modals */}
-      {viewModalOpen && (
-        <ViewUserModal
-          user={selectedUser}
-          onClose={() => setViewModalOpen(false)}
-        />
+                  {/* Status */}
+                  <td className="px-4 py-3 sm:px-6 sm:py-4">
+                    <span
+                      className={`inline-flex px-2 py-1 text-xs font-medium rounded ${getStatusColor(
+                        user.status
+                      )}`}
+                    >
+                      {user.status}
+                    </span>
+                  </td>
+
+                  {/* Certificates */}
+                  <td className="px-4 py-3 sm:px-6 sm:py-4 text-sm">
+                    {user.certificates}
+                  </td>
+
+                  {/* Last Login */}
+                  <td className="px-4 py-3 sm:px-6 sm:py-4 text-sm hidden sm:table-cell">
+                    {user.lastLogin}
+                  </td>
+
+                  {/* Join Date */}
+                  <td className="px-4 py-3 sm:px-6 sm:py-4 text-sm hidden md:table-cell">
+                    {user.joinDate}
+                  </td>
+
+                  {/* Actions */}
+                  <td className="px-4 py-3 sm:px-6 sm:py-4">
+                    <div className="flex space-x-2">
+                      <button
+                        onClick={() => handleView(user)}
+                        className="text-blue-600 hover:text-blue-700"
+                      >
+                        <i className="ri-eye-line"></i>
+                      </button>
+                      <button
+                        onClick={() => handleEdit(user)}
+                        className="text-emerald-600 hover:text-emerald-700"
+                      >
+                        <i className="ri-edit-line"></i>
+                      </button>
+                      <button
+                        onClick={() => handleDelete(user)}
+                        className="text-red-600 hover:text-red-700"
+                      >
+                        <i className="ri-delete-bin-line"></i>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+          </tbody>
+        </table>
+      </div>
+
+      {/* View Modal */}
+      {viewModalOpen && selectedUser && (
+        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
+            <h3 className="text-lg font-semibold mb-4">View Patient</h3>
+            <div className="space-y-2 text-sm">
+              <p><b>ID:</b> {selectedUser.id}</p>
+              <p><b>Name:</b> {selectedUser.name}</p>
+              <p><b>Email:</b> {selectedUser.email}</p>
+              <p><b>Type:</b> {selectedUser.type}</p>
+              <p><b>Status:</b> {selectedUser.status}</p>
+              <p><b>Certificates:</b> {selectedUser.certificates}</p>
+              <p><b>Last Login:</b> {selectedUser.lastLogin}</p>
+              <p><b>Join Date:</b> {selectedUser.joinDate}</p>
+            </div>
+            <div className="flex justify-end mt-4">
+              <button
+                onClick={() => setViewModalOpen(false)}
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
       )}
-      {editModalOpen && (
-        <EditUserModal
-          user={selectedUser}
-          onSave={handleSave}
-          onClose={() => setEditModalOpen(false)}
-        />
+
+      {/* Edit Modal */}
+      {editModalOpen && selectedUser && (
+        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
+            <h3 className="text-lg font-semibold mb-4">Edit Patient</h3>
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                handleSave(selectedUser);
+              }}
+              className="space-y-3"
+            >
+              <input
+                type="text"
+                value={selectedUser.name}
+                onChange={(e) =>
+                  setSelectedUser({ ...selectedUser, name: e.target.value })
+                }
+                className="w-full p-2 border rounded"
+                placeholder="Name"
+              />
+              <input
+                type="email"
+                value={selectedUser.email}
+                onChange={(e) =>
+                  setSelectedUser({ ...selectedUser, email: e.target.value })
+                }
+                className="w-full p-2 border rounded"
+                placeholder="Email"
+              />
+              <select
+                value={selectedUser.status}
+                onChange={(e) =>
+                  setSelectedUser({ ...selectedUser, status: e.target.value })
+                }
+                className="w-full p-2 border rounded"
+              >
+                <option>Active</option>
+                <option>Pending</option>
+                <option>Suspended</option>
+                <option>Inactive</option>
+              </select>
+              <div className="flex justify-end space-x-2 mt-4">
+                <button
+                  type="button"
+                  onClick={() => setEditModalOpen(false)}
+                  className="px-4 py-2 bg-gray-300 rounded-lg"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 bg-emerald-600 text-white rounded-lg"
+                >
+                  Save
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Modal */}
+      {deleteModalOpen && selectedUser && (
+        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-sm text-center">
+            <h3 className="text-lg font-semibold mb-4 text-red-600">
+              Confirm Delete
+            </h3>
+            <p className="mb-4">
+              Are you sure you want to delete{" "}
+              <b>{selectedUser.name}</b>?
+            </p>
+            <div className="flex justify-center space-x-2">
+              <button
+                onClick={() => setDeleteModalOpen(false)}
+                className="px-4 py-2 bg-gray-300 rounded-lg"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmDelete}
+                className="px-4 py-2 bg-red-600 text-white rounded-lg"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
-   </div>
   );
 }
