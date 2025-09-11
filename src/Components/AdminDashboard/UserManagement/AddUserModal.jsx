@@ -16,10 +16,6 @@ const AddUserModal = ({ isOpen, onClose, user, onSave }) => {
         requireVerification: true
     });
 
-    const [showTwoFactorVerification, setShowTwoFactorVerification] = useState(false);
-    const [twoFactorCode, setTwoFactorCode] = useState("");
-    const [twoFactorError, setTwoFactorError] = useState("");
-
     // Reset form when modal opens/closes
     useEffect(() => {
         if (isOpen) {
@@ -37,9 +33,6 @@ const AddUserModal = ({ isOpen, onClose, user, onSave }) => {
                 sendWelcomeEmail: true,
                 requireVerification: true
             });
-            setShowTwoFactorVerification(false);
-            setTwoFactorCode("");
-            setTwoFactorError("");
         }
     }, [isOpen]);
 
@@ -52,40 +45,6 @@ const AddUserModal = ({ isOpen, onClose, user, onSave }) => {
         setNewUserForm(prev => ({ ...prev, password: password, confirmPassword: password }));
     };
 
-    const handleProceedTo2FA = (e) => {
-        e.preventDefault();
-
-        // Validate form
-        if (!newUserForm.firstName || !newUserForm.lastName || !newUserForm.email || !newUserForm.phone || !newUserForm.password || !newUserForm.confirmPassword) {
-            setTwoFactorError("Please fill in all required fields");
-            return;
-        }
-
-        if (newUserForm.password !== newUserForm.confirmPassword) {
-            setTwoFactorError("Passwords do not match");
-            return;
-        }
-
-        if (newUserForm.userType === 'practitioner' && (!newUserForm.ahpraNumber || !newUserForm.specialization)) {
-            setTwoFactorError("Please fill in all practitioner fields");
-            return;
-        }
-
-        // Clear any previous errors and show 2FA verification
-        setTwoFactorError("");
-        setShowTwoFactorVerification(true);
-    };
-
-    const handleVerifyAndCreateUser = () => {
-        // Verify 2FA code
-        if (twoFactorCode !== "123456") {
-            setTwoFactorError("Invalid 2FA code. Please try again.");
-            return;
-        }
-
-        // If 2FA is valid, proceed with creating the user
-        handleAddUser();
-    };
 
     const handleAddUser = () => {
         console.log('Adding new user:', newUserForm);
@@ -110,7 +69,7 @@ const AddUserModal = ({ isOpen, onClose, user, onSave }) => {
                 <div className="p-4 sm:p-6 border-b border-slate-200">
                     <div className="flex items-center justify-between">
                         <h2 className="text-xl sm:text-2xl font-bold text-slate-900">
-                            {showTwoFactorVerification ? "Verify User Creation" : "Add New User"}
+                           Add New User
                         </h2>
                         <button
                             onClick={onClose}
@@ -262,7 +221,6 @@ const AddUserModal = ({ isOpen, onClose, user, onSave }) => {
                         Cancel
                     </button>
                     <button
-                        onClick={handleProceedTo2FA}
                         className={`flex-1 px-4 py-2 text-white rounded-lg transition-colors cursor-pointer whitespace-nowrap ${newUserForm.userType === 'practitioner' ? 'bg-blue-600 hover:bg-blue-700' : 'bg-purple-600 hover:bg-purple-700'}`}
                     >
                         <i className="ri-user-add-line mr-2"></i>
