@@ -106,8 +106,6 @@ function AppContent() {
           <Route path="/CarersLeave" element={<CarersLeavePage />} />
           <Route path="/WhatsAppLogin" element={<WhatsAppLogin/>} />
           <Route path="/MedicalCertificates" element={<WhatsAppLogin/>} />     
-
-
           <Route path="/ContactSupport" element={<ContactSupportPage />} />
         </Routes>
       )}
