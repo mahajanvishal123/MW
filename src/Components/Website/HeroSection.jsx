@@ -4,13 +4,28 @@ import heroA from "../../assets/WebsiteImage/heroA.jpg";
 import { Modal, Button, Nav } from "react-bootstrap";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
+import axios from "axios";
+import BaseUrl from "../../Utilities/BaseUrl";
 
 export default function HeroSection() {
   // Modal state
   const [showModal, setShowModal] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
+ const [certificates, setCertificates] = useState([]);
 
+  useEffect(() => {
+    const fetchCertificates = async () => {
+      try {
+        const res = await axios.get(`${BaseUrl}/certificateprice`);
+        setCertificates(res.data);
+      } catch (err) {
+        console.error("Failed to fetch certificates", err);
+      }
+    };
+
+    fetchCertificates();
+  }, []);
   useEffect(() => {
     const slideInterval = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % totalSlides);
@@ -64,7 +79,7 @@ export default function HeroSection() {
             <div className="flex flex-col sm:flex-row gap-3 mb-8">
               <Link to="/MedicalCertificates">
                 <button
-                  // onClick={() => setShowModal(true)}
+                
                   className="bg-indigo-600 text-white px-6 py-3 rounded-xl text-base font-semibold hover:bg-indigo-700 transition-all duration-300 cursor-pointer whitespace-nowrap shadow-lg hover:shadow-xl"
                 >
                   <i className="ri-file-add-line mr-2"></i>
@@ -72,7 +87,7 @@ export default function HeroSection() {
                 </button>
               </Link>
               <button
-                to="/verify"
+               
                 className="bg-white text-indigo-600 border-2 border-indigo-600 px-6 py-3 rounded-xl text-base font-semibold hover:bg-indigo-50 transition-all duration-300 cursor-pointer whitespace-nowrap text-center"
               >
                 <i className="ri-qr-scan-line mr-2"></i>
@@ -81,52 +96,34 @@ export default function HeroSection() {
             </div>
 
             {/* Pricing Highlight */}
-            <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-2xl">
-
-              {/* Single-Day Certificate */}
-              <div className="bg-white/80 backdrop-blur-sm border border-gray-200 rounded-xl p-10 shadow-lg hover:shadow-xl transition-all duration-300">
-                <div className="text-center">
-                  <div className="text-2xl sm:text-3xl font-bold text-gray-900 mb-1">$11.99</div>
-                  <div className="text-emerald-600 font-semibold mb-1 text-sm">
-                    Single-Day Certificate
-                  </div>
-                  <div className="text-xs font-bold text-gray-700 mb-4">
-                    AHPRA Registered Practitioners
-                  </div>
-                  {/* <Link to="/MedicalCertificates">
-                    <button className="bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-bold px-6 py-2 rounded-full shadow-md transition-all">
-                      Get Certificate
-                    </button>
-                  </Link> */}
-                  <a href="#pricingSection">
-                    <button className="bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-bold px-6 py-2 rounded-full shadow-md transition-all">
-                      Get Certificate
-                    </button>
-                  </a>
-
-                </div>
-              </div>
-
-              {/* Multi-Day Certificate */}
-              <div className="bg-white/80 backdrop-blur-sm rounded-xl p-10 shadow-lg hover:shadow-xl transition-all duration-300 relative">
-                <div className="text-center">
-                  <div className="text-2xl sm:text-3xl font-bold mb-1">$16.99</div>
-                  <div className="text-indigo-700 font-semibold mb-1 text-sm">
-                    Multi-Day (2-Day)
-                  </div>
-                  <div className="text-xs font-bold mb-4">
-                    AHPRA Registered Practitioners
-                  </div>
-                  <a href="#pricingSection">
-                    <button className="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold px-6 py-2 rounded-full shadow-md transition-all">
-                      Get Certificate
-                    </button>
-                  </a>
-
-                </div>
-              </div>
+           <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-2xl">
+      {certificates?.map((cert) => (
+        <div
+          key={cert.id}
+          className="bg-white/80 backdrop-blur-sm border border-gray-200 rounded-xl p-10 shadow-lg hover:shadow-xl transition-all duration-300"
+        >
+          <div className="text-center">
+            <div className="text-2xl sm:text-3xl font-bold text-gray-900 mb-1">
+              ${cert.price}
             </div>
-
+            <div className="text-emerald-600 font-semibold mb-1 text-sm">
+              {cert.certificate_name}
+            </div>
+            <div className="text-xs font-bold text-gray-700 mb-4">
+              {cert.description}
+            </div>
+            <Link to="/MedicalCertificates">
+          <button
+            onClick={() => localStorage.setItem("certificateId", cert.id)}
+            className="bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-bold px-6 py-2 rounded-full shadow-md transition-all"
+          >
+            Get Certificate
+          </button>
+        </Link>
+          </div>
+        </div>
+      ))}
+    </div>
             {/* Delivery Promise */}
             <div className="mt-8 bg-amber-50/90 backdrop-blur-sm border border-amber-200 rounded-xl p-6 max-w-2xl shadow-lg">
               <div className="flex items-center">

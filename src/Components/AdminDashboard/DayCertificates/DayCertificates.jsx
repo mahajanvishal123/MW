@@ -112,7 +112,7 @@ const DayCertificates = () => {
       </div>
 
       {/* Table */}
-      <div className="bg-white rounded-xl shadow-sm border overflow-x-auto">
+      <div className="bg-white rounded-xl shadow-sm py-5 overflow-x-auto">
         <table className="w-full border border-slate-200 rounded-lg">
           <thead className="bg-slate-50 border-b border-slate-200">
             <tr>

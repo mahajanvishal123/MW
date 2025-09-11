@@ -1,20 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
 import Navbar from './Navbar';
 
-const PersonalDetailsForm = ({ onContinue, onBack, selectedCertificate, certificates }) => {
+const PersonalDetailsForm = ({ onContinue, onBack, selectedCertificate, certificates, formData, setFormData }) => {
   // Find the selected certificate object
   const certificate = certificates.find(cert => cert.id === selectedCertificate);
-
-  const [formData, setFormData] = useState({
-    fullName: '',
-    email: '',
-    guardianName: '',
-    address: '',
-    city: '',
-    state: '',
-    pincode: '',
-  });
-
+  
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -46,14 +36,12 @@ const PersonalDetailsForm = ({ onContinue, onBack, selectedCertificate, certific
             </div>
           </div>
         )}
-
         {/* Personal Information Section */}
         <div className="bg-white p-5 rounded-lg shadow-sm border">
           <h3 className="text-lg font-semibold text-gray-800 mb-2">Personal Information</h3>
           <p className="text-sm text-gray-600 mb-4">
             Please provide your personal details as per official documents
           </p>
-
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             {/* Full Name */}
             <div>
@@ -86,7 +74,6 @@ const PersonalDetailsForm = ({ onContinue, onBack, selectedCertificate, certific
                 />
               </div>
             </div>
-
             {/* Email Address */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -115,7 +102,6 @@ const PersonalDetailsForm = ({ onContinue, onBack, selectedCertificate, certific
                 />
               </div>
             </div>
-
             {/* Birth Date */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -146,7 +132,6 @@ const PersonalDetailsForm = ({ onContinue, onBack, selectedCertificate, certific
                 />
               </div>
             </div>
-
             {/* Guardian's Name */}
             <div className="md:col-span-2">
               <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -181,12 +166,10 @@ const PersonalDetailsForm = ({ onContinue, onBack, selectedCertificate, certific
           </div>
         </div>
 
-
         {/* Address Information Section */}
         <div className="bg-white p-5 rounded-lg shadow-sm border">
           <h3 className="text-lg font-semibold text-gray-800 mb-2">Address Information</h3>
           <p className="text-sm text-gray-600 mb-4">Please provide your address as per official documents</p>
-
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Address (as per Govt ID proof) <span className="text-red-500">*</span>
@@ -208,7 +191,6 @@ const PersonalDetailsForm = ({ onContinue, onBack, selectedCertificate, certific
               />
             </div>
           </div>
-
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -231,25 +213,20 @@ const PersonalDetailsForm = ({ onContinue, onBack, selectedCertificate, certific
                 />
               </div>
             </div>
-
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 State <span className="text-red-500">*</span>
               </label>
-              <select
-                name="state"
-                value={formData.state}
-                onChange={handleInputChange}
-                required
-                className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              >
-                <option value="">Select state</option>
-                <option value="maharashtra">Maharashtra</option>
-                <option value="delhi">Delhi</option>
-                <option value="karnataka">Karnataka</option>
-              </select>
+             <input
+                  type="text"
+                  name="state"
+                  value={formData.state}
+                  onChange={handleInputChange}
+                  required
+                  className="w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="Enter your state "
+                />
             </div>
-
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Pincode <span className="text-red-500">*</span>
@@ -273,7 +250,6 @@ const PersonalDetailsForm = ({ onContinue, onBack, selectedCertificate, certific
             </div>
           </div>
         </div>
-
         {/* Privacy Notice */}
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
           <div className="flex items-start">
@@ -285,7 +261,6 @@ const PersonalDetailsForm = ({ onContinue, onBack, selectedCertificate, certific
             </p>
           </div>
         </div>
-
         {/* Navigation Buttons */}
         <div className="flex justify-between pt-4">
           <button
@@ -308,16 +283,7 @@ const PersonalDetailsForm = ({ onContinue, onBack, selectedCertificate, certific
 };
 
 // Certificate Details Form Component (Matches Screenshot)
-const CertificateDetailsForm = ({ onBack }) => {
-  const [formData, setFormData] = useState({
-    organizationName: '',
-    organizationLocation: 'inIndia',
-    height: '',
-    weight: '',
-    purpose: '',
-    medicalConditions: '',
-  });
-
+const CertificateDetailsForm = ({ onBack, formData, setFormData, handleSubmit, apiResponse, isSubmitting }) => {
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -327,10 +293,9 @@ const CertificateDetailsForm = ({ onBack }) => {
     setFormData((prev) => ({ ...prev, organizationLocation: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmitLocal = (e) => {
     e.preventDefault();
-    console.log('Certificate Details Submitted:', formData);
-    // Proceed to next step...
+    handleSubmit();
   };
 
   return (
@@ -342,8 +307,7 @@ const CertificateDetailsForm = ({ onBack }) => {
         </svg>
         <h2 className="font-semibold">Certificate Details</h2>
       </div>
-
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form onSubmit={handleSubmitLocal} className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -366,7 +330,6 @@ const CertificateDetailsForm = ({ onBack }) => {
               />
             </div>
           </div>
-
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Organization Location <span className="text-red-500">*</span>
@@ -397,7 +360,6 @@ const CertificateDetailsForm = ({ onBack }) => {
             </div>
           </div>
         </div>
-
         {/* Medical Fitness Details */}
         <div className="border-t pt-6">
           <div className="flex items-center mb-4">
@@ -415,7 +377,6 @@ const CertificateDetailsForm = ({ onBack }) => {
             </svg>
             <h3 className="font-semibold text-blue-800">Medical Fitness Details</h3>
           </div>
-
           {/* Dropdown for Reason */}
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -439,7 +400,6 @@ const CertificateDetailsForm = ({ onBack }) => {
               <option value="Other">Other (Please specify)</option>
             </select>
           </div>
-
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -468,7 +428,6 @@ const CertificateDetailsForm = ({ onBack }) => {
               />
             </div>
           </div>
-
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Any Medical Conditions to Note (Optional)
@@ -485,7 +444,6 @@ const CertificateDetailsForm = ({ onBack }) => {
               This information will be used by the doctor for assessment. Leave blank if none.
             </p>
           </div>
-
           <div className="bg-blue-50 border border-blue-200 rounded-md p-3 text-sm text-blue-800">
             <div className="flex items-start">
               <svg
@@ -506,7 +464,6 @@ const CertificateDetailsForm = ({ onBack }) => {
           </div>
         </div>
 
-
         {/* Navigation Buttons */}
         <div className="flex justify-between pt-4">
           <button
@@ -518,11 +475,35 @@ const CertificateDetailsForm = ({ onBack }) => {
           </button>
           <button
             type="submit"
-            className="px-6 py-2.5 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-lg hover:from-indigo-700 hover:to-purple-700 transition"
+            disabled={isSubmitting}
+            className="px-6 py-2.5 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-lg hover:from-indigo-700 hover:to-purple-700 transition disabled:opacity-70"
           >
-            Continue →
+            {isSubmitting ? 'Submitting...' : 'Submit Application'}
           </button>
         </div>
+        
+        {/* API Response Message */}
+        {apiResponse && (
+          <div className={`mt-4 p-4 rounded-lg ${apiResponse.error ? 'bg-red-50 border border-red-200' : 'bg-green-50 border border-green-200'}`}>
+            <div className="flex items-start">
+              <svg xmlns="http://www.w3.org/2000/svg" className={`h-5 w-5 mr-2 mt-0.5 ${apiResponse.error ? 'text-red-500' : 'text-green-500'}`} viewBox="0 0 20 20" fill="currentColor">
+                {apiResponse.error ? (
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                ) : (
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                )}
+              </svg>
+              <div>
+                <h3 className={`font-medium ${apiResponse.error ? 'text-red-800' : 'text-green-800'}`}>
+                  {apiResponse.error ? 'Error' : 'Success'}
+                </h3>
+                <p className={`text-sm ${apiResponse.error ? 'text-red-700' : 'text-green-700'}`}>
+                  {apiResponse.error || 'Your certificate has been submitted successfully!'}
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
       </form>
     </div>
   );
@@ -533,8 +514,31 @@ const SickLeavePage = () => {
   const [selectedCertificate, setSelectedCertificate] = useState(null);
   const [activeStep, setActiveStep] = useState('certificate'); // 'certificate', 'personal', 'details'
   const [sliderPosition, setSliderPosition] = useState(0);
-  const tabRefs = [useRef(null), useRef(null), useRef(null)];
+  const [apiResponse, setApiResponse] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  
+  // Combined form data state
+  const [formData, setFormData] = useState({
+    // Personal details
+    fullName: '',
+    email: '',
+    birthDate: '',
+    guardianName: '',
+    address: '',
+    city: '',
+    state: '',
+    pincode: '',
+    // Certificate details
+    organizationName: '',
+    organizationLocation: 'inIndia',
+    reason: '',
+    height: '',
+    weight: '',
+    medicalConditions: '',
+  });
 
+  const tabRefs = [useRef(null), useRef(null), useRef(null)];
+  
   const certificates = [
     {
       id: 1,
@@ -558,7 +562,8 @@ const SickLeavePage = () => {
 
   useEffect(() => {
     const updateSlider = () => {
-      const activeIndex = activeStep === 'certificate' ? 0 : activeStep === 'personal' ? 1 : 2;
+      const activeIndex = activeStep === 'certificate' ? 0 : 
+                         activeStep === 'personal' ? 1 : 2;
       if (tabRefs[activeIndex].current) {
         const { offsetLeft, offsetWidth } = tabRefs[activeIndex].current;
         setSliderPosition(offsetLeft);
@@ -587,6 +592,57 @@ const SickLeavePage = () => {
     setActiveStep(step);
   };
 
+  // Function to handle form submission
+  const handleSubmit = async () => {
+    setIsSubmitting(true);
+    setApiResponse(null); // Reset previous response
+    
+    try {
+      // Get additional data from localStorage
+      const certificate_day = localStorage.getItem('certificateId') || '1';
+      const mobile_No = localStorage.getItem('whatsappNumber') || '9876543210';
+      
+      // Find the selected certificate
+      const certificate = certificates.find(cert => cert.id === selectedCertificate);
+      
+      // Prepare the payload
+      const payload = {
+        certificate_type: certificate ? certificate.title : '',
+        full_name: formData.fullName,
+        email_address: formData.email,
+        birth_date: formData.birthDate,
+        guardian_name: formData.guardianName,
+        address: formData.address,
+        city: formData.city,
+        state: formData.state,
+        pincode: formData.pincode,
+        organization_name: formData.organizationName,
+        organization_location: formData.organizationLocation === 'inIndia' ? 'Mumbai Office' : 'Outside India',
+        reason_for_leave: formData.reason,
+        height: parseInt(formData.height) || 0,
+        weight: parseInt(formData.weight) || 0,
+        medical_conditions: formData.medicalConditions,
+        certificate_day: parseInt(certificate_day),
+        mobile_No: mobile_No
+      };
+
+      const response = await fetch('https://ssknf82q-4001.inc1.devtunnels.ms/api/patient', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
+
+      const result = await response.json();
+      setApiResponse(result);
+    } catch (error) {
+      setApiResponse({ error: error.message });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <>
       <Navbar />
@@ -602,7 +658,6 @@ const SickLeavePage = () => {
                 Complete the following steps to receive your medical certificate issued by registered Indian doctors
               </p>
             </div>
-
             {/* Progress Steps */}
             <div className="bg-gray-50 px-6 py-4 flex justify-between items-center">
               <div className="flex flex-col items-center w-1/3">
@@ -621,9 +676,7 @@ const SickLeavePage = () => {
                   Choose Certificate
                 </span>
               </div>
-
               <div className="flex-1 h-px bg-gray-300 mx-2"></div>
-
               <div className="flex flex-col items-center w-1/3">
                 <div
                   className={`w-8 h-8 rounded-full border-2 flex items-center justify-center font-medium ${activeStep === 'personal'
@@ -640,9 +693,7 @@ const SickLeavePage = () => {
                   Personal Details
                 </span>
               </div>
-
               <div className="flex-1 h-px bg-gray-300 mx-2"></div>
-
               <div className="flex flex-col items-center w-1/3">
                 <div
                   className={`w-8 h-8 rounded-full border-2 flex items-center justify-center font-medium ${activeStep === 'details'
@@ -660,7 +711,6 @@ const SickLeavePage = () => {
                 </span>
               </div>
             </div>
-
             {/* Tab Navigation with Slider */}
             <div className="px-6 py-3 flex border-b border-gray-200 relative">
               {/* Slider element */}
@@ -671,7 +721,6 @@ const SickLeavePage = () => {
                   width: 'var(--slider-width, 0px)'
                 }}
               ></div>
-
               <button
                 ref={tabRefs[0]}
                 className={`flex-1 flex items-center justify-center py-2 px-4 font-medium rounded-t-lg relative z-10 ${activeStep === 'certificate'
@@ -682,7 +731,6 @@ const SickLeavePage = () => {
               >
                 Choose Certificate
               </button>
-
               <button
                 ref={tabRefs[1]}
                 className={`flex-1 flex items-center justify-center py-2 px-4 font-medium rounded-t-lg relative z-10 ${activeStep === 'personal'
@@ -696,7 +744,6 @@ const SickLeavePage = () => {
               >
                 Personal Details
               </button>
-
               <button
                 ref={tabRefs[2]}
                 className={`flex-1 flex items-center justify-center py-2 px-4 font-medium rounded-t-lg relative z-10 ${activeStep === 'details'
@@ -711,7 +758,6 @@ const SickLeavePage = () => {
                 Certificate Details
               </button>
             </div>
-
             {/* Conditional Rendering */}
             {activeStep === 'certificate' ? (
               <div className="p-6 space-y-4">
@@ -719,7 +765,6 @@ const SickLeavePage = () => {
                   <h2 className="text-xl font-semibold text-blue-700">Select Your Medical Certificate</h2>
                   <p className="text-gray-600 mt-1">Choose the type of certificate you need from our verified medical professionals</p>
                 </div>
-
                 {certificates.map((cert) => (
                   <div
                     key={cert.id}
@@ -758,11 +803,8 @@ const SickLeavePage = () => {
                         </div>
                       </div>
                     </div>
-
-                    {/* Removed: Features list */}
                   </div>
                 ))}
-
                 {/* Important Information */}
                 <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
                   <div className="flex items-start">
@@ -777,7 +819,6 @@ const SickLeavePage = () => {
                     </div>
                   </div>
                 </div>
-
                 {/* Continue Button */}
                 <div className="flex justify-end pt-4">
                   <button
@@ -798,47 +839,20 @@ const SickLeavePage = () => {
                 onBack={() => handleTabChange('certificate')}
                 selectedCertificate={selectedCertificate}
                 certificates={certificates}
+                formData={formData}
+                setFormData={setFormData}
               />
             ) : (
-              <CertificateDetailsForm onBack={() => handleTabChange('personal')} />
+              <CertificateDetailsForm 
+                onBack={() => handleTabChange('personal')} 
+                formData={formData} 
+                setFormData={setFormData}
+                handleSubmit={handleSubmit}
+                apiResponse={apiResponse}
+                isSubmitting={isSubmitting}
+              />
             )}
           </div>
-        </div>
-
-        {/* Bottom Status Bar */}
-        <div className="flex justify-center items-center space-x-4 py-3 bg-white border-t">
-          <div className="flex items-center text-green-600 text-sm">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
-              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-            </svg>
-            Connected
-          </div>
-          <div className="flex items-center text-gray-600 text-sm">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
-              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-            </svg>
-            Registered Medical Professionals
-          </div>
-          <div className="flex items-center text-gray-600 text-sm">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
-              <path fillRule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clipRule="evenodd" />
-            </svg>
-            Fast Turnaround (30-60 mins)
-          </div>
-          <div className="flex items-center text-gray-600 text-sm">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
-              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-            </svg>
-            256-bit Secure Encryption
-          </div>
-        </div>
-
-        {/* Verified Customer Footer */}
-        <div className="text-center text-green-600 text-xs py-2 bg-gray-200">
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 inline mr-1" viewBox="0 0 20 20" fill="currentColor">
-            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-          </svg>
-          Verified Customer
         </div>
       </div>
     </>

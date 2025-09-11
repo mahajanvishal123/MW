@@ -1,18 +1,27 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Navbar from './Navbar';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+
 const WhatsAppLogin = () => {
+  const navigate = useNavigate();
+
   const [phoneNumber, setPhoneNumber] = useState('');
   const [countryCode, setCountryCode] = useState('+91');
   const [country, setCountry] = useState('IN');
   const [isChecked, setIsChecked] = useState(false);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Handle form submission here
-    console.log('Submitted:', countryCode, phoneNumber);
-    alert(`Verification code will be sent to ${countryCode}${phoneNumber}`);
-  };
+  // Prefill number if saved in localStorage
+  useEffect(() => {
+    const savedNumber = localStorage.getItem('whatsappNumber');
+    if (savedNumber) {
+      // Split country code and phone number
+      const match = savedNumber.match(/^(\+\d+)(\d+)$/);
+      if (match) {
+        setCountryCode(match[1]);
+        setPhoneNumber(match[2]);
+      }
+    }
+  }, []);
 
   const countryOptions = [
     { code: 'IN', name: 'India', dialCode: '+91' },
@@ -25,9 +34,20 @@ const WhatsAppLogin = () => {
     { code: 'BR', name: 'Brazil', dialCode: '+55' },
   ];
 
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!phoneNumber || phoneNumber.length < 10) return;
+
+    const fullNumber = `${countryCode}${phoneNumber}`;
+    localStorage.setItem('whatsappNumber', fullNumber);
+    console.log('Saved WhatsApp number:', fullNumber);
+
+    navigate('/SickLeave'); // navigate to next page
+  };
+
   return (
     <>
-    <Navbar />
+      <Navbar />
       <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-md">
           <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10" style={{ minHeight: '500px' }}>
@@ -39,52 +59,44 @@ const WhatsAppLogin = () => {
                 </svg>
               </div>
             </div>
-            
+
             {/* Heading */}
             <h1 className="text-center text-2xl font-bold text-gray-900 mb-2">
               Register / Sign In
             </h1>
-            
+
             <p className="text-center text-gray-600 text-sm mb-6">
               Enter your WhatsApp number to continue
             </p>
 
             <form className="space-y-6" onSubmit={handleSubmit}>
-              {/* Code and WhatsApp Number Labels */}
               <div className="flex justify-between mb-2">
                 <span className="text-sm font-medium text-gray-700">Country Code</span>
                 <span className="text-sm font-medium text-gray-700">WhatsApp Number</span>
               </div>
 
-              {/* Phone Input */}
               <div className="flex space-x-2">
                 <div className="w-2/5">
-                  <div className="relative rounded-md shadow-sm">
-                    <select
-                      value={`${country} ${countryCode}`}
-                      onChange={(e) => {
-                        const selectedOption = countryOptions.find(option => 
-                          `${option.code} ${option.dialCode}` === e.target.value
-                        );
-                        if (selectedOption) {
-                          setCountry(selectedOption.code);
-                          setCountryCode(selectedOption.dialCode);
-                        }
-                      }}
-                      className="block w-full px-3 py-2 border border-gray-300 rounded-md bg-white focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                    >
-                      {countryOptions.map((option) => (
-                        <option key={option.code} value={`${option.code} ${option.dialCode}`}>
-                          {option.code} {option.dialCode}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
+                  <select
+                    value={`${country} ${countryCode}`}
+                    onChange={(e) => {
+                      const selectedOption = countryOptions.find(option => `${option.code} ${option.dialCode}` === e.target.value);
+                      if (selectedOption) {
+                        setCountry(selectedOption.code);
+                        setCountryCode(selectedOption.dialCode);
+                      }
+                    }}
+                    className="block w-full px-3 py-2 border border-gray-300 rounded-md bg-white focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                  >
+                    {countryOptions.map((option) => (
+                      <option key={option.code} value={`${option.code} ${option.dialCode}`}>
+                        {option.code} {option.dialCode}
+                      </option>
+                    ))}
+                  </select>
                 </div>
                 <div className="w-3/5">
                   <input
-                    id="phoneNumber"
-                    name="phoneNumber"
                     type="tel"
                     placeholder="e.g., 9876543210"
                     value={phoneNumber}
@@ -97,21 +109,11 @@ const WhatsAppLogin = () => {
                 </div>
               </div>
 
-              {/* Helper text */}
               <p className="text-xs text-gray-500 mt-2">
                 You will receive a verification code via WhatsApp
               </p>
 
-              {/* Divider */}
-              <div className="relative my-6">
-                <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-gray-300"></div>
-                </div>
-              </div>
-
-              {/* Continue Button */}
               <div>
-                <Link to="/SickLeave">
                 <button
                   type="submit"
                   disabled={!phoneNumber || phoneNumber.length < 10}
@@ -119,19 +121,10 @@ const WhatsAppLogin = () => {
                 >
                   Continue
                 </button>
-                </Link>
               </div>
             </form>
 
-            {/* Footer Text */}
-            <div className="mt-6">
-              <p className="text-center text-xs text-gray-600">
-                By continuing, you agree to our <a href="#" className="text-green-600 hover:text-green-700">Terms of Service</a> and <a href="#" className="text-green-600 hover:text-green-700">Privacy Policy</a>
-              </p>
-            </div>
-
-            {/* Checkbox */}
-            <div className="mt-4 flex items-center">
+            <div className="mt-6 flex items-center">
               <input
                 id="secure"
                 name="secure"

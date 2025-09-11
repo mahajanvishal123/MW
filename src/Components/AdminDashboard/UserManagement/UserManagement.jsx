@@ -1,298 +1,134 @@
-import { Link } from 'react-router-dom';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import ViewUserModal from "./ViewUserModal";
-import EditUserModal from "./EditUserModal";
-import UserManagementCards from './UserManagementCards';
 import AddUserModal from './AddUserModal';
+import UserManagementCards from './UserManagementCards';
+import BaseUrl from '../../../Utilities/BaseUrl';
 
 export default function UserManagement() {
-  const [sidebarOpen, setSidebarOpen] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [userFilter, setUserFilter] = useState('all');
-  const [showAddUser, setShowAddUser] = useState(false);
-  const [showExportModal, setShowExportModal] = useState(false);
-  const [showTwoFactorVerification, setShowTwoFactorVerification] = useState(false);
-  const [twoFactorCode, setTwoFactorCode] = useState("");
-  const [twoFactorError, setTwoFactorError] = useState("");
-  const [activeTab, setActiveTab] = useState("Practitioners"); // 👈 Default Practitioners
-  const [newUserForm, setNewUserForm] = useState({
-    userType: 'patient',
-    firstName: '',
-    lastName: '',
-    email: '',
-    phone: '',
-    ahpraNumber: '',
-    specialization: '',
-    qualification: '',
-    password: '',
-    confirmPassword: '',
-    sendWelcomeEmail: true,
-    requireVerification: true
-  });
-  const [exportForm, setExportForm] = useState({
-    exportType: 'all',
-    format: 'csv',
-    includeDetails: true,
-    dateRange: 'all'
-  });
-
-  const users = [
-    {
-      id: 'U-2024-001',
-      name: 'Dr. Sarah Johnson',
-      email: 'sarah.johnson@medicert.com.au',
-      type: 'Practitioner',
-      role: 'Doctor',
-      status: 'Active',
-      verified: true,
-      certificates: 156,
-      lastLogin: '2024-01-15 14:30',
-      joinDate: '2023-06-15',
-      ahpra: 'MED0001234567'
-    },
-    {
-      id: 'U-2024-002',
-      name: 'John Smith',
-      email: 'john.smith@email.com',
-      type: 'Patient',
-      role: 'Patient',
-      status: 'Active',
-      verified: true,
-      certificates: 3,
-      lastLogin: '2024-01-15 12:45',
-      joinDate: '2024-01-10',
-      ahpra: null
-    },
-    {
-      id: 'U-2024-003',
-      name: 'Emma Wilson',
-      email: 'emma.wilson@pharmacy.com.au',
-      type: 'Practitioner',
-      role: 'Pharmacist',
-      status: 'Active',
-      verified: true,
-      certificates: 89,
-      lastLogin: '2024-01-15 11:20',
-      joinDate: '2023-09-22',
-      ahpra: 'PHA0002345678'
-    },
-    {
-      id: 'U-2024-004',
-      name: 'Michael Chen',
-      email: 'michael.chen@medicert.com.au',
-      type: 'Practitioner',
-      role: 'Doctor',
-      status: 'Pending',
-      verified: false,
-      certificates: 0,
-      lastLogin: 'Never',
-      joinDate: '2024-01-14',
-      ahpra: 'MED0003456789'
-    },
-    {
-      id: 'U-2024-005',
-      name: 'Alice Brown',
-      email: 'alice.brown@email.com',
-      type: 'Patient',
-      role: 'Patient',
-      status: 'Suspended',
-      verified: true,
-      certificates: 8,
-      lastLogin: '2024-01-10 16:15',
-      joinDate: '2023-11-05',
-      ahpra: null
-    }
-  ];
-
+  const [users, setUsers] = useState([]);
 
   const [viewModalOpen, setViewModalOpen] = useState(false);
-  const [editModalOpen, setEditModalOpen] = useState(false);
   const [addModalOpen, setAddModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
 
+  // ===== GET Users =====
+  const fetchUsers = async () => {
+    try {
+      const res = await fetch(`${BaseUrl}/users`);
+      const data = await res.json();
+      setUsers(data);
+    } catch (err) {
+      console.error("Failed to fetch users", err);
+    }
+  };
+
+  useEffect(() => {
+    fetchUsers();
+  }, []);
+
+  // ===== DELETE User =====
+  const handleDelete = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this user?")) return;
+    try {
+      await fetch(`${BaseUrl}/users/${id}`, { method: "DELETE" });
+      fetchUsers(); // refresh after delete
+    } catch (err) {
+      console.error("Failed to delete user", err);
+    }
+  };
+
+  // ===== PATCH Status =====
+  const handleStatusChange = async (id, newStatus) => {
+    try {
+      await fetch(`${BaseUrl}/users/status/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: newStatus })
+      });
+      fetchUsers(); // refresh after status change
+    } catch (err) {
+      console.error("Failed to update status", err);
+    }
+  };
 
   const getStatusColor = (status) => {
-    switch (status) {
-      case 'Active': return 'bg-emerald-100 text-emerald-800';
-      case 'Pending': return 'bg-yellow-100 text-yellow-800';
-      case 'Suspended': return 'bg-red-100 text-red-800';
-      case 'Inactive': return 'bg-slate-100 text-slate-800';
+    switch (status?.toLowerCase()) {
+      case 'active': return 'bg-emerald-100 text-emerald-800';
+      case 'pending': return 'bg-yellow-100 text-yellow-800';
+      case 'suspended': return 'bg-red-100 text-red-800';
+      case 'inactive': return 'bg-slate-100 text-slate-800';
       default: return 'bg-slate-100 text-slate-800';
     }
   };
 
   const getTypeColor = (type) => {
-    switch (type) {
-      case 'Practitioner': return 'bg-blue-100 text-blue-800';
-      case 'Patient': return 'bg-purple-100 text-purple-800';
-      case 'Admin': return 'bg-slate-100 text-slate-800';
+    switch (type?.toLowerCase()) {
+      case 'doctor':
+      case 'practitioner': return 'bg-blue-100 text-blue-800';
+      case 'patient': return 'bg-purple-100 text-purple-800';
+      case 'admin': return 'bg-slate-100 text-slate-800';
       default: return 'bg-slate-100 text-slate-800';
     }
   };
 
-  const filteredUsers = users.filter(user => {
-    const matchesSearch = user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.id.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesFilter = userFilter === 'all' ||
-      (userFilter === 'practitioners' && user.type === 'Practitioner') ||
-      (userFilter === 'patients' && user.type === 'Patient') ||
-      (userFilter === 'pending' && user.status === 'Pending');
-    return matchesSearch && matchesFilter;
-  });
-
-  const handleAddUser = () => {
-    console.log('Adding new user:', newUserForm);
-    setShowAddUser(false);
-    setNewUserForm({
-      userType: 'patient',
-      firstName: '',
-      lastName: '',
-      email: '',
-      phone: '',
-      ahpraNumber: '',
-      specialization: '',
-      qualification: '',
-      password: '',
-      confirmPassword: '',
-      sendWelcomeEmail: true,
-      requireVerification: true
-    });
-    alert(`${newUserForm.userType === 'practitioner' ? 'Practitioner' : 'Patient'} successfully added to the system!`);
-  };
-
-  const generatePassword = () => {
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*';
-    let password = '';
-    for (let i = 0; i < 12; i++) {
-      password += chars.charAt(Math.floor(Math.random() * chars.length));
-    }
-    setNewUserForm(prev => ({ ...prev, password: password, confirmPassword: password }));
-  };
-
-  const handleExportUsers = () => {
-    try {
-      console.log('Exporting users:', exportForm);
-      // Simulate CSV generation
-      const headers = ['User ID', 'Name', 'Email', 'Type', 'Status', 'Join Date', 'Last Login'];
-      const csvContent = [
-        headers.join(','),
-        ...filteredUsers.map(user => [
-          user.id,
-          `"${user.name}"`,
-          user.email,
-          user.type,
-          user.status,
-          user.joinDate,
-          user.lastLogin
-        ].join(','))
-      ].join('\n');
-      // Create download
-      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-      const link = document.createElement('a');
-      const url = URL.createObjectURL(blob);
-      link.setAttribute('href', url);
-      link.setAttribute('download', `users_export_${new Date().toISOString().split('T')[0]}.${exportForm.format}`);
-      link.style.visibility = 'hidden';
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      setShowExportModal(false);
-      alert(`User list exported successfully as ${exportForm.format.toUpperCase()}!`);
-    } catch (error) {
-      console.error('Error exporting users:', error);
-      alert('Failed to export user list. Please try again.');
-    }
-  };
-
-
+  // ===== Modal Handlers =====
   const handleView = (user) => {
     setSelectedUser(user);
     setViewModalOpen(true);
   };
 
-  const handleAdd = (user) => {
-    setSelectedUser(user);
+  const handleAdd = () => {
+    setSelectedUser(null);
     setAddModalOpen(true);
   };
 
-  const handleEdit = (user) => {
-    setSelectedUser(user);
-    setEditModalOpen(true);
-  };
+  const handleSave = () => {
+  fetchUsers(); // immediately refresh table
+  setAddModalOpen(false);
+};
 
-  const handleSave = (updatedUser) => {
-    console.log("Updated User:", updatedUser);
-    // Update logic here (API call or state update)
-  };
+const handleEdit = (user) => {
+  setSelectedUser(user);
+  setAddModalOpen(true); // open AddUserModal for edit
+};
 
 
-  const handleProceedTo2FA = (e) => {
-    e.preventDefault();
+  // ===== Filter + Search =====
+  const filteredUsers = users.filter((user) => {
+    const fullName = `${user.first_name || ''} ${user.last_name || ''}`.toLowerCase();
+    const search = searchTerm.toLowerCase();
+    const matchesSearch =
+      fullName.includes(search) ||
+      user.email?.toLowerCase().includes(search) ||
+      user.id?.toString().includes(search);
 
-    // Validate form
-    if (!newUserForm.firstName || !newUserForm.lastName || !newUserForm.email || !newUserForm.phone || !newUserForm.password || !newUserForm.confirmPassword) {
-      setTwoFactorError("Please fill in all required fields");
-      return;
-    }
+    const matchesType =
+      userFilter === 'all' ? true : user.user_type?.toLowerCase() === userFilter.toLowerCase();
 
-    if (newUserForm.password !== newUserForm.confirmPassword) {
-      setTwoFactorError("Passwords do not match");
-      return;
-    }
+    return matchesSearch && matchesType;
+  });
 
-    if (newUserForm.userType === 'practitioner' && (!newUserForm.ahpraNumber || !newUserForm.specialization)) {
-      setTwoFactorError("Please fill in all practitioner fields");
-      return;
-    }
-
-    // Clear any previous errors and show 2FA verification
-    setTwoFactorError("");
-    setShowTwoFactorVerification(true);
-  };
-
-  const handleVerifyAndCreateUser = () => {
-    // Verify 2FA code
-    if (twoFactorCode !== "123456") {
-      setTwoFactorError("Invalid 2FA code. Please try again.");
-      return;
-    }
-
-    // If 2FA is valid, proceed with creating the user
-    // Call your existing handleAddUser function here
-    handleAddUser();
-
-    // Reset states
-    setShowTwoFactorVerification(false);
-    setTwoFactorCode("");
-    setTwoFactorError("");
-  };
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col">
-      {/* Main Content */}
       <div className="flex-1">
         <header className="bg-white shadow-sm">
-          <div className="px-4 py-4 sm:px-6 sm:py-6">
-            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
-              <div>
-                <h1 className="text-xl sm:text-2xl font-bold text-slate-900">User Management</h1>
-                <p className="text-sm sm:text-base text-slate-600 mt-1">Manage patients, practitioners, and administrators</p>
-              </div>
-              <div className="flex items-center space-x-3">
-                <button
-                  onClick={() => handleAdd(true)}
-                  className="w-full sm:w-auto bg-slate-700 text-white px-4 py-2 rounded-lg hover:bg-slate-800 transition-colors cursor-pointer whitespace-nowrap"
-                >
-                  <i className="ri-user-add-line mr-2"></i>
-                  <span>Add User</span>
-                </button>
-              </div>
+          <div className="px-4 py-4 sm:px-6 sm:py-6 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
+            <div>
+              <h1 className="text-xl sm:text-2xl font-bold text-slate-900">User Management</h1>
+              <p className="text-sm sm:text-base text-slate-600 mt-1">Manage patients, practitioners, and administrators</p>
             </div>
+            <button
+              onClick={handleAdd}
+              className="w-full sm:w-auto bg-slate-700 text-white px-4 py-2 rounded-lg hover:bg-slate-800 transition-colors cursor-pointer whitespace-nowrap"
+            >
+              <i className="ri-user-add-line mr-2"></i> Add User
+            </button>
           </div>
         </header>
 
         <div className="p-4 sm:p-6 lg:p-8">
-
           <UserManagementCards />
 
           <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-4 sm:p-6 mb-6 sm:mb-8">
@@ -321,147 +157,91 @@ export default function UserManagement() {
                   className="w-full px-3 py-2 pr-8 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
                 >
                   <option value="all">All Users</option>
-                  <option value="practitioners">Practitioners</option>
-                  <option value="patients">Patients</option>
-                  <option value="pending">Pending Approval</option>
+                  <option value="doctor">doctor</option>
+                  <option value="pharmacist">pharmacist</option>
                 </select>
               </div>
             </div>
           </div>
 
-          <div className="bg-white rounded-xl shadow-sm border border-slate-200 mb-6 sm:mb-8">
-            <div className="border-b border-slate-200">
-              <button
-                className={`py-4 px-2 sm:px-4 border-b-2 font-medium text-sm cursor-pointer whitespace-nowrap ${activeTab === 'Practitioners'
-                  ? 'border-blue-500 text-blue-600'
-                  : 'border-transparent text-slate-500 hover:text-slate-700'
-                  }`}
-              >
-                <i className="ri-dashboard-line mr-2"></i>
-                Practitioners
-              </button>
-
-            </div>
-
-            <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead className="bg-slate-50 border-b border-slate-200">
-                    <tr>
-                      <th className="px-4 py-3 sm:px-6 sm:py-4 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">User</th>
-                      <th className="px-4 py-3 sm:px-6 sm:py-4 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Type</th>
-                      <th className="px-4 py-3 sm:px-6 sm:py-4 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Status</th>
-                      <th className="px-4 py-3 sm:px-6 sm:py-4 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Certificates</th>
-                      <th className="px-4 py-3 sm:px-6 sm:py-4 text-left text-xs font-medium text-slate-500 uppercase tracking-wider hidden sm:table-cell">Last Login</th>
-                      <th className="px-4 py-3 sm:px-6 sm:py-4 text-left text-xs font-medium text-slate-500 uppercase tracking-wider hidden md:table-cell">Join Date</th>
-                      <th className="px-4 py-3 sm:px-6 sm:py-4 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-slate-200">
-                    {filteredUsers
-                      .filter((user) => user.type === "Practitioner") // 👈 yaha filter lagaya
-                      .map((user) => (
-                        <tr key={user.id} className="hover:bg-slate-50">
-                          <td className="px-4 py-3 sm:px-6 sm:py-4">
-                            <div className="flex items-center">
-                              <div className="w-8 h-8 sm:w-10 sm:h-10 bg-slate-100 rounded-lg flex items-center justify-center mr-3">
-                                <i className={`ri-${user.type === 'Practitioner' ? 'user-heart' : 'user'}-line text-slate-600`}></i>
-                              </div>
-                              <div>
-                                <div className="text-sm font-medium text-slate-900 flex items-center">
-                                  {user.name}
-                                  {user.verified && (
-                                    <i className="ri-verified-badge-fill text-blue-500 ml-2" title="Verified"></i>
-                                  )}
-                                </div>
-                                <div className="text-sm text-slate-500">{user.email}</div>
-                                <div className="text-xs text-slate-400">{user.id}</div>
-                                {user.ahpra && (
-                                  <div className="text-xs text-blue-600 font-mono">AHPRA: {user.ahpra}</div>
-                                )}
-                              </div>
-                            </div>
-                          </td>
-                          <td className="px-4 py-3 sm:px-6 sm:py-4">
-                            <div>
-                              <span className={`inline-flex px-2 py-1 text-xs font-medium rounded ${getTypeColor(user.type)}`}>
-                                {user.type}
-                              </span>
-                              {user.role !== user.type && (
-                                <div className="text-xs text-slate-500 mt-1">{user.role}</div>
-                              )}
-                            </div>
-                          </td>
-                          <td className="px-4 py-3 sm:px-6 sm:py-4">
-                            <span className={`inline-flex px-2 py-1 text-xs font-medium rounded ${getStatusColor(user.status)}`}>
-                              {user.status}
-                            </span>
-                          </td>
-                          <td className="px-4 py-3 sm:px-6 sm:py-4 text-sm text-slate-900">{user.certificates}</td>
-                          <td className="px-4 py-3 sm:px-6 sm:py-4 text-sm text-slate-900 hidden sm:table-cell">{user.lastLogin}</td>
-                          <td className="px-4 py-3 sm:px-6 sm:py-4 text-sm text-slate-900 hidden md:table-cell">{user.joinDate}</td>
-                          <td className="px-4 py-3 sm:px-6 sm:py-4">
-                            <div className="flex space-x-2">
-                              <button onClick={() => handleView(user)} className="text-blue-600 hover:text-blue-700 cursor-pointer" title="View Profile">
-                                <i className="ri-eye-line"></i>
-                              </button>
-                              <button onClick={() => handleEdit(user)} className="text-emerald-600 hover:text-emerald-700 cursor-pointer" title="Edit User">
-                                <i className="ri-edit-line"></i>
-                              </button>
-                              <button className="text-red-600 hover:text-red-700 cursor-pointer" title="Delete">
-                                <i className="ri-delete-bin-line"></i>
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
-                      ))}
-                  </tbody>
-                </table>
-              </div>
-
-
-              <div className="bg-slate-50 px-4 py-3 sm:px-6 sm:py-4 border-t border-slate-200">
-                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-                  <div className="text-sm text-slate-700">
-                    Showing {filteredUsers.length} of {users.length} users
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <button className="px-3 py-2 border border-slate-300 rounded-lg text-sm hover:bg-slate-50 cursor-pointer">
-                      Previous
-                    </button>
-                    <button className="px-3 py-2 bg-slate-700 text-white rounded-lg text-sm cursor-pointer">1</button>
-                    <button className="px-3 py-2 border border-slate-300 rounded-lg text-sm hover:bg-slate-50 cursor-pointer">2</button>
-                    <button className="px-3 py-2 border border-slate-300 rounded-lg text-sm hover:bg-slate-50 cursor-pointer">
-                      Next
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
+          <div className="bg-white rounded-xl shadow-sm border border-slate-200 mb-6 sm:mb-8 overflow-x-auto">
+            <table className="w-full">
+              <thead className="bg-slate-50 border-b border-slate-200">
+                <tr>
+                  <th className="px-4 py-3 sm:px-6 sm:py-4 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">User</th>
+                  <th className="px-4 py-3 sm:px-6 sm:py-4 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Specialization</th>
+                  <th className="px-4 py-3 sm:px-6 sm:py-4 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Status</th>
+                  <th className="px-4 py-3 sm:px-6 sm:py-4 text-left text-xs font-medium text-slate-500 uppercase tracking-wider hidden sm:table-cell">Email</th>
+                  <th className="px-4 py-3 sm:px-6 sm:py-4 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-200">
+                {filteredUsers.map((user) => (
+                  <tr key={user.id} className="hover:bg-slate-50">
+                    <td className="px-4 py-3 sm:px-6 sm:py-4">
+                      <div className="flex items-center">
+                        <div className="w-8 h-8 sm:w-10 sm:h-10 bg-slate-100 rounded-lg flex items-center justify-center mr-3">
+                          <i className={`ri-user-line text-slate-600`}></i>
+                        </div>
+                        <div>
+                          <div className="text-sm font-medium text-slate-900 flex items-center">{user.first_name} {user.last_name}</div>
+                          <div className="text-sm text-slate-500">{user.email}</div>
+                          <div className="text-xs text-slate-400">ID: {user.id}</div>
+                          {user.ahpr_registration_number && (
+                            <div className="text-xs text-blue-600 font-mono">AHPRA: {user.ahpr_registration_number}</div>
+                          )}
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-4 py-3 sm:px-6 sm:py-4">
+                      <span className={`inline-flex px-2 py-1 text-xs font-medium rounded ${getTypeColor(user.user_type)}`}>
+                        {user.user_type}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3 sm:px-6 sm:py-4">
+                      <select
+                        value={user.status}
+                        onChange={(e) => handleStatusChange(user.id, e.target.value)}
+                        className={`inline-flex px-2 py-1 text-xs font-medium rounded ${getStatusColor(user.status)}`}
+                      >
+                        <option value="active">Active</option>
+                        <option value="inactive">Inactive</option>
+                        
+                      </select>
+                    </td>
+                    <td className="px-4 py-3 sm:px-6 sm:py-4 text-sm text-slate-900 hidden sm:table-cell">{user.email}</td>
+                    <td className="px-4 py-3 sm:px-6 sm:py-4">
+                      <div className="flex space-x-2">
+                        <button onClick={() => handleView(user)} className="text-blue-600 hover:text-blue-700 cursor-pointer" title="View Profile">
+                          <i className="ri-eye-line"></i>
+                        </button>
+                        <button onClick={() => handleEdit(user)} className="text-emerald-600 hover:text-emerald-700 cursor-pointer" title="Edit User">
+                          <i className="ri-edit-line"></i>
+                        </button>
+                        <button onClick={() => handleDelete(user.id)} className="text-red-600 hover:text-red-700 cursor-pointer" title="Delete">
+                          <i className="ri-delete-bin-line"></i>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </div>
       </div>
 
-      {/* Add User Modal */}
       <AddUserModal
         isOpen={addModalOpen}
         onClose={() => setAddModalOpen(false)}
         user={selectedUser}
         onSave={handleSave}
       />
-      {/* Modals */}
       <ViewUserModal
         isOpen={viewModalOpen}
         onClose={() => setViewModalOpen(false)}
         user={selectedUser}
       />
-      <EditUserModal
-        isOpen={editModalOpen}
-        onClose={() => setEditModalOpen(false)}
-        user={selectedUser}
-        onSave={handleSave}
-      />
-
     </div>
   );
 }

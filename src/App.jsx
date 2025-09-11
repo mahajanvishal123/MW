@@ -13,7 +13,6 @@ import WhatsAppLogin from "./Components/Website/WhatsAppLogin";
 // Admin Dashboard
 // import Dashboard from "./Components/AdminDashboard/Dashboard";
 import UserManagement from "./Components/AdminDashboard/UserManagement/UserManagement";
-import CertificateAuditTrail from "./Components/AdminDashboard/Certificate/CertificateAuditTrail";
 import DiscountManagement from "./Components/AdminDashboard/Discount/DiscountManagement";
 import AnalyticsReports from "./Components/AdminDashboard/AnalyticsReports";
 import SystemSettings from "./Components/AdminDashboard/SystemSettings";
@@ -33,6 +32,7 @@ import HeroSection from "./Components/Website/HeroSection";
 import PaymentManagement from "./Components/AdminDashboard/PaymentManagement/PaymentManagement";
 import AdminDashboard from "./Components/AdminDashboard/Dashboard/Dashboard";
 import DayCertificates from "./Components/AdminDashboard/DayCertificates/DayCertificates";
+import CertificateManagement from "./Components/AdminDashboard/Certificate/CertificateManagement";
 
 function AppContent() {
   const location = useLocation();
@@ -80,7 +80,7 @@ function AppContent() {
                 {/* Admin Routes */}
                 <Route path="/admin/dashboard" element={<AdminDashboard />} />
                 <Route path="/admin/usermanagement" element={<UserManagement />} />
-                <Route path="/admin/certificateaudittrail" element={<CertificateAuditTrail />} />
+                <Route path="/admin/certificateaudittrail" element={<CertificateManagement />} />
                 <Route path="/admin/paymentmanagement" element={<PaymentManagement />} />
                 <Route path="/admin/discountmanagement" element={<DiscountManagement />} />
                 <Route path="/admin/analyticsreports" element={<AnalyticsReports />} />
