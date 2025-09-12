@@ -24,10 +24,17 @@ function Sidebar({ sidebarOpen }) {
   const location = useLocation();
   const isAdminPath = location.pathname.startsWith("/admin");
   const menuItems = isAdminPath ? adminMenu : doctorMenu;
+// Get user info from localStorage
 
-  const userProfile = isAdminPath
-    ? { name: " Admin", role: "admin" }
-    : { name: "Dr. Sarah Johnson", role: "General Practitioner" };
+const storedUser = JSON.parse(localStorage.getItem("user")) || {};
+const userProfile = {
+  name: storedUser?.first_name && storedUser?.last_name
+    ? `${storedUser.first_name} ${storedUser?.last_name}`
+    : isAdminPath
+    ? "Admin"
+    : "Doctor",
+  role: storedUser.user_type || (isAdminPath ? "admin" : "General Practitioner"),
+};
 
   return (
     <div
@@ -74,14 +81,7 @@ function Sidebar({ sidebarOpen }) {
                 <div className="text-xs text-slate-400">{userProfile.role}</div>
               </div>
             </div>
-            <div className="text-xs text-slate-400 mb-3">Last login: Today 2:30 PM</div>
-            <NavLink
-              to="/"
-              className="text-xs text-slate-300 hover:text-white cursor-pointer flex items-center"
-            >
-              <i className="ri-home-line mr-1"></i>
-              Return to Main Site
-            </NavLink>
+           
           </div>
         </div>
       )}

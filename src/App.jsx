@@ -15,15 +15,12 @@ import WhatsAppLogin from "./Components/Website/WhatsAppLogin";
 import UserManagement from "./Components/AdminDashboard/UserManagement/UserManagement";
 import DiscountManagement from "./Components/AdminDashboard/Discount/DiscountManagement";
 import AnalyticsReports from "./Components/AdminDashboard/AnalyticsReports";
-import SystemSettings from "./Components/AdminDashboard/SystemSettings";
+import SystemSettings from "./Components/AdminDashboard/SystemSettings/SystemSettings";
 
 // Doctor Dashboard
-import Dasbord from "./Components/DoctorDashboard/Dashboard/Dasbord";
-import MyCertificates from "./Components/DoctorDashboard/MyCertificates";
 import ScheduleManagement from "./Components/DoctorDashboard/ScheduleManagement/ScheduleManagement";
-import EarningsReports from "./Components/DoctorDashboard/EarningsReports";
-import ProfileSettings from "./Components/DoctorDashboard/ProfileSettings";
-
+import ProfileSettings from "./Components/DoctorDashboard/ProfileSettings/ProfileSettings";
+import Dashboard from "./Components/DoctorDashboard/Dashboard/Dashboard";
 // Common
 import ScrollToTop from "./Components/ScrollToTop";
 import Sidebar from "./Components/Layouts/Sidebar";
@@ -33,6 +30,8 @@ import PaymentManagement from "./Components/AdminDashboard/PaymentManagement/Pay
 import AdminDashboard from "./Components/AdminDashboard/Dashboard/Dashboard";
 import DayCertificates from "./Components/AdminDashboard/DayCertificates/DayCertificates";
 import CertificateManagement from "./Components/AdminDashboard/Certificate/CertificateManagement";
+import MyCertificates from "./Components/DoctorDashboard/MyCertificates/MyCertificates";
+
 
 function AppContent() {
   const location = useLocation();
@@ -88,10 +87,9 @@ function AppContent() {
                  <Route path="/admin/daycertificates" element={<DayCertificates />} />
 
                 {/* Doctor Routes */}
-                <Route path="/doctor/doctorDashboard" element={<Dasbord />} />
-                <Route path="/doctor/mycertificates" element={<MyCertificates />} />
+                <Route path="/doctor/doctorDashboard" element={<Dashboard />} />
+                <Route path="/doctor/mycertificates" element={<MyCertificates  />} />
                 <Route path="/doctor/schedulemanagement" element={<ScheduleManagement />} />
-                <Route path="/doctor/earningsreports" element={<EarningsReports />} />
                 <Route path="/doctor/profilesettings" element={<ProfileSettings />} />
               </Routes>
             </main>
