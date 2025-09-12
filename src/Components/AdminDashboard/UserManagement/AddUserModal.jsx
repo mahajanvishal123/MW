@@ -6,7 +6,7 @@ import BaseUrl from "../../../Utilities/BaseUrl";
 
 const AddUserModal = ({ isOpen, onClose, onSave, user }) => {
   const [newUserForm, setNewUserForm] = useState({
-    userType: "",
+    user_type: "",
     firstName: "",
     lastName: "",
     email: "",
@@ -20,7 +20,7 @@ const AddUserModal = ({ isOpen, onClose, onSave, user }) => {
   useEffect(() => {
     if (isOpen && user) {
       setNewUserForm({
-        userType: user.user_type || "",
+        user_type: user.user_type || "",
         firstName: user.first_name || "",
         lastName: user.last_name || "",
         email: user.email || "",
@@ -31,7 +31,7 @@ const AddUserModal = ({ isOpen, onClose, onSave, user }) => {
       });
     } else if (isOpen) {
       setNewUserForm({
-        userType: "",
+        user_type: "",
         firstName: "",
         lastName: "",
         email: "",
@@ -57,7 +57,7 @@ const AddUserModal = ({ isOpen, onClose, onSave, user }) => {
           last_name: newUserForm.lastName,
           email: newUserForm.email,
           phone: newUserForm.phone,
-          user_type: newUserForm.userType,
+          user_type: newUserForm.user_type,
           ahpr_registration_number: newUserForm.ahpraNumber,
         };
 
@@ -84,7 +84,7 @@ const AddUserModal = ({ isOpen, onClose, onSave, user }) => {
       email: newUserForm.email,
       phone: newUserForm.phone,
       password: newUserForm.password,
-      user_type: newUserForm.userType,
+      user_type: newUserForm.user_type,
       ahpr_registration_number: newUserForm.ahpraNumber,
     };
 
@@ -194,11 +194,11 @@ const AddUserModal = ({ isOpen, onClose, onSave, user }) => {
               Specialization (User Type) *
             </label>
             <select
-              value={newUserForm.specialization}
+              value={newUserForm.user_type}
               onChange={(e) =>
                 setNewUserForm({
                   ...newUserForm,
-                  specialization: e.target.value,
+                  user_type: e.target.value,
                 })
               }
               className="w-full px-3 py-2 border border-slate-300 rounded-lg"

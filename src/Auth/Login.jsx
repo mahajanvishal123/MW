@@ -12,57 +12,59 @@ export default function Login() {
   const [userRole, setUserRole] = useState("");
   const navigate = useNavigate();
 
-  const handleLogin = async (e) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    setError("");
+const handleLogin = async (e) => {
+  e.preventDefault();
+  setIsSubmitting(true);
+  setError("");
 
-    try {
-      if (!showOtp) {
-        // Step 1: Login
-        const res = await fetch(
-          `${BaseUrl}/auth/login`,
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email, password }),
-          }
-        );
+  try {
+    if (!showOtp) {
+      // Step 1: Login
+      const res = await fetch(`${BaseUrl}/auth/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
 
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.message || "Login failed");
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Login failed");
 
-        // Store role from response (assuming API returns it)
-        setUserRole(data.role || "doctor");
-        setShowOtp(true);
+      // Move to OTP screen (no role yet)
+      setShowOtp(true);
+
+    } else {
+      // Step 2: Verify OTP
+      const res = await fetch(`${BaseUrl}/auth/verify-otp`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, otp }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "OTP verification failed");
+
+      // Store token and user data
+      localStorage.setItem("authToken", data.token);
+      localStorage.setItem("user", JSON.stringify(data.user));
+
+      // ✅ Now get role from verified user object
+      const role = data.user.user_type;
+      setUserRole(role);
+
+      // Redirect based on role
+      if (role === "admin") {
+        navigate("/admin/dashboard");
       } else {
-        // Step 2: Verify OTP
-        const res = await fetch(
-          `${BaseUrl}/auth/verify-otp`,
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email, otp }),
-          }
-        );
-
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.message || "OTP verification failed");
-         localStorage.setItem("authToken", data.token);
-         localStorage.setItem("user", JSON.stringify(data.user)  );
-        // Redirect based on role
-        if (userRole === "admin") {
-          navigate("/admin/dashboard");
-        } else {
-          navigate("/doctor/doctorDashboard");
-        }
+        navigate("/doctor/doctorDashboard");
       }
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setIsSubmitting(false);
     }
-  };
+  } catch (err) {
+    setError(err.message);
+  } finally {
+    setIsSubmitting(false);
+  }
+};
+
 
   const handleBack = () => {
     setShowOtp(false);
