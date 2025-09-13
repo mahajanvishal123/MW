@@ -99,11 +99,7 @@ const handleEdit = (user) => {
   const filteredUsers = users.filter((user) => {
     const fullName = `${user.first_name || ''} ${user.last_name || ''}`.toLowerCase();
     const search = searchTerm.toLowerCase();
-    const matchesSearch =
-      fullName.includes(search) ||
-      user.email?.toLowerCase().includes(search) ||
-      user.id?.toString().includes(search);
-
+    const matchesSearch = fullName.includes(search) || user?.email?.toLowerCase()?.includes(search) || user?.id?.toString()?.includes(search);
     const matchesType =
       userFilter === 'all' ? true : user.user_type?.toLowerCase() === userFilter.toLowerCase();
 
@@ -186,8 +182,7 @@ const handleEdit = (user) => {
                         <div>
                           <div className="text-sm font-medium text-slate-900 flex items-center">{user.first_name} {user.last_name}</div>
                           <div className="text-sm text-slate-500">{user.email}</div>
-                          <div className="text-xs text-slate-400">ID: {user.id}</div>
-                          {user.ahpr_registration_number && (
+                          {user?.ahpr_registration_number && (
                             <div className="text-xs text-blue-600 font-mono">AHPRA: {user.ahpr_registration_number}</div>
                           )}
                         </div>
@@ -195,7 +190,7 @@ const handleEdit = (user) => {
                     </td>
                     <td className="px-4 py-3 sm:px-6 sm:py-4">
                       <span className={`inline-flex px-2 py-1 text-xs font-medium rounded ${getTypeColor(user.user_type)}`}>
-                        {user.user_type}
+                        {user?.user_type}
                       </span>
                     </td>
                     <td className="px-4 py-3 sm:px-6 sm:py-4">

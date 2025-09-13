@@ -70,10 +70,8 @@ function AppContent() {
           {/* Sidebar + Main content */}
           <div className="flex flex-1 overflow-hidden">
             <Sidebar sidebarOpen={sidebarOpen} />
-            <main
-              className={`flex-1 overflow-y-auto bg-slate-100 transition-all duration-300
-    ${sidebarOpen ? "md:ml-[288px]" : "md:ml-[80px]"} ml-0
-  `}
+            <main className={`flex-1 overflow-y-auto bg-slate-100 transition-all duration-300
+    ${sidebarOpen ? "md:ml-[288px]" : "md:ml-[80px]"} ml-0`}
             >
               <Routes>
                 {/* Admin Routes */}

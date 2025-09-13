@@ -103,24 +103,29 @@ export default function HeroSection() {
           className="bg-white/80 backdrop-blur-sm border border-gray-200 rounded-xl p-10 shadow-lg hover:shadow-xl transition-all duration-300"
         >
           <div className="text-center">
-            <div className="text-2xl sm:text-3xl font-bold text-gray-900 mb-1">
-              ${cert.price}
-            </div>
-            <div className="text-emerald-600 font-semibold mb-1 text-sm">
-              {cert.certificate_name}
-            </div>
-            <div className="text-xs font-bold text-gray-700 mb-4">
-              {cert.description}
-            </div>
-            <Link to="/MedicalCertificates">
-          <button
-            onClick={() => localStorage.setItem("certificateId", cert.id)}
-            className="bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-bold px-6 py-2 rounded-full shadow-md transition-all"
-          >
-            Get Certificate
-          </button>
-        </Link>
-          </div>
+  <div className="text-2xl sm:text-3xl font-bold text-gray-900 mb-1">
+    ${cert.price}
+  </div>
+  <div className="text-emerald-600 font-semibold mb-1 text-sm">
+    {cert.certificate_name}
+  </div>
+  <div className="text-xs font-bold text-gray-700 mb-4">
+    {cert.description}
+  </div>
+
+  <Link to="/MedicalCertificates">
+    <button
+      onClick={() => {
+        localStorage.setItem("certificateId", cert.id);
+        localStorage.setItem("certificatePrice", cert.price);  // ✅ price bhi set ho rahi hai
+      }}
+      className="bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-bold px-6 py-2 rounded-full shadow-md transition-all"
+    >
+      Get Certificate
+    </button>
+  </Link>
+</div>
+
         </div>
       ))}
     </div>
