@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import BaseUrl from "../Utilities/BaseUrl";
 import { HiEye, HiEyeOff } from "react-icons/hi";
+import { Button } from "react-bootstrap";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -150,7 +151,7 @@ export default function Login() {
               : "Login"}
           </button>
         </form>
-
+      <Link to="/ForgotPassword">  <Button className="mt-4 float-end" > Forgot Password </Button></Link>
         {showOtp && (
           <div className="text-center mt-6">
             <button

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import BaseUrl from '../../../Utilities/BaseUrl';
 
-const BaseUrl = 'https://ssknf82q-4001.inc1.devtunnels.ms/api/settings';
 
 const PaymentSetting = () => {
   const [settings, setSettings] = useState([]);
@@ -10,7 +10,7 @@ const PaymentSetting = () => {
   // Fetch all settings
   const fetchSettings = async () => {
     try {
-      const res = await axios.get(BaseUrl);
+      const res = await axios.get(`${BaseUrl}/settings`);
       // Filter only doctor and pharmacist certificate fees
       const filtered = res.data.filter(
         (s) =>

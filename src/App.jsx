@@ -31,6 +31,8 @@ import AdminDashboard from "./Components/AdminDashboard/Dashboard/Dashboard";
 import DayCertificates from "./Components/AdminDashboard/DayCertificates/DayCertificates";
 import CertificateManagement from "./Components/AdminDashboard/Certificate/CertificateManagement";
 import MyCertificates from "./Components/DoctorDashboard/MyCertificates/MyCertificates";
+import ForgotPassword from "./Auth/ForgotPassword";
+import ResetPassword from "./Auth/ResetPassword";
 
 
 function AppContent() {
@@ -101,6 +103,8 @@ function AppContent() {
           <Route path="/PractitionerPortal" element={<PractitionerPortal />} />
           <Route path="/patient/login" element={<PatientPortal />} />
           <Route path="/Login" element={<Login />} />
+          <Route path="/ForgotPassword" element={<ForgotPassword />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="SickLeave" element={<SickLeavePage />} />
           <Route path="/CarersLeave" element={<CarersLeavePage />} />
           <Route path="/WhatsAppLogin" element={<WhatsAppLogin />} />

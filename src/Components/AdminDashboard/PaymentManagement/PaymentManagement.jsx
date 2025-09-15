@@ -4,8 +4,8 @@ import BaseUrl from "../../../Utilities/BaseUrl";
 
 const PaymentManagement = () => {
   const [transactions, setTransactions] = useState([]);
-  const [loading, setLoading] = useState(true);      // loading state
-  const [error, setError] = useState(null);           // error state
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const getStatusColor = (status) => {
     switch (status?.toLowerCase()) {
@@ -37,20 +37,19 @@ const PaymentManagement = () => {
 
           return {
             id: item?.transaction_id || `TXN-${i + 1}`,
-            patient: item?.patient_id
-              ? `Patient #${item.patient_id}`
-              : "John Doe",
+            patient: item?.patient_name || `Patient #${item?.patient_id || "-"}`,
+            patientEmail: item?.patient_email || "N/A",
             practitioner: item?.practitioner_id
               ? `Practitioner #${item.practitioner_id}`
-              : "Dr. Jane Smith",
+              : "N/A",
             amount: safeAmount,
             method:
               item?.payment_method
                 ?.replace(/_/g, " ")
-                ?.replace(/\b\w/g, (c) => c.toUpperCase()) || "Credit Card",
+                ?.replace(/\b\w/g, (c) => c.toUpperCase()) || "Unknown",
             status: item?.status
               ? item.status.charAt(0).toUpperCase() + item.status.slice(1)
-              : "Completed",
+              : "Unknown",
             date: item?.payment_date
               ? new Date(item.payment_date).toLocaleString()
               : "N/A",
@@ -97,7 +96,6 @@ const PaymentManagement = () => {
                 {[
                   "Transaction",
                   "Patient",
-                  "Practitioner",
                   "Amount",
                   "Method",
                   "Status",
@@ -115,54 +113,64 @@ const PaymentManagement = () => {
             </thead>
 
             <tbody className="divide-y divide-slate-100">
-              {transactions.map((txn) => (
-                <tr
-                  key={txn.id}
-                  className="hover:bg-slate-50 transition-colors duration-150"
-                >
-                  <td className="px-6 py-4">
-                    <div className="text-sm font-medium text-blue-600">
-                      {txn.id}
-                    </div>
-                    <div className="text-xs text-slate-500">
-                      {txn.certificateId}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 text-slate-800">{txn.patient}</td>
-                  <td className="px-6 py-4 text-slate-800 hidden sm:table-cell">
-                    {txn.practitioner}
-                  </td>
-                  <td className="px-6 py-4 font-semibold text-slate-900">
-                    ${txn.amount.toFixed(2)}
-                  </td>
-                  <td className="px-6 py-4 hidden md:table-cell">
-                    <span className="inline-flex px-2.5 py-1 text-xs font-medium rounded-full bg-slate-100 text-slate-800">
-                      {txn.method}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4">
-                    <span
-                      className={`inline-flex px-2.5 py-1 text-xs font-medium rounded-full ${getStatusColor(
-                        txn.status
-                      )}`}
-                    >
-                      {txn.status}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 text-slate-800 hidden sm:table-cell">
-                    {txn.date}
-                  </td>
-                 <td className="px-6 py-4">
-  <div className="flex space-x-3">
-    <button className="text-red-600 hover:text-red-700">
-      <i className="ri-delete-bin-line text-lg"></i>
-    </button>
-  </div>
-</td>
+              {transactions.length > 0 ? (
+                transactions.map((txn) => (
+                  <tr
+                    key={txn.id}
+                    className="hover:bg-slate-50 transition-colors duration-150"
+                  >
+                    <td className="px-6 py-4">
+                      <div className="text-sm font-medium text-blue-600">
+                        {txn.id}
+                      </div>
+                      <div className="text-xs text-slate-500">
+                        {txn.certificateId}
+                      </div>
+                    </td>
 
-                </tr>
-              ))}
-              {transactions.length === 0 && (
+                    <td className="px-6 py-4 text-slate-800">
+                      <div className="font-medium">{txn.patient}</div>
+                      <div className="text-xs text-slate-500">
+                        {txn.patientEmail}
+                      </div>
+                    </td>
+
+                   
+
+                    <td className="px-6 py-4 font-semibold text-slate-900">
+                      ${txn.amount.toFixed(2)}
+                    </td>
+
+                    <td className="px-6 py-4 hidden md:table-cell">
+                      <span className="inline-flex px-2.5 py-1 text-xs font-medium rounded-full bg-slate-100 text-slate-800">
+                        {txn.method}
+                      </span>
+                    </td>
+
+                    <td className="px-6 py-4">
+                      <span
+                        className={`inline-flex px-2.5 py-1 text-xs font-medium rounded-full ${getStatusColor(
+                          txn.status
+                        )}`}
+                      >
+                        {txn.status}
+                      </span>
+                    </td>
+
+                    <td className="px-6 py-4 text-slate-800 hidden sm:table-cell">
+                      {txn.date}
+                    </td>
+
+                    <td className="px-6 py-4">
+                      <div className="flex space-x-3">
+                        <button className="text-red-600 hover:text-red-700">
+                          <i className="ri-delete-bin-line text-lg"></i>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              ) : (
                 <tr>
                   <td
                     colSpan="8"

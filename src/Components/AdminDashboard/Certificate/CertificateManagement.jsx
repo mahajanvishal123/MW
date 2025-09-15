@@ -40,7 +40,7 @@ export default function CertificateManagement() {
             }`}
             onClick={() => setActiveTab('auditTrail')}
           >
-            Audit Trail
+        Completed Certificates
           </button>
         </div>
       </div>
@@ -48,7 +48,7 @@ export default function CertificateManagement() {
       {/* Tab Content */}
       <div className="p-4 sm:p-6 lg:p-8 flex-1">
         {activeTab === 'assignRequests' ? (
-          <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+          <div className="bg-white rounded-xl shadow-sm border border-slate-200 ">
            <AsignCertificate/>
           </div>
         ) : (

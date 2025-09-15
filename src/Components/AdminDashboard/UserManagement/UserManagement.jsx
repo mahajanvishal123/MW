@@ -98,10 +98,10 @@ const handleEdit = (user) => {
   // ===== Filter + Search =====
   const filteredUsers = users.filter((user) => {
     const fullName = `${user.first_name || ''} ${user.last_name || ''}`.toLowerCase();
-    const search = searchTerm.toLowerCase();
-    const matchesSearch = fullName.includes(search) || user?.email?.toLowerCase()?.includes(search) || user?.id?.toString()?.includes(search);
+    const search = searchTerm?.toLowerCase();
+    const matchesSearch = fullName?.includes(search) || user?.email?.toLowerCase()?.includes(search) || user?.id?.toString()?.includes(search);
     const matchesType =
-      userFilter === 'all' ? true : user.user_type?.toLowerCase() === userFilter.toLowerCase();
+      userFilter === 'all' ? true : user?.user_type?.toLowerCase() === userFilter.toLowerCase();
 
     return matchesSearch && matchesType;
   });

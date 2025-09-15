@@ -41,6 +41,10 @@ export default function HeroSection() {
     setCurrentSlide(index);
   };
 
+  const HandleAlert = () => {
+    alert("Please select a certificate type to proceed.");
+  }
+
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
@@ -77,15 +81,14 @@ export default function HeroSection() {
 
             {/* Action Buttons */}
             <div className="flex flex-col sm:flex-row gap-3 mb-8">
-              <Link to="/MedicalCertificates">
-                <button
-                
+             
+                <button   onClick={HandleAlert}
                   className="bg-indigo-600 text-white px-6 py-3 rounded-xl text-base font-semibold hover:bg-indigo-700 transition-all duration-300 cursor-pointer whitespace-nowrap shadow-lg hover:shadow-xl"
                 >
                   <i className="ri-file-add-line mr-2"></i>
                   Get Your Certificate Now
                 </button>
-              </Link>
+          
               <button
                
                 className="bg-white text-indigo-600 border-2 border-indigo-600 px-6 py-3 rounded-xl text-base font-semibold hover:bg-indigo-50 transition-all duration-300 cursor-pointer whitespace-nowrap text-center"
@@ -336,115 +339,70 @@ export default function HeroSection() {
 
           <div className="grid lg:grid-cols-2 gap-8 max-w-5xl mx-auto">
             {/* Single Day Pricing */}
-            <div className="bg-white/10 backdrop-blur-sm p-6 rounded-2xl shadow-xl border border-white/20 hover:bg-white/15 transition-all duration-500">
-              <div className="text-center">
-                <div className="relative mb-6">
-                  <div className="w-16 h-16 bg-emerald-600 rounded-2xl flex items-center justify-center mx-auto shadow-xl">
-                    <i className="ri-calendar-line text-white text-2xl"></i>
-                  </div>
-                </div>
-
-                <div className="mb-6">
-                  <h3 className="text-xl font-bold text-white mb-3">
-                    Single-Day Certificate
-                  </h3>
-                  <div className="flex items-center justify-center mb-3">
-                    <span className="text-3xl sm:text-4xl font-bold text-emerald-400">
-                      $11.99
-                    </span>
-                    <span className="text-emerald-300 ml-1 text-sm">AUD</span>
-                  </div>
-                  <p className="text-emerald-200 text-sm">
-                    Affordable, professional care
-                  </p>
-                </div>
-
-                {/* Bullet List */}
-                <ul className="space-y-3 text-gray-200 mb-8 text-sm text-left max-w-xs mx-auto">
-                  <li className="flex items-center">
-                    <div className="w-5 h-5 bg-emerald-600 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
-                      <i className="ri-check-line text-white text-xs"></i>
-                    </div>
-                    <span className="">Certified by AHPRA Registered Practitioners</span>
-                  </li>
-                  <li className="flex items-center">
-                    <div className="w-5 h-5 bg-emerald-600 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
-                      <i className="ri-check-line text-white text-xs"></i>
-                    </div>
-                    <span>1-day duration coverage</span>
-                  </li>
-                  <li className="flex items-center">
-                    <div className="w-5 h-5 bg-emerald-600 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
-                      <i className="ri-check-line text-white text-xs"></i>
-                    </div>
-                    <span>Email delivery</span>
-                  </li>
-                </ul>
-
-                <Link to="/MedicalCertificates">
-                  <button className="w-full bg-emerald-600 text-white py-3 px-6 rounded-xl text-base font-semibold hover:bg-emerald-700 transition-all duration-300 cursor-pointer shadow-lg hover:shadow-xl">
-                    <i className="ri-shopping-cart-line mr-1"></i>
-                    Get Single-Day Certificate
-                  </button>
-                </Link>
-
+          {certificates?.map((cert) => (
+        <div
+          key={cert.id}
+          className="bg-white/10 backdrop-blur-sm p-6 rounded-2xl shadow-xl border border-white/20 hover:bg-white/15 transition-all duration-500"
+        >
+          <div className="text-center">
+            <div className="relative mb-6">
+              <div className="w-16 h-16 bg-emerald-600 rounded-2xl flex items-center justify-center mx-auto shadow-xl">
+                <i className="ri-calendar-line text-white text-2xl"></i>
               </div>
             </div>
 
-            {/* Multi-Day Pricing */}
-            <div className="bg-indigo-600/20 backdrop-blur-sm p-6 rounded-2xl shadow-xl border-2 border-indigo-400/50 hover:bg-indigo-600/25 transition-all duration-500 relative">
-              <div className="text-center">
-                <div className="relative mb-6">
-                  <div className="w-16 h-16 bg-indigo-600 rounded-2xl flex items-center justify-center mx-auto shadow-xl">
-                    <i className="ri-calendar-2-line text-2xl text-white"></i>
-                  </div>
-                </div>
-
-                <div className="mb-6">
-                  <h3 className="text-xl font-bold text-white mb-3">
-                    Multi-Day (2-Day) Certificate
-                  </h3>
-                  <div className="flex items-center justify-center mb-3">
-                    <span className="text-3xl sm:text-4xl font-bold text-indigo-400">
-                      $16.99
-                    </span>
-                    <span className="text-indigo-300 ml-1 text-sm">AUD</span>
-                  </div>
-                  <p className="text-indigo-200 text-sm">
-                    Extended coverage with professional assessment
-                  </p>
-                </div>
-
-                {/* Bullet List */}
-                <ul className="space-y-3 text-gray-200 mb-8 text-sm text-left max-w-xs mx-auto">
-                  <li className="flex items-center">
-                    <div className="w-5 h-5 bg-indigo-600 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
-                      <i className="ri-check-line text-white text-xs"></i>
-                    </div>
-                    <span className="">Certified by AHPRA Registered Practitioners</span>
-                  </li>
-                  <li className="flex items-center">
-                    <div className="w-5 h-5 bg-indigo-600 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
-                      <i className="ri-check-line text-white text-xs"></i>
-                    </div>
-                    <span>2-day duration coverage</span>
-                  </li>
-                  <li className="flex items-center">
-                    <div className="w-5 h-5 bg-indigo-600 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
-                      <i className="ri-check-line text-white text-xs"></i>
-                    </div>
-                    <span>Email delivery</span>
-                  </li>
-                </ul>
-
-                <Link to="/MedicalCertificates">
-                  <button className="w-full bg-indigo-600 text-white py-3 px-6 rounded-xl text-base font-semibold hover:bg-indigo-700 transition-all duration-300 cursor-pointer shadow-lg hover:shadow-xl">
-                    <i className="ri-star-line mr-1"></i>
-                    Get Multi-Day Certificate
-                  </button>
-                </Link>
+            <div className="mb-6">
+              <h3 className="text-xl font-bold text-white mb-3">
+                {cert?.certificate_name}
+              </h3>
+              <div className="flex items-center justify-center mb-3">
+                <span className="text-3xl sm:text-4xl font-bold text-emerald-400">
+                  $ {cert?.price}
+                </span>
+                <span className="text-emerald-300 ml-1 text-sm">AUD</span>
               </div>
+              <p className="text-emerald-200 text-sm">{cert.description}</p>
             </div>
+
+            {/* Bullet list - optional static content */}
+            <ul className="space-y-3 text-gray-200 mb-8 text-sm text-left max-w-xs mx-auto">
+              <li className="flex items-center">
+                <div className="w-5 h-5 bg-emerald-600 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
+                  <i className="ri-check-line text-white text-xs"></i>
+                </div>
+                <span>Certified by AHPRA Registered Practitioners</span>
+              </li>
+              <li className="flex items-center">
+                <div className="w-5 h-5 bg-emerald-600 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
+                  <i className="ri-check-line text-white text-xs"></i>
+                </div>
+                <span>1-day duration coverage</span>
+              </li>
+              <li className="flex items-center">
+                <div className="w-5 h-5 bg-emerald-600 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
+                  <i className="ri-check-line text-white text-xs"></i>
+                </div>
+                <span>Email delivery</span>
+              </li>
+            </ul>
+
+            <Link to="/MedicalCertificates">
+              <button
+                onClick={() => {
+                  localStorage.setItem("certificateId", cert.id);
+                  localStorage.setItem("certificatePrice", cert.price);
+                }}
+                className="w-full bg-emerald-600 text-white py-3 px-6 rounded-xl text-base font-semibold hover:bg-emerald-700 transition-all duration-300 cursor-pointer shadow-lg hover:shadow-xl"
+              >
+                <i className="ri-shopping-cart-line mr-1"></i>
+                Get {cert.certificate_name}
+              </button>
+            </Link>
+          </div>
+        </div>
+      ))}
+
+          
           </div>
         </div>
       </section>

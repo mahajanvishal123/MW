@@ -332,87 +332,91 @@ const sendCertificate = async () => {
         Certificate History
       </h1>
       
-      <div className="space-y-4">
-        {certificates.map((c) => (
-          <div
-            key={c.id}
-            className="flex items-center justify-between bg-white border border-slate-200 rounded-xl p-5 shadow-md hover:shadow-lg transition-shadow"
+    <div className="space-y-4">
+  {certificates && certificates.length > 0 ? (
+    certificates.map((c) => (
+      <div
+        key={c.id}
+        className="flex items-center justify-between bg-white border border-slate-200 rounded-xl p-5 shadow-md hover:shadow-lg transition-shadow"
+      >
+        <div className="space-y-1">
+          <p className="font-semibold text-slate-800">
+            MC-{String(c.id).padStart(4, "0")}{" "}
+            <span
+              className={`ml-2 text-xs px-2 py-1 rounded-full ${
+                c.verify_certificate === "Approve"
+                  ? "bg-green-100 text-green-700"
+                  : c.verify_certificate === "Pending"
+                  ? "bg-yellow-100 text-yellow-700"
+                  : "bg-red-100 text-red-700"
+              }`}
+            >
+              {c.verify_certificate}
+            </span>
+          </p>
+          <p className="text-sm text-slate-600">
+            {c.full_name} • {c.certificate_type}
+          </p>
+          <p className="text-xs text-slate-500">
+            Duration: {c.certificate_type} <br /> {new Date(c.created_at).toLocaleString()}
+          </p>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => openModal(c)}
+            className="text-blue-600 text-sm underline"
           >
-            <div className="space-y-1">
-              <p className="font-semibold text-slate-800">
-                MC-{String(c.id).padStart(4, "0")}{" "}
-                <span
-                  className={`ml-2 text-xs px-2 py-1 rounded-full ${
-                    c.verify_certificate === "Approve"
-                      ? "bg-green-100 text-green-700"
-                      : c.verify_certificate === "Pending"
-                      ? "bg-yellow-100 text-yellow-700"
-                      : "bg-red-100 text-red-700"
-                  }`}
-                >
-                  {c.verify_certificate}
-                </span>
-              </p>
-              <p className="text-sm text-slate-600">
-                {c.full_name} • {c.certificate_type}
-              </p>
-              <p className="text-xs text-slate-500">
-                Duration: {c.certificate_type} 
-                <br /> {new Date(c.created_at).toLocaleString()}
-              </p>
-            </div>
-            
-            <div className="flex items-center gap-2">
+            View
+          </button>
+
+          {c.verify_certificate === "Pending" && (
+            <>
               <button
                 onClick={() => openModal(c)}
-                className="text-blue-600 text-sm underline"
+                className="bg-green-600 text-white px-3 py-1 rounded-lg text-sm hover:bg-green-700"
               >
-                View
+                Approve
               </button>
-              
-              {c.verify_certificate === "Pending" && (
-                <>
-                  <button
-                    onClick={() => openModal(c)}
-                    className="bg-green-600 text-white px-3 py-1 rounded-lg text-sm hover:bg-green-700"
-                  >
-                    Approve
-                  </button>
-                  <button
-                    onClick={() => handleSubmit("Declined")}
-                    className="bg-red-600 text-white px-3 py-1 rounded-lg text-sm hover:bg-red-700"
-                  >
-                    Decline
-                  </button>
-                </>
-              )}
-              
-              {c.verify_certificate === "Approve" && (
-                <>
-                  <button
-                    onClick={() => {
-                      openModal(c);
-                      setTimeout(downloadCertificate, 500);
-                    }}
-                    className="bg-blue-600 text-white px-3 py-1 rounded-lg text-sm hover:bg-blue-700"
-                  >
-                    Download
-                  </button>
-                  <button
-                    onClick={() => {
-                      openModal(c);
-                      setTimeout(() => sendCertificate(), 500);
-                    }}
-                    className="bg-purple-600 text-white px-3 py-1 rounded-lg text-sm hover:bg-purple-700"
-                  >
-                    Send
-                  </button>
-                </>
-              )}
-            </div>
-          </div>
-        ))}
+              <button
+                onClick={() => handleSubmit("Declined")}
+                className="bg-red-600 text-white px-3 py-1 rounded-lg text-sm hover:bg-red-700"
+              >
+                Decline
+              </button>
+            </>
+          )}
+
+          {c.verify_certificate === "Approve" && (
+            <>
+              <button
+                onClick={() => {
+                  openModal(c);
+                  setTimeout(downloadCertificate, 500);
+                }}
+                className="bg-blue-600 text-white px-3 py-1 rounded-lg text-sm hover:bg-blue-700"
+              >
+                Download
+              </button>
+              <button
+                onClick={() => {
+                  openModal(c);
+                  setTimeout(() => sendCertificate(), 500);
+                }}
+                className="bg-purple-600 text-white px-3 py-1 rounded-lg text-sm hover:bg-purple-700"
+              >
+                Send
+              </button>
+            </>
+          )}
+        </div>
       </div>
+    ))
+  ) : (
+    <p className="text-center text-gray-500 text-sm">No certificates found.</p>
+  )}
+</div>
+
       
       {showModal && selectedCert && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">

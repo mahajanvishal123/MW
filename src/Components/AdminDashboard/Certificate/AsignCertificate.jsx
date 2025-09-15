@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import BaseUrl from '../../../Utilities/BaseUrl';
 const AssignCertificate = () => {
   const [certificates, setCertificates] = useState([]);
   const [practitioners, setPractitioners] = useState({ doctor: [], pharmacist: [] });
@@ -17,13 +18,13 @@ const AssignCertificate = () => {
         setLoading(true);
         
         // Fetch certificates
-        const certResponse = await fetch('https://ssknf82q-4001.inc1.devtunnels.ms/api/patient');
+        const certResponse = await fetch(`${BaseUrl}/patient`);
         if (!certResponse.ok) throw new Error('Failed to fetch certificates');
         const certData = await certResponse.json();
         setCertificates(certData);
         
         // Fetch practitioners
-        const pracResponse = await fetch('https://ssknf82q-4001.inc1.devtunnels.ms/api/auth/getUsersList');
+        const pracResponse = await fetch(`${BaseUrl}/auth/getUsersList`);
         if (!pracResponse.ok) throw new Error('Failed to fetch practitioners');
         const pracData = await pracResponse.json();
         setPractitioners(pracData);
@@ -66,7 +67,7 @@ const AssignCertificate = () => {
     if (!practitionerId) return;
     
     try {
-      const response = await fetch(`https://ssknf82q-4001.inc1.devtunnels.ms/api/patient/assignpractitioner/${certificateId}`, {
+      const response = await fetch(`${BaseUrl}/patient/assignpractitioner/${certificateId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -96,7 +97,7 @@ const AssignCertificate = () => {
     if (!window.confirm('Are you sure you want to delete this certificate?')) return;
     
     try {
-      const response = await fetch(`https://ssknf82q-4001.inc1.devtunnels.ms/api/patient/${certificateId}`, {
+      const response = await fetch(`${BaseUrl}/patient/${certificateId}`, {
         method: 'DELETE',
       });
       

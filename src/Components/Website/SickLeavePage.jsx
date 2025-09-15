@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import Navbar from './Navbar';
+import BaseUrl from '../../Utilities/BaseUrl';
 
 const PersonalDetailsForm = ({ onContinue, onBack, selectedCertificate, certificates, formData, setFormData }) => {
   // Find the selected certificate object
@@ -538,25 +539,22 @@ const SickLeavePage = () => {
   });
 
   const tabRefs = [useRef(null), useRef(null), useRef(null)];
-  
+  const storedPrice = localStorage.getItem("certificatePrice") || "11.99";
   const certificates = [
     {
       id: 1,
       title: 'Sick Leave Certificate',
       subtitle: 'For workplace or educational absence',
-      price: '$11.99',
     },
     {
       id: 2,
       title: 'Carers Leave Certificate',
       subtitle: 'Government-recognized format',
-      price: ' $11.99',
     },
     {
       id: 3,
       title: 'Student Sick Leave Certificate',
       subtitle: 'For employment or education purposes',
-      price: '$11.99',
     },
   ];
 
@@ -599,7 +597,7 @@ const SickLeavePage = () => {
     
     try {
       // Get additional data from localStorage
-      const certificate_day = localStorage.getItem('certificateId') || '1';
+      const certificateId  = localStorage.getItem('certificateId')
       const mobile_No = localStorage.getItem('whatsappNumber') || '9876543210';
       
       // Find the selected certificate
@@ -622,11 +620,14 @@ const SickLeavePage = () => {
         height: parseInt(formData.height) || 0,
         weight: parseInt(formData.weight) || 0,
         medical_conditions: formData.medicalConditions,
-        certificate_day: parseInt(certificate_day),
         mobile_No: mobile_No
       };
+  // certificate_day केवल तभी जोड़ें जब valid number हो
+if (certificateId && !isNaN(parseInt(certificateId))) {
+  payload.certificate_day = parseInt(certificateId);
+}
 
-      const response = await fetch('https://ssknf82q-4001.inc1.devtunnels.ms/api/patient', {
+      const response = await fetch(`${BaseUrl}/patient`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -790,7 +791,7 @@ const SickLeavePage = () => {
                         </div>
                       </div>
                       <div className="text-right">
-                        <span className="text-sm font-medium text-gray-700">{cert.price}</span>
+                        <span className="text-sm font-medium text-gray-700"> ${storedPrice}</span>
                         <div className="mt-2">
                           <span
                             className={`inline-flex items-center px-4 py-2 text-sm font-medium rounded-full border ${selectedCertificate === cert.id
