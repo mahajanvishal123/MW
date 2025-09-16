@@ -85,21 +85,7 @@ const Navbar = () => {
 
           {/* Mobile Navigation */}
           {menuOpen && (
-            <div className="md:hidden flex flex-col gap-4 mt-4 pb-4 text-gray-700 font-medium text-base border-t pt-4">
-              <Link
-                to="/SickLeave"
-                className="hover:text-indigo-600 transition duration-300"
-                onClick={() => setMenuOpen(false)}
-              >
-                Sick Leave
-              </Link>
-              <Link
-                to="/CarersLeave"
-                className="hover:text-indigo-600 transition duration-300"
-                onClick={() => setMenuOpen(false)}
-              >
-                Carer's Leave
-              </Link>
+            <div className="md:hidden flex flex-col gap-4 mt-4 pb-4 text-gray-700 font-medium text-base">
               <Link
                 to="/MedicalCertificates"
                 className="hover:text-indigo-600 transition duration-300"

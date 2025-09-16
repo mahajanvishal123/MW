@@ -148,8 +148,11 @@ export default function ProfileSettings() {
                 <input
                   type="email"
                   value={profileData.email}
-                  disabled
-                  className="w-full px-3 py-2 border rounded-lg bg-slate-50 text-slate-500"
+                   disabled={!isEditing}
+                  onChange={(e) =>
+                    setProfileData({ ...profileData, email: e.target.value })
+                  }
+                  className="w-full px-3 py-2 border rounded-lg"
                 />
               </div>
               <div>
