@@ -166,39 +166,50 @@ const generateCertificatePDF = async (cert) => {
   // PATIENT DETAILS
   drawSectionHeader('PATIENT DETAILS');
 
-  const patientDetails = [
-    ['Full Name:', cert.full_name, 'Email:', cert.email_address],
-    ['Mobile:', cert.mobile_No, 'Date of Birth:', new Date(cert.birth_date).toLocaleDateString()],
-    ['Reason for Leave:', cert.reason_for_leave, 'Medical Conditions:', cert.medical_conditions],
-    [`Height:`, `${cert.height} cm`, `Weight:`, `${cert.weight} kg`]
-  ];
+// Email hata di gayi hai is array se
+const patientDetails = [
+  ['Full Name:', cert.full_name, 'Mobile:', cert.mobile_No],
+  ['Date of Birth:', new Date(cert.birth_date).toLocaleDateString(), 'Reason for Leave:', cert.reason_for_leave],
+  ['Medical Conditions:', cert.medical_conditions, 'Height:', `${cert.height} cm`],
+  ['Weight:', `${cert.weight} kg`, '', ''] // last row ke right side empty
+];
 
 patientDetails.forEach((row) => {
   const leftLabelX = 20;
-  const leftValueX = 55;
+  const leftValueX = 70;
   const rightLabelX = pageWidth / 2 + 5;
-  const rightValueX = pageWidth / 2 + 35;
+  const rightValueX = pageWidth / 2 + 60;
 
+  // left label
   pdf.setFont('helvetica', 'bold');
   pdf.text(row[0], leftLabelX, y);
+
+  // left value (wrap)
   pdf.setFont('helvetica', 'normal');
-  const leftLines = pdf.splitTextToSize(row[1] || '-', 60);
+  const leftLines = pdf.splitTextToSize(row[1] || '-', 70);
   pdf.text(leftLines, leftValueX, y);
 
-  pdf.setFont('helvetica', 'bold');
-  pdf.text(row[2], rightLabelX, y);
+  // right label
+  if (row[2]) {
+    pdf.setFont('helvetica', 'bold');
+    pdf.text(row[2], rightLabelX, y);
+  }
+
+  // right value (wrap)
   pdf.setFont('helvetica', 'normal');
-  const rightLines = pdf.splitTextToSize(row[3] || '-', 60);
+  const rightLines = pdf.splitTextToSize(row[3] || '-', 70);
   pdf.text(rightLines, rightValueX, y);
 
-  // calculate how tall this row became
+  // calculate tallest column
   const leftHeight = leftLines.length * 6;
   const rightHeight = rightLines.length * 6;
   const rowHeight = Math.max(leftHeight, rightHeight);
 
-  y += rowHeight + 4; // move down for next row
+  y += rowHeight + 6; // add spacing between rows
 });
-y += 5;
+
+y += 8; // extra gap after table
+
 
 
 
@@ -207,10 +218,8 @@ y += 5;
 
   const docDetails = [
     ['Name:', `Dr. ${cert.doctor_first_name} ${cert.doctor_last_name}`],
-    ['Email:', cert.doctor_email],
     ['Phone:', cert.doctor_phone],
-    ['Description:', cert.description],
-    ['Price:', `$${cert.price}`]
+  
   ];
 
   docDetails.forEach(([label, value]) => {
